@@ -1,0 +1,86 @@
+			*{
+				margin: 0 auto;
+				font-family: 'Merriweather Sans', sans-serif !important;
+			}
+			#noticeTable{
+				text-align: center;
+				align:center;
+				border:0;
+				width:960px
+			}
+			#noticeTable th{
+				font-weight: bolder;
+				font-size: large;
+				padding: 8px 0 9px;
+		     	border-bottom: solid 1px #d2d2d2;
+		     	text-align: center;
+		      	line-height: 18px;
+				background-color: hotpink;
+			}
+			/* #noticeTable{
+				border: 0.5px solid black;
+			} */
+			#noticeTable  tr{
+				border: 1px outset ;
+		
+			}
+			#Category{
+				width: 110px;
+				border-right: 0.5px outset ;
+			}
+			#Cate_td{
+				border-right: 0.5px solid rgb(200, 200, 200);
+			}
+			#notice_Title{
+				border-right: 0.5px solid rgb(200, 200, 200);
+				border-left: 0.5px solid rgb(200, 200, 200);
+			}
+			#Title_td{
+				border-right: 0.5px solid rgb(200, 200, 200);
+				border-left: 0.5px solid rgb(200, 200, 200);
+			}
+			#notice_Num{
+				width: 75px;
+			}
+			#RegDate{
+				width: 110px;
+			}
+			#view{
+				width: 90px;
+			}
+			#writer{
+				width: 100px;
+			}
+			#foreach_tr{
+				height: 30px;
+				
+			}
+			#foreach_tr >td {
+				vertical-align: middle; 		/* 셀 안의 텍스트 완전 중앙정렬 */
+			}
+		    #notice_add_btn:hover{ color: rgb(119, 112, 102);
+		    }
+		    #notice_add_btn{
+		      margin-top: 10px;
+			  width: fit-content;
+		    }
+			#a_none{
+				text-decoration: none;
+			}
+			#noticeForm{
+				min-height: 572px;
+			}
+			.nt_header {
+				display: flex;
+				margin-top: 50px;
+				margin-bottom: 50px;
+			}
+			.nt_header h1 {
+				font-weight: bold;
+				font-size: x-large;
+				margin: 20px 0 20px 20px;
+			}
+			.nt_header h3 {
+				margin: 20px 0 0 20px;
+				line-height: 130%;
+			}

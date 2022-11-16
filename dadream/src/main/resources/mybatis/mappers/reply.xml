@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+   <mapper namespace ="com.dd.dealing.dao.DealingDAO">
+   
+   <resultMap id="replyResult" type="replyVO">
+		<result property="user_Id" column="user_Id" />
+		<result property="reply_content" column="reply_content" />
+		<result property="inte_Num" column="inte_Num" />
+		<result property="reply_regDate" column="reply_regDate" />
+		<result property="reply_Num" column="reply_Num" />
+<!-- 		<result property="rp_parent_No" column="rp_parent_No"></result> -->
+
+		
+	</resultMap> 
+   <!-- 댓글 추가 -->
+   <insert id="rewrite" parameterType="ReplyVO">
+   	insert into board_reply(reply_content, reply_Num, reply_regDate, user_Id, inte_Num)
+   				values( #{reply_content}, #{reply_Num}, #{reply_regDate},#{user_Id}, #{inte_Num})
+   </insert>
+   
+   
+   
+   
+   <!-- 댓글 리스트 -->
+   
+   <select id="list"  resultType="replyVO">
+   select *
+   	 from board_reply
+   		where inte_Num = #{inte_Num}
+   </select>
+   
+   <!-- 댓글 수정 -->
+   <update id="modify" >
+   		update board_reply 
+   		set reply_content = #{reply_content} 
+   			where reply_Num = #{reply_Num};
+   </update>
+   
+   <!-- 댓글 삭제 -->
+   <delete id="remove">
+   		delete from 
+   			board_reply 
+   				where reply_Num = #{reply_Num};
+   </delete>
+  
+   </mapper>

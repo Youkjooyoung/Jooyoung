@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+"-//Apache Software Foundation//DTD Tiles Configuration 2.0//KO"
+"http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+<tiles-definitions>
+   <definition name="baseLayout"  template="/WEB-INF/views/common/layout.jsp">
+      <put-attribute name="title" value="" />
+      <put-attribute name="header" value="" />
+      <put-attribute name="img" value="" />
+      <put-attribute name="body" value="" />
+      <put-attribute name="side" value="" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   <!-- 사용자 가구 메인 -->
+   <definition name="/productmain" extends="baseLayout">
+      <put-attribute name="title" value="가구 메인페이지" />
+	  <put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/product/mainpro.jsp" />
+   </definition>
+   
+
+   <!-- 사용자 가구 상품 리스트 -->
+   <definition name="/product" extends="baseLayout">
+      <put-attribute name="title" value="상품리스트" />
+      <put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+      <put-attribute name="img" value="/WEB-INF/views/product/imgside.jsp" />
+	  <put-attribute name="body" value="/WEB-INF/views/product/product.jsp" />
+      <put-attribute name="side" value="/WEB-INF/views/product/proside.jsp" />
+   </definition>
+   
+ 
+   
+    <!-- 판매자 가구 상품 등록 -->
+   <definition name="/productform" extends="baseLayout">
+      <put-attribute name="title" value="상품리스트" />
+      <put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+	  <put-attribute name="body" value="/WEB-INF/views/product/productform.jsp" />
+   </definition>
+   <!-- 판매자 가구 상품관리 -->
+   <definition name="/product/productmanager" extends="baseLayout">
+      <put-attribute name="title" value="상품관리" />
+      <put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+	  <put-attribute name="body" value="/WEB-INF/views/product/productmanager.jsp" />
+   </definition>
+  	<!-- 판매자 가구 상품 수정 -->
+    <definition name="/product/productMod" extends="baseLayout">
+      <put-attribute name="title" value="상품관리" />
+      <put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+	  <put-attribute name="body" value="/WEB-INF/views/product/productMod.jsp" />
+   </definition>
+   
+   <!-- 상품상세보기 -->
+   <definition name="/productview" extends="baseLayout">
+      <put-attribute name="title" value="상품리스트" />
+      <put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+	  <put-attribute name="body" value="/WEB-INF/views/product/productview.jsp" />
+   </definition>
+   
+    <!-- 장바구니 -->
+   <definition name="/cartweb" extends="baseLayout">
+      <put-attribute name="title" value="장바구니" />
+      <put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+      <!-- <put-attribute name="img" value="/WEB-INF/views/product/imgside.jsp" /> -->
+	  <put-attribute name="body" value="/WEB-INF/views/product/cart.jsp" />
+     <!--  <put-attribute name="side" value="/WEB-INF/views/product/proside.jsp" /> -->
+   </definition>
+   
+     <!-- 장바구니 구매창 -->
+   <definition name="/cartorder" extends="baseLayout">
+      <put-attribute name="title" value="장바구니" />
+      <put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+	  <put-attribute name="body" value="/WEB-INF/views/product/cartorder.jsp" />
+   </definition>
+   
+      <!-- 단일 구매창 -->
+   <definition name="/order" extends="baseLayout">
+      <put-attribute name="title" value="구매" />
+      <put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+	  <put-attribute name="body" value="/WEB-INF/views/common/order.jsp" />
+	</definition>
+
+	<!-- 토스api창 -->
+	<definition name="/orderfinishs" extends="baseLayout">
+      	<put-attribute name="title" value="토스" />
+      	<put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/product/orderfinishs.jsp" />
+	</definition>
+	
+	<!-- 주문완료 -->
+	<definition name="/oft" extends="baseLayout">
+      	<put-attribute name="title" value="구매완료" />
+      	<put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/product/oft.jsp" />
+	</definition>
+	
+	<!-- 주문목록 -->
+	<definition name="/orderlist" extends="baseLayout">
+      	<put-attribute name="title" value="구매완료" />
+      	<put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/product/orderlist.jsp" />
+	</definition>
+		
+	<!-- 판매목록 -->
+	<definition name="/mypaylist" extends="baseLayout">
+      	<put-attribute name="title" value="판매목록" />
+      	<put-attribute name="header" value="/WEB-INF/views/product/headerpp.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/product/mypaylist.jsp" />
+	</definition>
+	
+	<!-- 환불이유 -->
+	<definition name="/refundform" extends="baseLayout">
+      	<put-attribute name="title" value="리뷰" />
+		<put-attribute name="body" value="/WEB-INF/views/product/refundform.jsp" />
+	</definition>
+   </tiles-definitions>

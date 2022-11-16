@@ -1,0 +1,99 @@
+		 * {
+            box-sizing: border-box;
+            user-select: none;
+            /*margin: 0 auto;*/
+
+        }
+
+        /* maintab */
+        .maintab {
+            display: flex;
+            margin-top:10px ;
+            margin-bottom: 20px;
+            background: rgb(238, 232, 232);
+        }
+        .maintab a{
+            width: 100%;
+            text-decoration: none;
+            color: black;
+		}
+
+        .maintab a li {
+            padding: 20px 20px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+        }
+        .maintab a:first-child{
+			border-right: solid 0.5px;
+		}
+
+        .maintab .a:hover {
+            background-color: rgb(146, 142, 142);
+        }
+
+        .maintab .b:hover {
+            background-color: rgb(161, 117, 20);
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .red {
+            background-color: rgb(146, 142, 142);
+        }
+
+        .blue {
+            background-color: rgb(161, 117, 20);
+        }
+
+
+        /*---------------------- header------------------------------- */
+        .header {
+            margin: 20px 0 0 0;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .header .Main_Logo {
+            width: 220px;
+            height: 50px;
+            margin-left: 45px;
+        }
+
+        .headerleft {
+            display: flex;
+            margin-right: 25%;
+        }
+
+        .headerul ul {
+            margin-top: 2%;
+            font-size: 18px;
+            margin-left: 300px;
+        }
+
+        .headerul ul li {
+            display: inline-block;
+            font-weight: bold;
+            margin-right: 50px;
+        }
+
+        .headerul ul>a {
+            margin-top: 1.5%;
+            text-decoration: none;
+            color: black;
+        }
+        
+
+        /* top버튼 */
+        .top {
+            text-decoration: none;
+            color: black;
+            position: fixed;
+            bottom: 100px;
+            right: 40px;
+        }

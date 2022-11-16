@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dd.product.dao.ProductDAO">
+
+	<resultMap id="reviewResult" type="reviewVO">
+		<result property="review_Num" column="review_Num" />
+		<result property="review_Text" column="review_Text" />
+		<result property="review_Title" column="review_Title" />
+		<result property="review_Date" column="review_Date" />
+		<result property="review_Image" column="review_Image" />
+		<result property="product_Num" column="product_Num" />
+		<result property="user_Id" column="user_Id" />
+		<!-- <collection property ="reviewReply" resultMap ="reviewReplyResult"> </collection> -->
+	</resultMap>
+	
+
+	<resultMap id="reviewReplyResult" type="reviewReplyVO">
+		<result property="reply_Count" column="reply_Count" />
+		<result property="review_Num" column="review_Num" />
+		<result property="reply_Text" column="reply_Text" />
+		<result property="parent_No" column="parent_No" />
+		<result property="user_Id" column="user_Id" />
+		<result property="reply_Date" column="reply_Date" />
+		
+	</resultMap>
+	
+	<!-- 리뷰리스트 -->
+	<select id ="reviewList" resultMap="reviewResult" parameterType="int">
+		<![CDATA[
+			select * from review_t where product_Num = #{product_Nums}
+		]]>
+	</select>
+	
+	<!-- 리뷰작성 -->
+	<insert id="reviewpost"  parameterType="java.util.Map">
+	<![CDATA[
+		insert into review_t(review_Num,review_Text,review_Title,review_Date,review_Image,product_Num,user_Id)
+		values(#{review_Num},#{review_Text},#{review_Title},#{review_Date},#{review_Image},#{product_Num},#{user_Id})
+		]]>
+	</insert>
+	<!-- 리뷰답글 -->
+	<insert id ="reviewReply" parameterType="reviewReplyVO">
+		<![CDATA[
+			insert into reviewreply_t(reply_Count,review_Num,reply_Text,parent_No,user_Id,reply_Date)
+			values(#{reply_Count},#{review_Num},#{reply_Text},#{parent_No},#{user_Id},#{reply_Date})
+		]]>
+		
+	</insert>
+	
+	<!-- 리뷰 댓글 리스트 -->
+	<select id ="revReply" resultMap="reviewReplyResult" parameterType="int">
+		<![CDATA[
+			select * from reviewreply_t  where parent_No = 0
+		]]>
+	</select>
+	<!-- 리뷰 대댓글 -->
+	<insert id="daedatgle" parameterType="reviewReplyVO">
+	<![CDATA[
+		insert into reviewreply_t(reply_Count,review_Num,reply_Text,parent_No,user_Id,reply_Date)
+			values(#{reply_Count},#{review_Num},#{reply_Text},#{parent_No},#{user_Id},#{reply_Date})
+	]]>
+	</insert> 
+	<!-- parentNO max 구하기 -->
+	<select id="parentMax" resultType="int">
+		<![CDATA[
+			select MAX(parent_No) from reviewreply_t
+		]]>
+	</select>
+	<!-- 댓글 토탈리스트 -->
+		<!-- 리뷰 댓글 리스트 -->
+	<select id ="totalReply" resultMap="reviewReplyResult" >
+		<![CDATA[
+			select * from reviewreply_t  
+		]]>
+	</select>
+	
+</mapper>

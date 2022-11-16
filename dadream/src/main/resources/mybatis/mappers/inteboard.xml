@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+   <mapper namespace="com.dd.product.dao.ProductDAO">
+   
+	<resultMap id="boardResult" type="boardVO">
+		<result property="inte_Num" column="inte_Num" />
+		<result property="inte_Title" column="inte_Title" />
+		<result property="inte_Text" column="inte_Text" />
+		<result property="inte_Image" column="inte_Image" />
+		<result property="inte_Date" column="inte_Date" />
+		<result property="user_Id" column="user_Id" />
+		<result property="viewCounts" column="viewCounts" />
+		
+	
+	</resultMap> 
+
+	<!-- 메인화면 인테리어 보이기 -->
+	<select id="inteView" resultMap="boardResult">
+		<![CDATA[
+			select * from interior_t
+			order by viewCounts DESC
+			limit 3
+		
+		]]>
+	</select>
+	
+	
+	</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dd.admin.dao.AdminDAO">
+
+	<resultMap id="dealResult2" type="dealingVO">
+		<result property="dl_Num" column="dl_Num" />
+		<result property="dl_Title" column="dl_Title" />
+		<result property="dl_Views" column="dl_Views" />
+		<result property="user_Id" column="user_Id" />
+		<result property="dl_City" column="dl_City" />
+		<result property="dl_Address" column="dl_Address" />
+		<result property="dl_Option" column="dl_Option" />
+		<result property="dl_Form" column="dl_Form" />
+		<result property="dl_Form2" column="dl_Form2" />
+		<result property="dl_Room" column="dl_Room" />
+		<result property="dl_Size" column="dl_Size" />
+		<result property="dl_Content" column="dl_Content" />
+		<result property="dl_Price" column="dl_Price" />
+		<result property="dl_Image" column="dl_Image" />
+		<result property="dl_Lat" column="dl_Lat" />
+		<result property="dl_Lng" column="dl_Lng" />
+
+	</resultMap>
+	<resultMap id="reportView" type="reportVO">
+		<result property="dl_ReportNum" column="dl_ReportNum" />
+		<result property="user_Id" column="user_Id" />
+		<result property="rp_Title" column="rp_Title" />
+		<result property="rp_Content" column="rp_Content" />
+		<result property="rp_Date" column="rp_Date" />
+		<result property="dl_Num" column="dl_Num" />
+		<result property="rp_State" column="rp_State" />
+		<collection property="dealing" resultMap="dealResult2">
+		</collection>
+	</resultMap>
+
+
+	<!-- 신고내역 -->
+	<select id="reportView" resultMap="reportView" parameterType="int">
+		<![CDATA[
+			SELECT *
+			FROM dealing_t a
+			JOIN report_t b
+			ON a.dl_Num = b.dl_Num
+			WHERE b.dl_ReportNum = #{rp_Num}
+		]]>
+	</select>
+	
+	<select id="dealingsList" resultMap="dealResult2">
+		<![CDATA[
+			SELECT *
+			FROM dealing_t
+		]]>
+	</select>
+	
+	<select id="adminDlView" resultMap="dealResult2" parameterType="int">
+		<![CDATA[
+			SELECT *
+			FROM dealing_t
+			WHERE dl_Num = #{dl_Num}
+		]]>
+	</select>
+	
+	<delete id="deleteDealing" parameterType="java.util.Map">
+		DELETE
+		FROM dealing_t
+		<where>
+			<if test="dlsList != null and dlsList.size != 0">
+				dl_Num IN
+				<foreach collection="dlsList" item="item" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+	
+	<select id="dlSum" resultType="Integer">
+		<![CDATA[
+			SELECT COUNT(*)*100000
+			FROM dlorder_t 
+			GROUP BY do_Date DESC
+			LIMIT 7
+		]]>
+	</select>
+</mapper>

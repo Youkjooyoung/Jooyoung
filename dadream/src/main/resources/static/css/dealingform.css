@@ -1,0 +1,170 @@
+		* {
+            font-family: 'Merriweather Sans', sans-serif !important;
+        }
+		.first {
+            font-weight: 50;
+        }
+       
+        .first>h1 {
+            font-weight: bold;
+            font-size: xx-large;
+            margin:40px 0 0 0;
+        }
+
+
+
+        .dlImg {
+            display: flex;
+            justify-content: space-around;
+            /*margin: 10px 30px 0 20px;*/
+            flex-direction: column;
+        }
+
+        .dlMain {
+            margin-bottom: 0px;
+            line-height: 30px;
+            display:table-cell;
+            width:565px;
+        }
+        .dlMain  p{
+		font-weight: bold;
+		}
+
+        /* 나중에 width길이 조정 필요할 수 있음 */
+        .middle {
+            display: flex;
+            /*justify-content: space-between;*/
+            width: 1130px;
+
+        }
+
+        .dealingcon >h3{
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .dlThumbnail1 {
+            display: flex;
+            position: relative;
+            margin: 10px 0 0 5px;
+            right: 5px;
+            overflow-x: auto;
+            white-space: nowarp;
+        }
+
+        .dlThumbnail2 {
+            width: 100px;
+            height: 100px;
+            margin-right: 10px;
+        }
+
+        .cg {
+            margin: 50px 0 0 0;
+        }
+
+        .bds02 {
+            /*margin: 50% 0 0 0px;*/
+            text-align: center;
+            width: 237px;
+    		display: inline-grid;
+        }
+        .cg >h3{
+            font-weight: bold;
+            font-size: revert;
+            color:blue;
+        }
+        .cg > h5{
+			margin-bottom: 10px;
+			font-weight: bold;
+        }
+        .dealingformcontent{
+			width: 850px;
+			margin-left: 20px;
+			display:table-footer-group;
+		}
+		.dealingformcontent > h3{
+			margin-bottom: 10px;
+			font-weight: bold;
+			color:blue;
+		}
+		.dropdown-toggle::after {
+            display: none;
+        }
+        #map{
+			width:300px;
+	        height:300px;
+	        margin-top:10px;
+	        display:none
+	
+		}
+		.note-editable{
+			width:992px;
+			height:300px;
+			height: 500px;
+            min-Height: 500px;
+            max-Height: 500px;
+		}
+		.Address_search_btn{
+			height: 27px;
+		}
+		.imgh1{
+			color:red;
+		}
+		.Ad_Search_btn{
+			cursor:pointer;
+			width:100px;
+			height:30px;
+			box-shadow: 3px 4px 0px 0px #dcecfb;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+			
+		}
+		.Ad_Search_btn:hover{
+			background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+			background-color:#80b5ea;
+		}
+		.Ad_Search_btn:active{
+			position:relative;
+			top:1px;
+		}
+		#dealing_Image{
+			cursor:pointer;
+			}
+			
+		#dealing_Image:active{
+			position:relative;
+			top:1px;
+		}
+		input[type=text],input[type=password],input[type=email]{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+			}
+		
+/*------------------------------------moddealing-----------------------------------------*/		
+		.dropdown-toggle::after {
+            display: none;
+        }
+
+        .first {
+            font-weight: 50px;
+        }
+        #summernote{
+			width: 971px;
+		    height: 500px;
+		    resize: none;
+		}
+		#FORMTAG{
+			display: table-caption;
+		}
+        

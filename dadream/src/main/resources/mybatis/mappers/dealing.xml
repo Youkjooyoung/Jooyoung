@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dd.dealing.dao.DealingDAO">
+
+	<resultMap id="dealResult" type="dealingVO">
+		<result property="dl_Num" column="dl_Num" />
+		<result property="dl_Title" column="dl_Title" />
+		<result property="dl_Views" column="dl_Views" />
+		<result property="user_Id" column="user_Id" />
+		<result property="dl_City" column="dl_City" />
+		<result property="dl_Address" column="dl_Address" />
+		<result property="dl_Option" column="dl_Option" />
+		<result property="dl_Form" column="dl_Form" />
+		<result property="dl_Form2" column="dl_Form2" />
+		<result property="dl_Room" column="dl_Room" />
+		<result property="dl_Size" column="dl_Size" />
+		<result property="dl_Content" column="dl_Content" />
+		<result property="dl_Price" column="dl_Price" />
+		<result property="dl_Image" column="dl_Image" />
+		<result property="dl_Lat" column="dl_Lat" />
+		<result property="dl_Lng" column="dl_Lng" />
+		<result property="dl_Sold" column="dl_Sold" />
+
+	</resultMap>
+	<resultMap id="jjimResult2" type="jjimVO">
+		<result property="dl_Num" column="dl_Num" />
+		<result property="user_Id" column="user_Id" />
+		<collection property="dealing" resultMap="dealResult">
+		</collection>
+	</resultMap>
+
+	<resultMap id="dlorder" type="dlorderVO">
+		<result property="dl_Num" column="dl_Num" />
+		<result property="user_Id" column="user_Id" />
+		<result property="order_Num" column="order_Num" />
+	</resultMap>
+
+<!-- 공실검색 -->
+	<select id="gongsilSearch" resultMap="dealResult" parameterType="java.util.Map">
+		SELECT *
+		FROM dealing_t
+		<where>
+		dl_Sold != 'Y' AND
+			<if test="gsList != null and gsList.size != 0">
+				dl_Form IN 
+				<foreach collection="gsList" item="item" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="dl_Address != null and dl_Address !=''">
+			AND dl_Address LIKE CONCAT('%', #{dl_Address}, '%')
+		</if>
+	</select>
+	
+	<!-- 매물수정 창 -->
+	<select id="modDealing" resultMap="dealResult" parameterType="java.util.Map">
+		<![CDATA[
+			SELECT *
+			FROM dealing_t
+			WHERE user_Id = #{user_Id} AND dl_Num = #{dl_Num}
+		]]>
+	</select>
+	
+	<!-- 매물수정 -->
+	<update id="modDealing2" parameterType="java.util.Map">
+			UPDATE dealing_t 
+			SET 
+			dl_Title = #{dl_Title}, 
+			dl_City = #{dl_City},
+			dl_Address = #{dl_Address},
+			dl_Lat = #{dl_Lat}, 
+			dl_Lng = #{dl_Lng}, 
+			dl_Price = #{dl_Price}, 
+			dl_Option = #{dl_Option},
+			dl_Form = #{dl_Form},
+			dl_Form2 = #{dl_Form2}, 
+			dl_Room = #{dl_Room}, 
+			dl_Size = #{dl_Size} 
+		<if test="dl_Content != null and dl_Content != ''">
+			, dl_Content = #{dl_Content}
+		</if>
+		<if test="dl_Image != null and dl_Image != ''"> 
+			, dl_Image = #{dl_Image} 
+		</if>
+			WHERE dl_Num = #{dl_Num}
+	</update>
+	
+	<delete id="deleteDealing" parameterType="int">
+		<![CDATA[
+			DELETE
+			FROM dealing_t
+			WHERE dl_Num = #{dl_Num}
+		]]>
+	</delete>
+
+
+
+	<!-- 매물등록 -->
+	<insert id="addNewdealing" parameterType="java.util.Map">
+		<![CDATA[
+		 insert into dealing_t(dl_Num,dl_Title,dl_Views,user_Id,dl_City,dl_Address,dl_Option,dl_Form,dl_Form2,dl_Room,dl_Size,dl_Content,dl_Price,dl_Image, dl_Lat, dl_Lng)
+		 values(#{dl_Num},#{dl_Title},#{dl_Views},#{user_Id},#{dl_City},#{dl_Address},#{dl_Option},#{dl_Form},#{dl_Form2},#{dl_Room},#{dl_Size},#{dl_Content},#{dl_Price},#{dl_Image}, #{dl_Lat}, #{dl_Lng})
+		]]>
+	</insert>
+
+	<insert id="insertNewImage" parameterType="java.util.Map">
+		INSERT INTO dealing_t(dl_Image,dl_Num)
+		VALUES
+		<foreach item="item" collection="list" separator=", ">
+			(#{item.dl_Image},
+			)
+		</foreach>
+	</insert>
+
+	<!-- 매물 상세보기 -->
+	<select id="getDealingContents" parameterType="int"
+		resultType="dealingVO">
+		SELECT * FROM dealing_t
+		WHERE dl_Num = #{dl_Num}
+	</select>
+
+	<update id="viewCount" parameterType="int">
+		update dealing_t
+		set
+		dl_Views =dl_Views +1
+		where dl_Num =#{dl_Num}
+	</update>
+
+
+
+
+	<select id="selectMap" resultMap="dealResult"
+		parameterType="java.util.Map">
+		SELECT *
+		FROM dealing_t
+		<if test="dl_Form != null and dl_Form != '' and dl_Form != 'all'">
+			WHERE
+			dl_Form = #{dl_Form}
+		</if>
+	</select>
+
+
+	<select id="selectMap2" resultMap="dealResult"
+		parameterType="java.util.Map">
+		SELECT *
+		FROM dealing_t
+		WHERE
+		1=1
+		<if test="dl_Form != null and dl_Form !=''">
+			AND dl_Form LIKE CONCAT('%', #{dl_Form}, '%')
+		</if>
+		<if test="dl_Form2 != null and dl_Form2 !=''">
+			AND dl_Form2 = #{dl_Form2}
+		</if>
+		<if test="dl_Room != null and dl_Room !=''">
+			AND dl_Room LIKE CONCAT('%', #{dl_Room}, '%')
+		</if>
+		<if test="dl_Option != null and dl_Option !=''">
+			AND dl_Option LIKE CONCAT('%', #{dl_Option}, '%')
+		</if>
+		<if test="dl_Price != null and dl_Price !=''">
+			AND #{dl_Price} >= dl_Price
+		</if>
+		<if test="dl_Address != null and dl_Address !=''">
+			AND dl_Address LIKE CONCAT('%', #{dl_Address}, '%')
+		</if>
+	</select>
+
+	<select id="selectMap3" resultMap="dealResult"
+		parameterType="java.util.Map">
+		SELECT *
+		FROM dealing_t
+		<if test="dl_Address != null and dl_Address != ''">
+			WHERE
+			dl_Address LIKE CONCAT('%', #{dl_Address}, '%')
+		</if>
+	</select>
+
+
+	<!--매물 전체검색 -->
+	<select id="allListdealing" resultType="dealingVO"
+		parameterType="String">
+	<![CDATA[
+			SELECT *
+			FROM dealing_t
+			WHERE
+			dl_Form LIKE CONCAT('%', #{dl_Form}, '%')
+		]]>
+	</select>
+
+	<select id="myDealing" resultMap="dealResult"
+		parameterType="String">
+	<![CDATA[
+		SELECT *
+		FROM dealing_t
+		WHERE user_Id = #{user_Id}
+	]]>
+	</select>
+
+	<select id="hereMe" resultMap="dealResult"
+		parameterType="java.util.Map">
+	<![CDATA[
+		SELECT *
+		FROM dealing_t
+		WHERE dl_Lat BETWEEN (#{lat}-0.01) AND (#{lat}+0.01) 
+		AND dl_Lng BETWEEN (#{lng}-0.01) AND (#{lng}+0.01)
+		ORDER BY dl_Views DESC
+		LIMIT 8
+	]]>
+	</select>
+
+<!-- 찜 -->
+<select id="myJjim" resultMap="jjimResult2" parameterType="String">
+		<![CDATA[
+			SELECT a.dl_Num, a.dl_Title, a.dl_Image, a.dl_Price, a.dl_Address, a.dl_Content, 
+			a.dl_Views, a.dl_Date, a.user_Id, a.dl_City, a.dl_Form, a.dl_Form2, a.dl_Room, 
+			a.dl_Size, a.dl_Option, a.dl_Lat, a.dl_Lng 
+			FROM dealing_t a
+			JOIN like_t b
+			ON a.dl_Num = b.dl_Num
+			WHERE b.user_Id = #{user_Id}
+		]]>
+	</select>
+	
+	<!-- 공실 주문 -->
+	<insert id="dlorder" parameterType="java.util.Map">
+	<![CDATA[
+	insert into dlorder_t(dl_Num,user_Id,order_Num, do_Date) value
+	(#{dl_Num},#{user_Id},#{order_Num},CURDATE())
+	]]>
+	</insert>
+	
+	
+	<!-- 공실 구매하면 솔드아웃 -->
+	<update id="dlsold" parameterType="String">
+		update dealing_t 
+		set dl_Sold = "Y"
+		where dl_Num = #{dl_Num}
+	
+</update>
+	
+
+
+</mapper>

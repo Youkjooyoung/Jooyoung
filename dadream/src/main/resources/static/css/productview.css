@@ -1,0 +1,430 @@
+  * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        @supports (position: sticky) or (position: -webkit-sticky) {
+            .sticky {
+                position: sticky;
+                top: 4px;
+            }
+        }
+
+        .stickydiv {
+            background-color: rgba(220, 220, 220, 0.322);
+            position: sticky;
+            top: 4px;
+            transition: top 0.1s ease 0s;
+            z-index: 100;
+        }
+
+        .stickydiv ul {
+            list-style-type: none;
+            display: flex;
+            width: 1130px;
+        }
+
+        .tabli {
+            width: 450px;
+            height: 20px;
+            text-align: center;
+            margin: 15px 0
+        }
+
+        .sticky li a.active {
+            color: #8A2908;
+            border-bottom: 3px solid #8A2908;
+            width: 450px;
+        }
+
+        .sticky li a {
+            text-decoration: none;
+            padding: 0 150px 11px 150px;
+            color: black;
+        }
+		
+		.reviewTitle{
+			font-weight: bolder;
+		}
+        .reviewinfo {
+            display: flex;
+            margin: 10px 0;
+            border-bottom: 1px solid #000;
+            width: 1100px;
+
+        }
+
+        .reviewinfo img {
+            width: 200px;
+            height: 200px;
+        }
+
+        .reviewinfo textarea {
+            padding: 5px;
+        }
+
+        .reviewinfo #sub {
+            cursor:pointer;
+			width:100px;
+			height:30px;
+			box-shadow: 3px 4px 0px 0px #dcecfb;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+			margin:auto;
+        }
+
+        .reviewinfo p {
+            padding: 5px;
+            width: 800px;
+
+        }
+
+
+        .reviewText {
+            height: auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+           	color: red;
+        }
+        .rvWriter{
+			color:green;	
+			}
+
+        #reply {
+            border: none;
+            background: white;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        #ok {
+            display: none;
+        }
+
+        .divtag {
+            display: inline-flex;
+        }
+
+        #border {
+            padding: 10px;
+            border-top: 1px solid gray;
+            margin-top: 5px;
+        }
+
+        #under,
+        #sum {
+            border-bottom: 1px solid #000;
+        }
+
+        #eye {
+            border: none;
+            background: white;
+            font-weight: bold;
+            margin: 10px;
+            cursor:pointer;
+			width:100px;
+			height:30px;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+        }
+        #eye:hover{
+			background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+			background-color:#80b5ea;
+		
+		}
+		
+		#eye:active{
+			position:relative;
+			top:1px;
+		}
+
+        .replying {
+            display: none;
+        }
+
+        .formTagclass {
+            display: none;
+        }
+        .nump,.sump{
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        .background{
+	        background-color:#f5f5f5;
+	        margin-top: 70px;
+	        line-height: initial;
+        }
+        .background p {
+			font-size: initial;
+		}
+        
+        .totaloption{
+        display: flex;
+        margin-top:10px;
+        }
+        
+        .totalprice{
+            font-size: initial;
+            display: contents;
+        }
+        #so1{
+        margin-left: 10px;
+        margin-right: 90px;
+        }
+        
+        #so2{
+        margin-left: 10px;
+        }
+        
+        .num{
+		margin-top: 15px;
+        }
+        
+        .btn{
+        margin-top: 30px;
+        }
+        
+        .cartimg{
+        width: 74px;
+        height: 30px;
+        }
+        
+		#order{
+		cursor:pointer;
+		width:100px;
+		height:41px;
+		background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+		background-color:#bddbfa;
+		border:1px solid #84bbf3;
+		border-radius:5px;
+		display:inline-block;
+		cursor:pointer;
+		color:#471f54;
+		font-family:Arial;
+		font-size:17px;
+		font-weight:bold;
+		padding:2px;
+		text-decoration:none;
+		text-shadow:0px 1px 0px #528ecc;
+		}
+		#order:hover{
+			background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+			background-color:#80b5ea;
+		}
+		
+		#order:active{
+			position:relative;
+			top:1px;
+		}
+		#cart{
+			position:relative;
+			border-radius:5px;
+			cursor:pointer;
+			border-radius: 5px;
+			border:0.5px solid skyblue;
+			
+		}
+		#cart:active{
+			top:2px;
+		}
+		
+		.bot{
+		display:flex;
+		margin-bottom: 15px;
+		justify-content: end;
+		}
+        
+        img {
+  		vertical-align: middle;
+		}
+
+		.middle{
+		display: flex;
+		}
+		
+		.dlComments{
+		margin-left: 235px;
+		font-size: 25px;
+		}
+		
+		.dlComments1{
+		margin-bottom: 15px;
+		
+		}
+		
+		.dlComments1 h1{
+			font-size: xx-large;
+			font-weight: bolder;
+		}
+		
+		#dlComments2{
+		margin-bottom: 15px;
+		}
+		#dlComments3 h3{
+			font-size: large;
+		}
+		
+		.selectoption{
+		display: table-caption;
+		}
+		
+		.select{
+		width:175px;
+		height: 40px;
+		margin: 15px 0;
+		}
+		
+		/* Position the image container (needed to position the left and right arrows) */
+		.container {
+		  position: relative;
+		}
+		
+		/* Hide the images by default */
+		.mySlides {
+		  display: none;
+		}
+		
+		/* Add a pointer when hovering over the thumbnail images */
+		.cursor {
+		  cursor: pointer;
+		}
+		#so1,#so2{
+			font-size: initial;
+		}
+		
+		input[type=password],input[type=email],textarea{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+			}
+			
+			
+			
+
+/* Next & previous buttons */
+.prev,
+.next {
+  cursor: pointer;
+  position: absolute;
+  top: 40%;
+  width: auto;
+  padding: 16px;
+  margin-top: -50px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  -webkit-user-select: none;
+  margin-top: 20px;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover,
+.next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* Container for image text */
+.caption-container {
+  text-align: center;
+  background-color: #222;
+  padding: 2px 16px;
+  color: white;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Six columns side by side */
+.column {
+  float: left;
+  width: 75px;
+  height: 75px;
+}
+
+/* Add a transparency effect for thumnbail images */
+.demo {
+  opacity: 0.6;
+}
+
+.active,
+.demo:hover {
+  opacity: 1;
+}
+
+#contents{
+	width:1236px;
+}
+
+#contents textarea{
+	width: 1236px;
+}
+
+#plus{
+		cursor:pointer;
+		width:100px;
+		height:27px;
+		background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+		background-color:#bddbfa;
+		border:1px solid #84bbf3;
+		border-radius:5px;
+		display:inline-block;
+		cursor:pointer;
+		color:#471f54;
+		font-family:Arial;
+		font-size:17px;
+		font-weight:bold;
+		text-decoration:none;
+		text-shadow:0px 1px 0px #528ecc;
+		margin-left: 40px;
+		text-align: center;
+}
+.resultPrice{
+	border:none;
+	color:rgb(161, 117, 20);
+	font-size: x-large;
+	background-color: white;
+}
+

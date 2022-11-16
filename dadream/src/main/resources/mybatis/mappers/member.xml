@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dd.dealing.dao.DealingDAO">
+
+	<resultMap id="memResult" type="memberVO">
+		<result property="user_Id" column="user_Id" />
+		<result property="user_Pwd" column="user_Pwd" />
+		<result property="user_Name" column="user_Name" />
+		<result property="user_Phone" column="user_Phone" />
+		<result property="user_Email" column="user_Email" />
+		<result property="user_Level" column="user_Level" />
+		<result property="user_Sign" column="user_Sign" />
+		<result property="user_Address1" column="user_Address1" />
+		<result property="user_Address2" column="user_Address2" />
+		<result property="user_Address3" column="user_Address3" />
+		<result property="user_Business" column="user_Business" />
+	</resultMap>
+	<select id="members" resultType="memberVO" parameterType="String">
+		select * from user_t
+		where user_Id =#{user_Id}
+	</select>
+
+
+	<insert id="insertMember" parameterType="memberVO">
+		<![CDATA[
+		 insert into user_t(user_Id ,user_Pwd, user_Name, user_Phone,user_Email,user_Level,user_Sign,user_Address1,user_Address2,user_Address3,user_business)
+		 values(#{user_Id}, sha2(#{user_Pwd},256), #{user_Name}, #{user_Phone},
+		 #{user_Email},#{user_Level},#{user_Sign},
+		 #{user_Address1},#{user_Address2},#{user_Address3},#{user_Business})
+		]]>
+	</insert>
+	<select id="idcheck" resultType="java.lang.Integer"
+		parameterType="String">
+	<![CDATA[
+		select count(*) from user_t	
+		where user_Id = #{user_Id} 		
+	]]>
+	</select>
+	<delete id="removeMem" parameterType="String">
+		  <![CDATA[
+		  	DELETE
+		  	FROM user_t
+		  	WHERE user_Id = #{user_Id}
+		  ]]>
+	</delete>
+
+	<select id="pwdCheck" resultType="java.lang.Integer"
+		parameterType="String">
+		<![CDATA[
+			SELECT COUNT(*) 
+			FROM user_t	
+			WHERE user_Pwd = sha2(#{user_Pwd},256) AND user_Id = #{user_Id} 		
+		]]>
+	</select>
+	<select id="infoCheck" resultType="java.lang.Integer"
+		parameterType="memberVO">
+		<![CDATA[
+			SELECT COUNT(*) 
+			FROM user_t	
+			WHERE user_Pwd = sha2(#{user_Pwd},256) AND user_Id = #{user_Id} 		
+		]]>
+	</select>
+	
+	<update id="memMod" parameterType="memberVO">
+		<![CDATA[
+			update user_t
+			set 
+				user_Email =#{user_Email},
+				user_Phone = #{user_Phone},
+				user_Address2 = #{user_Address2},
+				user_Address3 =#{user_Address3}
+				where user_Id =#{user_Id}
+		]]>
+	</update>
+	
+	
+	
+	<update id="memberMod" parameterType="memberVO">
+		<![CDATA[
+			update user_t
+			set user_Pwd =sha2(#{user_Pwd},256),
+				user_Email =#{user_Email},
+				user_Phone = #{user_Phone},
+				user_Address2 = #{user_Address2},
+				user_Address3 =#{user_Address3}
+				where user_Id =#{user_Id}
+		]]>
+	</update>
+	
+	<select id ="modPwd" resultType="int" parameterType="memberVO">
+		select COUNT(*) from user_t
+		where user_Id =#{user_Id} and user_Pwd =#{user_Pwd}
+	</select>
+
+	<select id="loginById" resultType="memberVO"
+		parameterType="memberVO">
+	<![CDATA[
+		select * from user_t	
+		where user_Id = #{user_Id} and user_Pwd = sha2(#{user_Pwd},256)		
+	]]>
+	</select>
+</mapper>

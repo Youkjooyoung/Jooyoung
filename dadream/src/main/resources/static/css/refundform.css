@@ -1,0 +1,138 @@
+    .rating .rate_radio + label {
+			    position: relative;
+			    display: inline-block;
+			    margin-left: -4px;
+			    z-index: 10;
+			    width: 60px;
+			    height: 60px;
+			    background-image: url('../image/starrate.png');
+			    background-repeat: no-repeat;
+			    background-size: 60px 60px;
+			    cursor: pointer;
+			    background-color: #f0f0f0;
+			}
+			.rating{
+			width:350px;
+			}
+			.rating .rate_radio:checked + label {
+			    background-color: #ff8;
+			}
+			.wrap{
+			   width: 300px;
+			    background-color: #fff;
+			    height: 100%;
+			    box-sizing: border-box;
+			
+			}
+			.reviewform textarea{
+			    width: 300px;
+			    padding: 10px;
+			    box-sizing: border-box;
+			    resize: none;
+			}
+			.rating .rate_radio {
+			    position: relative;
+			    display: inline-block;
+			    z-index: 20;
+			    opacity: 0.001;
+			    width: 60px;
+			    height: 60px;
+			    background-color: #fff;
+			    cursor: pointer;
+			    vertical-align: top;
+			    display: none;
+			}
+			.rating .rate_radio + label {
+			    position: relative;
+			    display: inline-block;
+			    margin-left: -4px;
+			    z-index: 10;
+			    width: 60px;
+			    height: 60px;
+			    background-image: url('../image/starrate.png');
+			    background-repeat: no-repeat;
+			    background-size: 60px 60px;
+			    cursor: pointer;
+			    background-color: #f0f0f0;
+			}
+			.rating .rate_radio:checked + label {
+			    background-color: #ff8;
+			}
+			
+			
+			.warning_msg {
+			    display: none;
+			    position: relative;
+			    text-align: center;
+			    background: #ffffff;
+			    line-height: 26px;
+			    width: 100%;
+			    color: red;
+			    padding: 10px;
+			    box-sizing: border-box;
+			    border: 1px solid #e0e0e0;
+			}
+			.displaystyle1{
+			margin-left: 70px;
+			width: 300px;
+			}
+			.displayflex{
+				display: flex;
+				margin-top: 20px;
+				}
+			
+			#df_1 {
+				margin-left: 70px;
+			}
+			
+			.reviewTitle h4 {
+				margin-top: 0;
+			}
+			
+			#title {
+				width:292px;
+				height: 30px;
+			}
+			
+			.review_textarea {
+				width:292px;
+				height: 250px;
+			}
+			
+			#save {
+				text-align: center; 
+				width: 300px; 
+				height: 50px; 
+				background-color: brown;color: #fff; 
+				margin: 63px;
+				cursor:pointer;
+				width:100px;
+				height:30px;
+				box-shadow: 3px 4px 0px 0px #dcecfb;
+				background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+				background-color:#bddbfa;
+				border-radius:15px;
+				border:1px solid #84bbf3;
+				display:inline-block;
+				cursor:pointer;
+				color:#471f54;
+				font-family:Arial;
+				font-size:17px;
+				font-weight:bold;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+			}
+			#save:hover{
+				background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+				background-color:#80b5ea;
+			}
+			
+			#save:active{
+				position:relative;
+				top:1px;
+			}
+			
+			input[type=text],input[type=password],input[type=email],textarea{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+			}

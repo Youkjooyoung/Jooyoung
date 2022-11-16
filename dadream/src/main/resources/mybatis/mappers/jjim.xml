@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+	<mapper namespace="com.dd.dealing.dao.DealingDAO">
+   
+	<resultMap id="jjimResult" type="JjimVO">
+		<result property="dl_Num" column="dl_Num" />
+		<result property="user_Id" column="user_Id" />
+	</resultMap>	
+	
+	<select id="jjimCheck" resultType="java.lang.Integer" parameterType="java.util.Map">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM like_t
+			WHERE user_Id = #{user_Id} AND dl_Num = #{dl_Num}
+		]]>
+	</select>
+	
+	<insert id="jjim" parameterType="java.util.Map">
+		<![CDATA[
+			INSERT INTO like_t(dl_Num, user_Id)
+			VALUES(#{dl_Num}, #{user_Id})
+		]]>
+	</insert>
+	
+	<delete id="jjimRemove" parameterType="java.util.Map">
+		<![CDATA[
+			DELETE
+			FROM like_t
+			WHERE dl_Num = #{dl_Num} AND user_Id = #{user_Id}
+		]]>
+	</delete>
+	
+</mapper>

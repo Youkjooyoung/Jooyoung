@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration 	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<!-- <typeAliases> <typeAlias type="com.dd.dealing.vo.MemberVO" alias="memberVO" 
+		/> <typeAlias type="com.myboot03.board.vo.ArticleVO" alias="articleVO" /> 
+		</typeAliases> -->
+		 
+	<mappers>
+		<mapper resource="mybatis/mappers/member.xml" />
+		<mapper resource="mybatis/mappers/dealing.xml" /> 
+		<mapper resource ="mybatis/mappers/product.xml" />
+		<mapper resource ="mybatis/mappers/report.xml" />
+		<mapper resource="mybatis/mappers/board.xml"/>	
+		<mapper resource="mybatis/mappers/inteboard.xml"/>	
+		<mapper resource="mybatis/mappers/notice.xml"/>	
+		<mapper resource="mybatis/mappers/review.xml"/>
+		<mapper resource="mybatis/mappers/kakaologin.xml"/>
+		<mapper resource="mybatis/mappers/jjim.xml"/>
+		<mapper resource="mybatis/mappers/prodealing.xml"/>
+		<mapper resource="mybatis/mappers/reply.xml"/>
+		<mapper resource="mybatis/mappers/adminDealing.xml"/>
+		<mapper resource="mybatis/mappers/adminReport.xml"/>
+		<mapper resource="mybatis/mappers/adminpro.xml"/>
+		<mapper resource="mybatis/mappers/adminMember.xml"/>
+		<mapper resource="mybatis/mappers/adminNotice.xml"/>
+		<mapper resource="mybatis/mappers/cartorder.xml"/>
+		<mapper resource="mybatis/mappers/refund.xml"/>
+		<mapper resource="mybatis/mappers/adminDlorder.xml"/>
+		<mapper resource="mybatis/mappers/adminOft.xml"/>
+	</mappers>
+</configuration>

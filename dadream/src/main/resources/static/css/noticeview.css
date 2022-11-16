@@ -1,0 +1,77 @@
+			* {
+            font-family: 'Merriweather Sans', sans-serif !important;
+        		}
+			#readForm{
+				font-weight:lighter;
+				
+			}
+			#container{
+				margin-top: 30px;
+			}
+			#viewboardform {
+				width:500px;
+				display: table-caption;
+				line-height: normal;
+			}
+			#viewboardform > div {
+				margin-bottom: 8px;
+			}
+		
+			#content{
+				display: grid;
+			}
+			#inputNumber{
+				width:40px; 
+				text-align: center; 
+				border: 0.5px;
+			}
+			#Number{
+				display: grid;
+			}
+			#writerName{
+				display: inline-grid;
+			}
+			#readbtn{
+				display: grid;
+			}
+			.mod_btn{
+				text-decoration: none;
+				color: black;	
+			}
+			#delete{
+				cursor: pointer;
+			}
+			#backList{
+				cursor: pointer;
+				margin-left: 336px;
+
+			}
+			#backList:hover{
+				background: linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+   		 		background-color: #80b5ea;
+			}
+			#backList:active{
+				position:relative;
+				top:2px;
+				left:2px;
+				box-shadow : none;
+			}
+			#updatebtn{
+				cursor: pointer;
+			}
+			#viewCount{
+				width: 35px;
+				text-align: center;
+				margin-bottom: 8px;
+			}
+			.contentForm{
+				display: grid;
+			}
+			#notice_Category{
+				display: flex;
+
+			}
+			.select_backBtn{
+				display: flex;
+
+			}

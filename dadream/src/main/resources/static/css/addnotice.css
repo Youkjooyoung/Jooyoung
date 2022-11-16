@@ -1,0 +1,79 @@
+		#notice_Category{
+			margin-bottom: 10px;
+		}
+		#notice_add_form{
+			display: table-caption;
+		}
+		#notice_add_form > div{
+			margin-bottom: 15px;
+		}
+		#writer_Title{
+			display: grid;
+		}
+		#TitleForm{
+			width: 300px;
+		}
+		#Writer_Form{
+			width: 120px;
+			
+		}
+		#addnotice_btn{
+			transition: 800ms ease all;
+			outline: none;
+			
+		}
+		#addnotice_btn:hover{
+			background:#fff;
+  			color:#1AAB8A;
+		}
+		#addnotice_btn::before,#addnotice_btn::after{
+			content:'';
+			position:absolute;
+			top:0;
+			right:0;
+			height:2px;
+			width:0;
+			background: #1AAB8A;
+			transition:400ms ease all;
+		}
+		#addnotice_btn::after{
+			right:inherit;
+			top:inherit;
+			left:0;
+			bottom:0;	
+		}
+		#addnotice_btn:hover::before,#addnotice_btn:hover:after{
+			width:100%;
+  			transition:800ms ease all;
+		}
+
+
+		#backlist_btn{
+			transition: 800ms ease all;
+			outline: none;
+			
+		}
+		#backlist_btn:hover{
+			background:#fff;
+  			color:#b44d4a;
+		}
+		#backlist_btn::before,#backlist_btn::after{
+			content:'';
+			position:absolute;
+			top:0;
+			right:0;
+			height:2px;
+			width:0;
+			background: #b44d4a;
+			transition:400ms ease all;
+		}
+		#backlist_btn::after{
+			right:inherit;
+			top:inherit;
+			left:0;
+			bottom:0;	
+		}
+		#backlist_btn:hover::before,#backlist_btn:hover:after{
+			width:100%;
+  			transition:800ms ease all;
+		}

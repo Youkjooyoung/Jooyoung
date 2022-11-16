@@ -1,0 +1,59 @@
+		* {
+            font-family: 'Merriweather Sans', sans-serif 
+            !important;
+        }
+		#updatecontent > div{
+			margin-bottom: 20px;
+			font-weight:lighter;
+			/*display:table-caption;*/
+		}
+		#writer1{
+		display: table-caption;
+		}
+		#update_title_form{
+			display:table-caption;
+		}
+		#updatecontent > div{
+			margin:3px;
+		}
+		#update_content{
+			display:grid;
+		}
+		#file_add{
+			display: table-caption;
+		}
+		#file_add2{
+			display: grid;
+		}
+		#update_btn{
+			margin-left: 3px;
+			margin-top: 10px;
+			display:revert;
+		}
+		#submit_btn,#cancel_btn{
+			cursor: pointer;
+		}
+		.inteMain{
+			display: inline-grid;
+		}
+		#preview{
+			width:250px; 
+			height:250px;
+		}
+		.inteMain >label{
+			margin-bottom: 5px;
+		}
+		.inteMain >label > p{
+			font-weight: bold;
+		}
+		.cancel{
+			text-decoration: none;
+		}
+		#inte_Text{
+			resize:none;
+		}
+		input[type=text],input[type=password],input[type=email],textarea{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+			}
+		

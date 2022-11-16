@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+"-//Apache Software Foundation//DTD Tiles Configuration 2.0//KO"
+"http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+<tiles-definitions>
+   <definition name="baseLayout2"  template="/WEB-INF/views/common/layout2.jsp">
+      <put-attribute name="title" value="" />
+      <put-attribute name="header" value="" />
+      <put-attribute name="body" value="" />
+      <put-attribute name="side" value="" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+      
+   </definition>
+     <!-- 회원가입선택 -->
+   <definition name="/userjoin" extends="baseLayout2">
+      <put-attribute name="title" value="회원가입" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/common/userjoin.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+   <!-- 회원가입 -->
+   <definition name="/userform" extends="baseLayout2">
+      <put-attribute name="title" value="회원가입" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/common/userform.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+	<!--회원가입완료창 -->
+  <definition name="/formcheck" extends="baseLayout2">
+      <put-attribute name="title" value="회원가입" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/common/uformcheck.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+    <!-- 로그인 -->
+   <definition name="/login" extends="baseLayout2">
+      <put-attribute name="title" value="로그인" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/common/login.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+ <!-- 마이페이지 -->
+   <definition name="/mypage" extends="baseLayout2">
+      <put-attribute name="title" value="마이페이지" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/common/mypage.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+
+  <!--사용자 매물 메인  -->
+   <definition name="/dealingmain" extends="baseLayout2">
+      <put-attribute name="title" value="매물 메인페이지" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/main.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+   <!-- 공실센터 -->
+   <definition name="/dealing/gongsilCenter" extends="baseLayout2">
+      <put-attribute name="title" value="공실센터" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/gongsilCenter.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+   <!-- 매물수정 -->
+   <definition name="/dealing/modDealing" extends="baseLayout2">
+      <put-attribute name="title" value="매물수정" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/modDealing.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+  
+   
+   <!-- 매물등록 -->
+   <definition name="/dealingform" extends="baseLayout2">
+      <put-attribute name="title" value="매물 등록" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/dealingregform.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+   <!-- 매물상세보기 -->
+   <definition name="/dealingview" extends="baseLayout2">
+      <put-attribute name="title" value="매물 상세보기" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/dealingview.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+     <!-- 매물수정 -->
+   <definition name="/dealingmod" extends="baseLayout2">
+      <put-attribute name="title" value="매물 상세보기" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/mod.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   <!-- 지도창 -->
+   <definition name="/map" extends="baseLayout2">
+      <put-attribute name="title" value="매물 상세보기" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/Map.jsp" />
+      <put-attribute name="footer" value=""/>
+   </definition>
+   
+   
+   <!-- 부동산 인테리어 게시판 -->
+   <definition name="/dealing/inteboardlist" extends="baseLayout2">
+      <put-attribute name="title" value="게시판 리스트페이지" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/inteboardlist.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+   <!-- 부동산 게시판 글 등록 -->
+   <definition name="/dealing/addboard" extends="baseLayout2">
+      <put-attribute name="title" value="게시판 리스트페이지" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/addboard.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+   <!-- 부동산 게시판 글 상세보기 -->
+   <definition name="/dealing/boardview" extends="baseLayout2">
+      <put-attribute name="title" value="게시글 등록 페이지" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/boardview.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+   <!-- 부동산 게시글 수정,삭제 -->
+   <definition name="/dealing/boardupdate" extends="baseLayout2">
+      <put-attribute name="title" value="게시글 수정 페이지" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/boardupdate.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+   <!-- 공지사항 리스트 -->
+    <definition name="/dealing/noticelist" extends="baseLayout2">
+      <put-attribute name="title" value="공지사항 리스트 페이지" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/noticelist.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+    </definition>
+   
+   <!-- 공지사항 글등록 -->
+    <definition name="/dealing/addnotice" extends="baseLayout2">
+      <put-attribute name="title" value="공지사항 글등록 페이지" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/addnotice.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   
+   <!-- 공지사항 상세보기 -->
+    <definition name="/dealing/noticeview" extends="baseLayout2">
+      <put-attribute name="title" value="공지사항 수정 페이지" />
+      <put-attribute name="header" value="/WEB-INF/views/dealing/headerp_m.jsp" />
+      <put-attribute name="body" value="/WEB-INF/views/dealing/noticeview.jsp" />
+      <put-attribute name="footer" value="/WEB-INF/views/common/footer.jsp" />
+   </definition>
+   </tiles-definitions>

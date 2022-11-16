@@ -1,0 +1,342 @@
+			 * {
+			     margin: 0px;
+			     
+			
+			 }
+			
+			 .first>h1 {
+			     font-weight: bold;
+			     font-size: 22px;
+			 }
+			
+			
+			
+			 .dlImg {
+			     display: flex;
+			     margin: 0 0 0 20px;
+			     flex-wrap: wrap;
+			     height: 610px
+			 }
+			
+			 .dlMain {
+			     margin-bottom: 0px;
+			 }
+			
+			 /* 나중에 width길이 조정 필요할 수 있음 */
+			 .middle {
+			     display: flex;
+			     justify-content: space-between;
+			     width: 1130px;
+			
+			 }
+			
+			 .productcon  *{
+				
+			}
+			.productcon> input{
+				height:40px;
+			}
+			
+			 .productcon>h3 {
+			     margin-bottom: 10px;
+			     font-weight: bold;
+			     font-size: 22px;
+			 }
+			
+			 .dlThumbnail1 {
+			     display: flex;
+			     position: relative;
+			     margin: 10px 0 0 5px;
+			     right: 5px;
+			     overflow-x: auto;
+			     white-space: nowarp;
+			 }
+			
+			 .dlThumbnail2 {
+			     width: 100px;
+			     height: 100px;
+			     margin-right: 10px;
+			 }
+			
+			 .flexnum {
+			     display: flex;
+			 }
+			 .flexnum h3 {
+				font-size: 22px;
+			}
+			.flexnum input{
+				height:40px;
+			}
+			
+			 .margin10:nth-child(1) {
+			     margin-right: 10px;
+			 }
+			
+			 .option:nth-child(1) {
+			     margin-right: 10px;
+			 }
+			
+			 .option_all {
+			     display: flex;
+			 }
+			 .option_all h3{
+				font-size: 22px;
+			}
+			.option_all input{
+				height:40px;
+			}
+			 .cg {
+			     margin: 50px 0 0 20px;
+			 }
+			
+			
+			
+			 .bds02 {
+			     display: flex;
+			     /*margin-top: 100px;*/
+			     justify-content: center;
+			 }
+			
+			 .cg>h3 {
+			     font-weight: bold;
+			     font-size: 19px;
+			 }
+			
+			 .cg>h5 {
+			     line-height: 2;
+			     font-weight: bold;
+			 }
+			
+			 .product_form {
+			     display: flex;
+			     flex-direction: column;
+			 }
+			
+			 .pfcontrol h3 {
+			     margin-bottom: 10px;
+			     font-weight: bold;
+			 }
+			
+			 .option_all input {
+			
+			     margin-bottom: 10px;
+			 }
+			
+			
+			 .dropzone .dz-preview .dz-image img {
+			     width: 496px;
+			     height: 400px;
+			 }
+			
+			 .dropzone .dz-preview .dz-image {
+			     width: 496px;
+			     height: 400px;
+			 }
+			
+			 .dlThumbnail1 .dropzone .dz-preview .dz-image img {
+			     width: 100px;
+			     height: 100px;
+			 }
+			
+			 .dlThumbnail1 .dropzone .dz-preview .dz-image {
+			     width: 100px;
+			     height: 100px;
+			 }
+			
+			 .dlThumbnail2 .dropzone .dz-preview .dz-image img {
+			     width: 150px;
+			     height: 150px;
+			 }
+			
+			 .dlThumbnail2 .dropzone .dz-preview .dz-image {
+			     width: 150px;
+			     height: 150px;
+			 }
+			
+			 .dropzone.dz3.dz-clickable {
+			     padding: 0 20px 20px 20px;
+			 }
+			 .xbox{
+            	display: none;
+        	}
+			
+			 .dropzone {
+			     padding: 0;
+			 }
+			
+			 .dropzone .dz-preview {
+			     margin: 0px;
+			 }
+			 .bds02 input{
+				height:40px;
+				width:100px
+			}
+			
+			.firstH1{
+				margin:20px 0 0 10px; 
+				font: bold;
+			}
+			.dlMainP{
+				width: 300px;
+				border: 1px solid;
+				height: 40px;
+				text-align: center;
+				line-height: 40px;
+			}
+			.imgh1{
+				font-weight: bold;
+				margin-top: 20px;
+			}
+			#productsubmit{
+				cursor:pointer;
+				width:100px;
+				height:40px;
+				background:linear-gradient(to bottom, rgb(64,64,64) 5%, rgb(125,80,8) 100%);
+				background-color:#bddbfa;
+				border-radius:5px;
+				margin-left: 3px;
+				border:1px solid black;
+				display:inline-block;
+				cursor:pointer;
+				color:white;
+				font-family:Arial;
+				font-size:13px;
+				/*font-weight:bold;*/
+				padding:2px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+			}
+			#productsubmit:hover{
+				cursor:pointer;
+				background:linear-gradient(to bottom, rgb(125,80,8) 5%, lightgray 100%);
+				background-color:#80b5ea;
+			}
+			
+			#productsubmit:active{
+				position:relative;
+				top:1px;
+			}
+			.btn{
+				cursor:pointer;
+				width:100px;
+				height:40px;
+				background:linear-gradient(to bottom, rgb(64,64,64) 5%, rgb(125,80,8) 100%);
+				background-color:#bddbfa;
+				border-radius:5px;
+				margin-left: 3px;
+				border:1px solid black;
+				display:inline-block;
+				cursor:pointer;
+				color:white;
+				font-family:Arial;
+				font-size:13px;
+				/*font-weight:bold;*/
+				padding:2px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+			}
+			.btn:hover{
+				cursor:pointer;
+				background:linear-gradient(to bottom, rgb(125,80,8) 5%, lightgray 100%);
+				background-color:#80b5ea;
+			}
+			.btn:active{
+				position:relative;
+				top:1px;
+			}
+			.text_button,.text_button2{
+				cursor:pointer;
+				width:100px;
+				height:40px;
+				background:linear-gradient(to bottom, rgb(64,64,64) 5%, rgb(125,80,8) 100%);
+				background-color:#bddbfa;
+				border-radius:5px;
+				margin-left: 3px;
+				border:1px solid black;
+				display:inline-block;
+				cursor:pointer;
+				color:white;
+				font-family:Arial;
+				font-size:13px;
+				/*font-weight:bold;*/
+				padding:2px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+			}
+			.text_button:hover{
+				cursor:pointer;
+				background:linear-gradient(to bottom, rgb(125,80,8) 5%, lightgray 100%);
+				background-color:#80b5ea;
+			}
+			.text_button2:hover{
+				cursor:pointer;
+				background:linear-gradient(to bottom, rgb(125,80,8) 5%, lightgray 100%);
+				background-color:#80b5ea;
+			}
+			.text_button:active{
+				position:relative;
+				top:1px;
+			}
+			.text_button2:active{
+				position:relative;
+				top:1px;
+			}
+			.dlMainP{
+				cursor:pointer;
+				width:196px;
+				height:40px;
+				background:linear-gradient(to bottom, rgb(64,64,64) 5%, rgb(125,80,8) 100%);
+				background-color:#bddbfa;
+				border-radius:5px;
+				margin-left: 3px;
+				border:1px solid black;
+				display:inline-block;
+				cursor:pointer;
+				color:white;
+				font-family:Arial;
+				font-size:13px;
+				/*font-weight:bold;*/
+				padding:2px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+			}
+			
+			input[type=text],input[type=password],input[type=email],textarea{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+			}
+			
+			.note-editable{
+				width:1130px;
+				height:500px;
+			}
+			
+			.ClickImg{
+				width: 300px;
+				border: 1px solid;
+				height: 40px;
+				text-align: center;
+				line-height: 40px;
+				cursor:pointer;
+				box-shadow: 3px 4px 0px 0px #dcecfb;
+				background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+				background-color:#bddbfa;
+				border-radius:15px;
+				border:1px solid #84bbf3;
+				display:inline-block;
+				color:#471f54;
+				font-family:Arial;
+				font-size:17px;
+				font-weight:bold;
+				padding:2px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+			}
+			.ClickImg:hover{
+				background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+				background-color:#80b5ea;
+			}
+			.ClickImg:active{
+				position:relative;
+				top:1px;
+			}
