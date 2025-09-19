@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductMapper">
+
+	<!-- Product VO 매핑 -->
+	<resultMap id="product" type="product">
+		<id property="prodNo" column="PROD_NO" jdbcType="NUMERIC" />
+		<result property="prodName" column="PROD_NAME"
+			jdbcType="VARCHAR" />
+		<result property="prodDetail" column="PROD_DETAIL"
+			jdbcType="VARCHAR" />
+		<result property="manuDate" column="MANUFACTURE_DAY"
+			jdbcType="VARCHAR" />
+		<result property="price" column="PRICE" jdbcType="NUMERIC" />
+		<result property="fileName" column="IMAGE_FILE"
+			jdbcType="VARCHAR" />
+		<result property="regDate" column="REG_DATE" jdbcType="DATE" />
+	</resultMap>
+
+
+	<!-- 공통 컬럼 -->
+	<sql id="Base_Columns">
+		PROD_NO, PROD_NAME, PROD_DETAIL, MANUFACTURE_DAY, PRICE,
+		IMAGE_FILE, REG_DATE
+	</sql>
+
+	<!-- Search(검색/페이징) 기준 where 절 -->
+	<sql id="Search_Where">
+		<where>
+			<if test="searchKeyword != null and searchKeyword != ''">
+				<choose>
+					<when test="searchCondition == 'name'">
+						PROD_NAME LIKE '%' || #{searchKeyword} || '%'
+					</when>
+					<when test="searchCondition == 'detail'">
+						PROD_DETAIL LIKE '%' || #{searchKeyword} || '%'
+					</when>
+					<otherwise>
+						(PROD_NAME LIKE '%' || #{searchKeyword} || '%'
+						OR
+						PROD_DETAIL LIKE '%' || #{searchKeyword} || '%')
+					</otherwise>
+				</choose>
+			</if>
+		</where>
+	</sql>
+
+	<!-- ========== 단건/특정 기능 ========== -->
+
+	<!-- 단건 조회: prodNo -->
+	<select id="getProduct" parameterType="int" resultMap="product">
+		SELECT
+		<include refid="Base_Columns" />
+		FROM PRODUCT
+		WHERE PROD_NO = TO_NUMBER(#{prodNo})
+	</select>
+
+	<!-- 조건으로 상품명 1건만 문자열 반환 -->
+	<select id="findProduct" parameterType="product"
+		resultType="string">
+		SELECT PROD_NAME
+		FROM (
+		SELECT PROD_NAME
+		FROM PRODUCT
+		<where>
+			<if test="prodNo != null and prodNo != 0">
+				PROD_NO = #{prodNo}
+			</if>
+			<if test="manuDate != null and manuDate != ''">
+				AND MANUFACTURE_DAY = #{manuDate}
+			</if>
+			<if test="prodName != null and prodName != ''">
+				AND PROD_NAME LIKE '%' || #{prodName,jdbcType=VARCHAR} ||
+				'%'
+			</if>
+			<if test="price != null and price != 0">
+				AND PRICE = #{price}
+			</if>
+		</where>
+		ORDER BY PROD_NO DESC
+		)
+		WHERE ROWNUM = 1
+	</select>
+
+	<!-- ========== CRUD ========== -->
+
+	<!-- 등록 -->
+	<insert id="addProduct" parameterType="product">
+		<!-- 시퀀스로 PK 생성 -->
+		<selectKey keyProperty="prodNo" resultType="int"
+			order="BEFORE">
+			SELECT seq_product_prod_no.NEXTVAL FROM dual
+		</selectKey>
+
+		INSERT INTO PRODUCT
+		(PROD_NO, PROD_NAME, PROD_DETAIL, MANUFACTURE_DAY,
+		PRICE, IMAGE_FILE, REG_DATE)
+		VALUES
+		(
+		#{prodNo, jdbcType=NUMERIC},
+		#{prodName, jdbcType=VARCHAR},
+		#{prodDetail, jdbcType=VARCHAR},
+		#{manuDate, jdbcType=VARCHAR},
+		#{price, jdbcType=NUMERIC},
+		#{fileName,
+		jdbcType=VARCHAR},
+		SYSDATE
+		)
+	</insert>
+
+	<insert id="addProductImage"
+		parameterType="com.model2.mvc.service.domain.ProductImage">
+		INSERT INTO PRODUCT_IMAGE (IMG_ID, PROD_NO, FILE_NAME,
+		REG_DATE)
+		VALUES (PRODUCT_IMG_SEQ.NEXTVAL, #{prodNo}, #{fileName},
+		SYSDATE)
+	</insert>
+
+
+	<!-- 수정 -->
+	<update id="updateProduct" parameterType="product">
+		UPDATE PRODUCT
+		SET
+		PROD_NAME = #{prodName, jdbcType=VARCHAR},
+		PROD_DETAIL = #{prodDetail,
+		jdbcType=VARCHAR},
+		MANUFACTURE_DAY = #{manuDate, jdbcType=VARCHAR},
+		PRICE = #{price, jdbcType=NUMERIC},
+		IMAGE_FILE = #{fileName,
+		jdbcType=VARCHAR}
+		WHERE PROD_NO = #{prodNo, jdbcType=NUMERIC}
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteProduct" parameterType="int">
+		DELETE FROM PRODUCT
+		WHERE PROD_NO = #{prodNo, jdbcType=NUMERIC}
+	</delete>
+
+	<delete id="deleteProductImage"
+		parameterType="java.lang.Integer">
+		DELETE FROM PRODUCT_IMAGE
+		WHERE IMG_ID = #{imgId}
+	</delete>
+
+	<!-- ========== 목록/카운트 : Search 파라미터(페이징) ========== -->
+
+	<!-- 목록 (Search 기반 페이징) -->
+	<select id="getProductList"
+		parameterType="com.model2.mvc.common.Search" resultMap="product">
+		SELECT *
+		FROM (
+		SELECT ROWNUM rnum, A.*
+		FROM (
+		SELECT
+		<include refid="Base_Columns" />
+		FROM PRODUCT
+		<include refid="Search_Where" />
+		ORDER BY PROD_NO DESC
+		) A
+		WHERE ROWNUM <![CDATA[<=]]>
+		#{endRowNum}
+		)
+		WHERE rnum <![CDATA[>=]]>
+		#{startRowNum}
+	</select>
+
+	<select id="getProductImages" parameterType="int"
+		resultType="com.model2.mvc.service.domain.ProductImage">
+		SELECT
+		img_id AS imgId,
+		prod_no AS prodNo,
+		file_name AS
+		fileName,
+		reg_date AS regDate
+		FROM PRODUCT_IMAGE
+		WHERE prod_no =
+		#{prodNo}
+		ORDER BY img_id ASC
+	</select>
+
+	<!-- 총건수 -->
+	<select id="getTotalCount"
+		parameterType="com.model2.mvc.common.Search" resultType="int">
+		SELECT COUNT(*)
+		FROM PRODUCT
+		<include refid="Search_Where" />
+	</select>
+
+	<!-- (선택) Product 조건 검색 -->
+	<select id="getProductListByCond" parameterType="product"
+		resultMap="product">
+		SELECT
+		<include refid="Base_Columns" />
+		FROM PRODUCT
+		<where>
+			<if test="prodNo != null and prodNo != 0">
+				PROD_NO = #{prodNo}
+			</if>
+			<if test="prodName != null and prodName != ''">
+				AND PROD_NAME LIKE '%' || #{prodName} || '%'
+			</if>
+			<if test="manuDate != null and manuDate != ''">
+				AND MANUFACTURE_DAY = #{manuDate}
+			</if>
+			<if test="price != null and price != 0">
+				AND PRICE = #{price}
+			</if>
+		</where>
+		ORDER BY PROD_NO DESC
+	</select>
+
+</mapper>

@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PurchaseMapper">
+
+	<!-- ========================================================= ResultMap 
+		: Purchase + (buyer:User) + (purchaseProd:Product) ========================================================= -->
+	<resultMap id="purchaseResultMap"
+		type="com.model2.mvc.service.domain.Purchase">
+		<id property="tranNo" column="TRAN_NO" />
+		<result property="tranCode" column="TRAN_CODE" />
+		<result property="orderDate" column="ORDER_DATE" />
+		<result property="divyAddr" column="DIVY_ADDR" />
+		<result property="divyDate" column="DIVY_DATE" jdbcType="DATE" />
+		<result property="divyRequest" column="DLVY_REQUEST" />
+		<result property="paymentOption" column="PAYMENT_OPTION"
+			jdbcType="CHAR" />
+		<result property="receiverName" column="RECEIVER_NAME" />
+		<result property="receiverPhone" column="RECEIVER_PHONE"
+			jdbcType="VARCHAR" />
+
+
+		<association property="buyer"
+			javaType="com.model2.mvc.service.domain.User">
+			<id property="userId" column="BUYER_ID" />
+			<result property="userName" column="BUYER_NAME" />
+			<result property="cellPhone" column="BUYER_CELL_PHONE" />
+			<result property="addr" column="BUYER_ADDR" />
+			<result property="email" column="BUYER_EMAIL" />
+			<result property="regDate" column="BUYER_REG_DATE" />
+		</association>
+
+		<association property="purchaseProd"
+			javaType="com.model2.mvc.service.domain.Product">
+			<id property="prodNo" column="PROD_NO" />
+			<result property="prodName" column="PROD_NAME" />
+			<result property="prodDetail" column="PROD_DETAIL" />
+			<result property="manuDate" column="MANUFACTURE_DAY" />
+			<result property="price" column="PRICE" />
+			<result property="fileName" column="IMAGE_FILE" />
+			<result property="regDate" column="REG_DATE" />
+		</association>
+	</resultMap>
+
+	<!-- 공통 SELECT 컬럼 모듈화(별칭으로 도메인에 맞춤) -->
+	<sql id="purchaseSelectColumns">
+		T.TRAN_NO,
+		T.TRAN_STATUS_CODE AS TRAN_CODE,
+		T.ORDER_DATA AS
+		ORDER_DATE,
+		T.DEMAILADDR AS DIVY_ADDR,
+		TO_CHAR(T.DLVY_DATE,
+		'YYYY-MM-DD') AS DIVY_DATE,
+		T.DLVY_REQUEST,
+		T.PAYMENT_OPTION,
+		T.RECEIVER_NAME,
+		T.RECEIVER_PHONE,
+
+		U.USER_ID AS BUYER_ID,
+		U.USER_NAME AS
+		BUYER_NAME,
+		U.CELL_PHONE AS BUYER_CELL_PHONE,
+		U.ADDR AS BUYER_ADDR,
+		U.EMAIL AS BUYER_EMAIL,
+		U.REG_DATE AS BUYER_REG_DATE,
+
+		P.PROD_NO,
+		P.PROD_NAME,
+		P.PROD_DETAIL,
+		P.MANUFACTURE_DAY,
+		P.PRICE,
+		P.IMAGE_FILE,
+		P.REG_DATE
+	</sql>
+
+	<sql id="purchaseJoins">
+		FROM TRANSACTION T
+		LEFT JOIN USERS U ON U.USER_ID =
+		T.BUYER_ID
+		LEFT JOIN PRODUCT P ON P.PROD_NO = T.PROD_NO
+	</sql>
+
+	<!-- 검색 동적조건 (search.searchCondition / search.searchKeyword) -->
+	<sql id="searchWhere">
+		<if
+			test="search != null and search.searchCondition != null and search.searchKeyword != null and search.searchKeyword != ''">
+			<choose>
+				<when test="search.searchCondition == 'buyer'">
+					AND LOWER(T.BUYER_ID) LIKE '%' ||
+					LOWER(#{search.searchKeyword}) ||
+					'%'
+				</when>
+				<when
+					test="search.searchCondition == 'prodName' or search.searchCondition == 'name'">
+					AND LOWER(P.PROD_NAME) LIKE '%' ||
+					LOWER(#{search.searchKeyword}) ||
+					'%'
+				</when>
+				<when test="search.searchCondition == 'prodNo'">
+					AND INSTR(TO_CHAR(T.PROD_NO),
+					#{search.searchKeyword}) &gt; 0
+				</when>
+				<when
+					test="search.searchCondition == 'tranCode' or search.searchCondition == 'status'">
+					AND T.TRAN_STATUS_CODE = #{search.searchKeyword}
+				</when>
+			</choose>
+		</if>
+	</sql>
+
+	<!-- ========================================================= INSERT ========================================================= -->
+	<insert id="addPurchase"
+		parameterType="com.model2.mvc.service.domain.Purchase">
+		<selectKey keyProperty="tranNo" resultType="int"
+			order="BEFORE">
+			SELECT seq_transaction_tran_no.NEXTVAL FROM dual
+		</selectKey>
+		INSERT INTO TRANSACTION (
+		TRAN_NO, PROD_NO, BUYER_ID, PAYMENT_OPTION,
+		RECEIVER_NAME, RECEIVER_PHONE,
+		DEMAILADDR, DLVY_REQUEST,
+		TRAN_STATUS_CODE,
+		ORDER_DATA, DLVY_DATE
+		) VALUES (
+		#{tranNo},
+		#{purchaseProd.prodNo, jdbcType=NUMERIC},
+		#{buyer.userId,
+		jdbcType=VARCHAR},
+		#{paymentOption, jdbcType=CHAR},
+		#{receiverName,
+		jdbcType=VARCHAR},
+		#{receiverPhone, jdbcType=VARCHAR},
+		#{divyAddr,
+		jdbcType=VARCHAR},
+		#{divyRequest, jdbcType=VARCHAR},
+		#{tranCode,
+		jdbcType=CHAR},
+		SYSDATE,
+		<choose>
+			<when test="divyDate != null and divyDate != ''">
+				TO_DATE(#{divyDate}, 'YYYY-MM-DD')
+			</when>
+			<otherwise>
+				NULL
+			</otherwise>
+		</choose>
+		)
+	</insert>
+
+	<!-- ========================================================= SELECT ONE 
+		========================================================= -->
+	<select id="getPurchase" parameterType="int"
+		resultMap="purchaseResultMap">
+		SELECT
+		<include refid="purchaseSelectColumns" />
+		<include refid="purchaseJoins" />
+		WHERE T.TRAN_NO = #{tranNo}
+	</select>
+
+	<!-- ========================================================= 구매자 관점 목록 
+		+ 카운트 (buyerId 필요) 페이징 : ROWNUM 래핑 (row_seq between startRow and endRow) 
+		========================================================= -->
+	<select id="getPurchaseList" parameterType="map"
+		resultMap="purchaseResultMap">
+		SELECT *
+		FROM (
+		SELECT inner_table.*, ROWNUM AS row_seq
+		FROM (
+		SELECT
+		<include refid="purchaseSelectColumns" />
+		<include refid="purchaseJoins" />
+		WHERE 1=1
+		<if test="buyerId != null and buyerId != ''">
+			AND T.BUYER_ID = #{buyerId, jdbcType=VARCHAR}
+		</if>
+		<include refid="searchWhere" />
+		ORDER BY T.TRAN_NO DESC
+		) inner_table
+		WHERE ROWNUM &lt;=
+		#{search.endRowNum}
+		)
+		WHERE row_seq &gt;= #{search.startRowNum}
+	</select>
+
+	<select id="getTotalCountPurchase" parameterType="map"
+		resultType="int">
+		SELECT COUNT(1)
+		<include refid="purchaseJoins" />
+		WHERE T.BUYER_ID = #{buyerId}
+		<include refid="searchWhere" />
+	</select>
+
+	<!-- ========================================================= 판매관리 목록 + 
+		카운트 (전체/관리자 관점) ========================================================= -->
+	<select id="getSaleList"
+		parameterType="com.model2.mvc.common.Search"
+		resultMap="purchaseResultMap">
+		SELECT *
+		FROM (
+		SELECT inner_table.*, ROWNUM AS row_seq
+		FROM (
+		SELECT
+		<include refid="purchaseSelectColumns" />
+		<include refid="purchaseJoins" />
+		WHERE 1 = 1
+		<include refid="searchWhere" />
+		ORDER BY T.TRAN_NO DESC
+		) inner_table
+		WHERE ROWNUM &lt;= #{endRow}
+		)
+		WHERE row_seq &gt;= #{startRow}
+	</select>
+
+	<select id="getTotalCountSale"
+		parameterType="com.model2.mvc.common.Search" resultType="int">
+		SELECT COUNT(1)
+		<include refid="purchaseJoins" />
+		WHERE 1 = 1
+		<include refid="searchWhere" />
+	</select>
+
+	<!-- ========================================================= UPDATE ========================================================= -->
+	<update id="updatePurchase"
+		parameterType="com.model2.mvc.service.domain.Purchase">
+		UPDATE TRANSACTION
+		SET PAYMENT_OPTION = #{paymentOption},
+		RECEIVER_NAME
+		= #{receiverName},
+		RECEIVER_PHONE = #{receiverPhone},
+		DEMAILADDR =
+		#{divyAddr},
+		DLVY_REQUEST = #{divyRequest},
+		DLVY_DATE =
+		<choose>
+			<when test="divyDate != null and divyDate != ''">
+				TO_DATE(#{divyDate}, 'YYYY-MM-DD')
+			</when>
+			<otherwise>
+				NULL
+			</otherwise>
+		</choose>
+		WHERE TRAN_NO = #{tranNo}
+	</update>
+
+	<update id="updateTranCode" parameterType="map">
+		UPDATE TRANSACTION
+		SET
+		TRAN_STATUS_CODE = #{tranCode}
+		WHERE TRAN_NO = #{tranNo}
+	</update>
+
+	<!-- 주의: DDL에는 PRODUCT에 상태컬럼이 없음 요구가 "상품 기준으로 거래상태 일괄 변경"이라면 TRANSACTION을 
+		업데이트해야 함 -->
+	<update id="updateTranCodeByProd" parameterType="map">
+		UPDATE
+		TRANSACTION
+		SET TRAN_STATUS_CODE = #{tranCode}
+		WHERE PROD_NO = #{prodNo}
+	</update>
+
+	<!-- 단일 상품의 최신 거래상태 -->
+	<select id="getLatestTranCodeByProd" parameterType="int"
+		resultType="string">
+		SELECT tranCode
+		FROM (
+		SELECT t.TRAN_STATUS_CODE AS tranCode,
+		ROW_NUMBER() OVER (ORDER BY t.TRAN_NO DESC) AS rn
+		FROM TRANSACTION t
+		WHERE t.PROD_NO = #{prodNo}
+		)
+		WHERE rn = 1
+	</select>
+
+
+
+	<!-- 여러 상품의 최신 거래상태(리스트 화면용) -->
+	<select id="getLatestTranCodeByProdNos" parameterType="list"
+		resultType="map">
+		SELECT prodNo, tranCode
+		FROM (
+		SELECT
+		t.PROD_NO AS prodNo,
+		t.TRAN_STATUS_CODE AS tranCode,
+		ROW_NUMBER() OVER (
+		PARTITION BY t.PROD_NO
+		ORDER BY t.TRAN_NO DESC
+		) AS rn
+		FROM TRANSACTION t
+		WHERE t.PROD_NO IN
+		<foreach collection="list" item="value" open="(" separator=","
+			close=")">
+			#{value}
+		</foreach>
+		AND t.TRAN_STATUS_CODE != '004'
+		)
+		WHERE rn = 1
+	</select>
+
+
+</mapper>
