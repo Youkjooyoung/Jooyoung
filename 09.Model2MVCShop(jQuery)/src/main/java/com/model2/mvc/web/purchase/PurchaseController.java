@@ -3,6 +3,7 @@ package com.model2.mvc.web.purchase;
 import java.util.Map;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ import com.model2.mvc.service.purchase.PurchaseService;
 @Controller
 @RequestMapping("/purchase/*")
 public class PurchaseController {
-
+	@Autowired
 	private final PurchaseService purchaseService;
 	private final ProductService productService;
 
@@ -41,7 +42,7 @@ public class PurchaseController {
 		this.productService = productService;
 	}
 
-	//구매 등록 화면
+	// 구매 등록 화면
 	@GetMapping("add")
 	public ModelAndView showAddPurchaseForm(@RequestParam int prodNo) throws Exception {
 		Product product = productService.getProduct(prodNo);
@@ -50,7 +51,7 @@ public class PurchaseController {
 		return mv;
 	}
 
-	//구매 등록 처리
+	// 구매 등록 처리
 	@PostMapping("add")
 	public ModelAndView addPurchase(@ModelAttribute Purchase purchase,
 			@SessionAttribute(name = "user", required = false) User sessionUser) throws Exception {
@@ -64,20 +65,20 @@ public class PurchaseController {
 		return new ModelAndView("forward:/purchase/getPurchase.jsp", "purchase", saved);
 	}
 
-	//구매 상세
+	// 구매 상세
 	@GetMapping("{tranNo}")
 	public ModelAndView getPurchase(@PathVariable int tranNo) throws Exception {
 		return new ModelAndView("forward:/purchase/getPurchase.jsp", "purchase", purchaseService.getPurchase(tranNo));
 	}
 
-	//구매 수정 화면
+	// 구매 수정 화면
 	@GetMapping("{tranNo}/edit")
 	public ModelAndView showUpdatePurchaseForm(@PathVariable int tranNo) throws Exception {
 		return new ModelAndView("forward:/purchase/updatePurchaseView.jsp", "purchase",
 				purchaseService.getPurchase(tranNo));
 	}
 
-	//구매 수정 처리
+	// 구매 수정 처리
 	@PostMapping("update")
 	public ModelAndView updatePurchase(@ModelAttribute Purchase purchase, RedirectAttributes redirectAttrs)
 			throws Exception {
@@ -102,7 +103,7 @@ public class PurchaseController {
 		return new ModelAndView("redirect:/purchase/" + purchase.getTranNo());
 	}
 
-	//구매 취소
+	// 구매 취소
 	@PostMapping("{tranNo}/cancel")
 	public ModelAndView cancelPurchase(@PathVariable int tranNo) throws Exception {
 		Purchase purchase = purchaseService.getPurchase(tranNo);
@@ -115,7 +116,7 @@ public class PurchaseController {
 		return new ModelAndView("redirect:/purchase/list");
 	}
 
-	//구매 내역 리스트
+	// 구매 내역 리스트
 	@GetMapping("list")
 	public ModelAndView listPurchase(@ModelAttribute Search search,
 			@SessionAttribute(name = "user", required = false) User user) throws Exception {
@@ -139,14 +140,14 @@ public class PurchaseController {
 		return mv;
 	}
 
-	//상태 변경 (공용)
+	// 상태 변경 (공용)
 	@PostMapping("{tranNo}/status")
 	public ModelAndView updateTranCode(@PathVariable int tranNo, @RequestParam String tranCode) throws Exception {
 		purchaseService.updateTranCode(tranNo, tranCode);
 		return new ModelAndView("redirect:/purchase/" + tranNo);
 	}
 
-	//구매자 수령 확인
+	// 구매자 수령 확인
 	@PostMapping("{tranNo}/confirm")
 	public ModelAndView confirmReceive(@PathVariable int tranNo, @RequestParam int prodNo) throws Exception {
 		purchaseService.updateTranCode(tranNo, "003");
@@ -154,7 +155,7 @@ public class PurchaseController {
 		return new ModelAndView("redirect:/purchase/" + tranNo);
 	}
 
-	//관리자 상품별 상태 변경
+	// 관리자 상품별 상태 변경
 	@PostMapping("product/{prodNo}/status")
 	public ModelAndView updateTranCodeByProd(@PathVariable int prodNo, @RequestParam String tranCode) throws Exception {
 		purchaseService.updateTranCodeByProd(prodNo, tranCode);

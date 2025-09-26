@@ -1,53 +1,50 @@
-$(function() {
-    // 등록 버튼
-    $("#btnAdd").on("click", function(e) {
-        e.preventDefault();
-        const form = document.detailForm;
+$(function () {
+  var ctx = $("body").data("ctx") || "";
 
-        // 1. 상품명 필수 체크
-        const prodName = $("input[name='prodName']").val().trim();
-        if (prodName === "") {
-            alert("상품명을 입력하세요.");
-            $("input[name='prodName']").focus();
-            return false;
-        }
+  $("#btnAdd").on("click", function (e) {
+    e.preventDefault();
 
-        // 2. 가격 입력 여부만 확인 (숫자 여부는 도메인에서 처리)
-        const price = $("input[name='price']").val().trim();
-        if (price === "") {
-            alert("가격을 입력하세요.");
-            $("input[name='price']").focus();
-            return false;
-        }
+    var $name = $("input[name='prodName']");
+    var $price = $("input[name='price']");
+    var $manu = $("input[name='manuDate']");
 
-        // 3. 제조일자 입력 여부만 확인 (형식은 도메인에서 처리)
-        const manuDate = $("input[name='manuDate']").val().trim();
-        if (manuDate === "") {
-            alert("제조일자를 입력하세요.");
-            $("input[name='manuDate']").focus();
-            return false;
-        }
+    // 간단한 검증
+    if (!$.trim($name.val())) { alert("상품명을 입력하세요."); $name.focus(); return; }
+    if (!$.trim($price.val())) { alert("가격을 입력하세요."); $price.focus(); return; }
+    if (!$.trim($manu.val())) { alert("제조일자를 입력하세요."); $manu.focus(); return; }
 
-        form.submit();
+    var form = document.forms["detailForm"];
+    var fd = new FormData(form);
+
+    // 가격 콤마 제거
+    fd.set("price", $.trim($price.val()).replace(/,/g, ""));
+
+    // 제조일자 하이픈 제거 → YYYYMMDD(8자리)
+    var manuDate = $.trim($manu.val());
+    if (manuDate) fd.set("manuDate", manuDate.replace(/[^0-9]/g, ""));
+
+    $.ajax({
+      url: ctx + "/api/products",
+      type: "POST",
+      data: fd,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (res) {
+        alert("상품이 등록되었습니다. 상품번호: " + res.prodNo);
+        location.href = ctx + "/product/getProduct?prodNo=" + res.prodNo;
+      },
+      error: function (xhr) {
+        console.log("상태코드:", xhr.status);
+        console.log("응답본문:", xhr.responseText);
+        alert("상품 등록에 실패했습니다.");
+      }
     });
+  });
 
-    // 취소 버튼
-    $("#btnCancel").on("click", function(e) {
-        e.preventDefault();
-        if (confirm("입력한 내용을 모두 지우시겠습니까?")) {
-            document.detailForm.reset();
-            if (typeof selectedFiles !== "undefined") {
-                selectedFiles = [];
-                updatePreview(document.getElementById("uploadFiles"));
-            }
-        }
-    });
-
-    // 가격 입력 시 자동 콤마 처리 (보기 편하게)
-    $("input[name='price']").on("keyup", function() {
-        let val = $(this).val().replace(/,/g, "");
-        if (val !== "" && !isNaN(val)) {
-            $(this).val(parseInt(val, 10).toLocaleString());
-        }
-    });
+  // 가격 입력 시 콤마 포맷(보기용)
+  $("input[name='price']").on("keyup", function () {
+    var v = $(this).val().replace(/,/g, "");
+    if (v !== "" && !isNaN(v)) $(this).val(parseInt(v, 10).toLocaleString());
+  });
 });

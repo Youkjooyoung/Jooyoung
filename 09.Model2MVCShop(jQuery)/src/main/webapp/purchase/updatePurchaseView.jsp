@@ -52,7 +52,6 @@
   </c:choose>
 </div>
 
-<!-- ✅ JS는 body 맨끝 -->
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="${ctx}/javascript/updatePurchase.js"></script>
 </body>

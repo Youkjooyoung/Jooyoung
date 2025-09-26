@@ -6,10 +6,10 @@
 <head>
 <title>상품 검색</title>
 <link rel="stylesheet" href="${ctx}/css/admin.css" type="text/css">
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="${ctx}/javascript/listProduct.js"></script>
 </head>
-<body>
+<body data-ctx="${ctx}">
 
 <div style="width:98%; margin-left:10px;">
 	<!-- 제목 -->
@@ -126,11 +126,5 @@
 
 <!-- 전역 hover 썸네일 -->
 <div id="hoverThumb" style="display:none; position:absolute; border:1px solid #ccc; background:#fff; padding:5px; z-index:999;"></div>
-
-<!-- 전역 변수 -->
-<script>
-  const ctx = "${ctx}";
-</script>
-
 </body>
 </html>

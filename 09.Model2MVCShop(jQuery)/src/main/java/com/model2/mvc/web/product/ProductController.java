@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,10 +34,10 @@ import com.model2.mvc.service.purchase.PurchaseService;
 @RequestMapping("/product/*")
 public class ProductController {
 
-	private final ProductService productService;
+	@Qualifier("productServiceImpl")
 	private final PurchaseService purchaseService;
-	@Autowired
-	private org.mybatis.spring.SqlSessionTemplate sqlSession;
+	private final ProductService productService;
+
 	@Value("#{commonProperties['pageUnit'] ?: 5}")
 	private int pageUnit;
 
@@ -59,17 +59,16 @@ public class ProductController {
 		productService.addProduct(product);
 
 		if (uploadFiles != null && uploadFiles.length > 0) {
-			List<ProductImage> images = FileUploadHelper.saveFiles(uploadFiles, product.getProdNo(),
-					resolveUploadPath(request));
+			String uploadPath = resolveUploadPath(request);
+			List<ProductImage> images = FileUploadHelper.saveFiles(uploadFiles, product.getProdNo(), uploadPath);
 
 			if (!images.isEmpty()) {
-				// 대표 이미지(Product 테이블 IMAGE_FILE) 설정
+				// 대표 이미지 파일명만 세팅 후 서비스에 위임
 				product.setFileName(images.get(0).getFileName());
-
-				sqlSession.update("ProductMapper.updateProductFileName", product);
+				productService.updateProduct(product); // IMAGE_FILE 반영
 
 				for (ProductImage img : images) {
-					sqlSession.insert("ProductMapper.addProductImage", img);
+					productService.addProductImage(img);
 				}
 			}
 		}
@@ -161,31 +160,28 @@ public class ProductController {
 
 	// =============== 목록 ===============
 	@GetMapping("listProduct")
-	public String listProduct(@RequestParam(value = "menu", required = false) String menu,
-			@RequestParam(value = "sort", required = false) String sort, @ModelAttribute Search search, Model model)
+	public String listProduct(@ModelAttribute("search") Search search,
+			@RequestParam(value = "sort", required = false, defaultValue = "") String sort, Model model)
 			throws Exception {
 
-		if (search.getCurrentPage() == 0)
+		// 기본값 통일
+		if (search.getCurrentPage() <= 0)
 			search.setCurrentPage(1);
-		if (search.getPageSize() == 0)
-			search.setPageSize(pageSize);
+		if (search.getPageSize() <= 0)
+			search.setPageSize(5); // << 한 가지 규칙만 사용
 
-		search.setSort(sort);
+		Map<String, Object> result = productService.getProductList(search, sort);
+		int totalCount = (int) result.getOrDefault("totalCount", 0);
 
-		Map<String, Object> map = productService.getProductList(search, sort);
-		List<Product> productList = (List<Product>) map.get("list");
+		Page resultPage = new Page(search.getCurrentPage(), totalCount, pageUnit, // 블록 단위 (규칙: '<'은 1페이지, '>'은 블록 이동)
+				search.getPageSize());
 
-		List<Integer> prodNos = productList.stream().map(Product::getProdNo).collect(Collectors.toList());
-		Map<Integer, String> latestCodeMap = purchaseService.getLatestTranCodeByProdNos(prodNos);
+		// JSP에서 쓰는 모델 키들
+		model.addAttribute("list", result.get("list"));
+		model.addAttribute("latestCodeMap", result.get("latestCodeMap")); // 상태 표시에 사용 중이면 유지
+		model.addAttribute("resultPage", resultPage);
 
-		model.addAttribute("list", productList);
-		model.addAttribute("resultPage",
-				new Page(search.getCurrentPage(), (Integer) map.get("totalCount"), pageUnit, search.getPageSize()));
-		model.addAttribute("search", search);
-		model.addAttribute("sort", sort);
-		model.addAttribute("latestCodeMap", latestCodeMap);
-
-		return "manage".equals(menu) ? "product/listManageProduct" : "product/listProduct";
+		return "forward:/product/listProduct.jsp";
 	}
 
 	// --------- helpers ---------

@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,32 +32,40 @@ public class ProductRestController {
 
 	private final ProductService productService;
 
+	@Value("#{commonProperties['pageUnit'] ?: 5}")
+	private int pageUnit;
+
 	public ProductRestController(ProductService productService) {
 		this.productService = productService;
 	}
 
-	// =============== 등록 ===============
-	@PostMapping(consumes = "multipart/form-data")
+	// 등록
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public Product create(@ModelAttribute Product product,
-			@RequestParam(value = "uploadFiles", required = false) MultipartFile[] files, HttpServletRequest request)
-			throws Exception {
+			@RequestParam(value = "uploadFiles", required = false) MultipartFile[] files) throws Exception {
 
-		if (files != null && files.length > 0 && !files[0].isEmpty()) {
-			product.setFileName(files[0].getOriginalFilename());
-		}
+		// 상품 등록(키 생성)
 		productService.addProduct(product);
 
-		String uploadPath = request.getSession().getServletContext().getRealPath("/images/uploadFiles/");
+		// 파일 저장
+		String uploadPath = "C:/upload/";
 		List<ProductImage> images = FileUploadHelper.saveFiles(files, product.getProdNo(), uploadPath);
+
 		if (!CollectionUtils.isEmpty(images)) {
-			for (ProductImage img : images)
+			// 대표 이미지 = 실제 저장된 파일명(첫 번째)
+			product.setFileName(images.get(0).getFileName());
+			productService.updateProduct(product);
+
+			for (ProductImage img : images) {
 				productService.addProductImage(img);
+			}
 		}
+
 		return product;
 	}
 
-	// =============== 상세(조회수 증가 없음) ===============
-	@GetMapping("/{prodNo}")
+	// 상세(JSON)
+	@GetMapping(value = "/{prodNo}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Product get(@PathVariable int prodNo) throws Exception {
 		return productService.getProduct(prodNo);
 	}
@@ -89,14 +99,16 @@ public class ProductRestController {
 	@GetMapping
 	public Map<String, Object> list(@ModelAttribute Search search,
 			@RequestParam(value = "sort", required = false, defaultValue = "") String sort) throws Exception {
+
 		if (search.getCurrentPage() <= 0)
 			search.setCurrentPage(1);
 		if (search.getPageSize() <= 0)
-			search.setPageSize(10);
+			search.setPageSize(5);
 
 		Map<String, Object> map = productService.getProductList(search, sort);
 		int totalCount = (int) map.getOrDefault("totalCount", 0);
-		map.put("page", new Page(search.getCurrentPage(), totalCount, 5, search.getPageSize()));
+
+		map.put("page", new Page(search.getCurrentPage(), totalCount, pageUnit, search.getPageSize()));
 		return map;
 	}
 

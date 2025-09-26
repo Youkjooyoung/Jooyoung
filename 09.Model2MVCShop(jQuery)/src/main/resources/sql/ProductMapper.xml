@@ -12,7 +12,7 @@
 		<result property="prodDetail" column="PROD_DETAIL" />
 		<result property="manuDate" column="MANUFACTURE_DAY" />
 		<result property="price" column="PRICE" />
-		<result property="fileName" column="fileName" />
+		<result property="fileName" column="IMAGE_FILE" />
 		<result property="regDate" column="REG_DATE" />
 		<result property="viewCount" column="VIEW_COUNT" />
 		<result property="buyerId" column="BUYER_ID" />
@@ -76,14 +76,13 @@
 	<insert id="addProductImage" parameterType="productImage">
 		<selectKey keyProperty="imgId" resultType="int"
 			order="BEFORE">
-			SELECT SEQ_PRODUCT_IMAGE_IMG_ID.NEXTVAL FROM DUAL
+			SELECT PRODUCT_IMG_SEQ.NEXTVAL FROM DUAL
 		</selectKey>
 
 		INSERT INTO PRODUCT_IMAGE
 		(IMG_ID, PROD_NO, FILE_NAME)
 		VALUES
-		(#{imgId},
-		#{prodNo}, #{fileName})
+		(#{imgId}, #{prodNo}, #{fileName})
 	</insert>
 
 	<!-- 수정 -->
@@ -120,7 +119,8 @@
 	<!-- 목록 (페이징) -->
 	<select id="getProductList" parameterType="map"
 		resultMap="product">
-		SELECT * FROM (
+		SELECT *
+		FROM (
 		SELECT ROWNUM rnum, A.*
 		FROM (
 		SELECT
@@ -132,38 +132,38 @@
 		p.IMAGE_FILE,
 		p.REG_DATE,
 		p.VIEW_COUNT,
-		t.BUYER_ID,
-		TO_CHAR(t.ORDER_DATA, 'YYYY-MM-DD') AS BUY_DATE,
+
+		CASE WHEN t.TRAN_STATUS_CODE = '004' THEN NULL
+		ELSE t.BUYER_ID END AS
+		BUYER_ID,
+		CASE WHEN t.TRAN_STATUS_CODE = '004'
+		THEN NULL ELSE
+		TO_CHAR(t.ORDER_DATA,'YYYY-MM-DD') END AS BUY_DATE,
+
 		t.TRAN_STATUS_CODE
+
 		FROM PRODUCT p
 		LEFT JOIN (
 		SELECT
 		tr.PROD_NO,
 		tr.BUYER_ID,
 		tr.ORDER_DATA,
-		tr.TRAN_STATUS_CODE
-		FROM TRANSACTION tr
-		WHERE (tr.PROD_NO, tr.TRAN_NO) IN (
-		SELECT PROD_NO, MAX(TRAN_NO)
-		FROM TRANSACTION
-		GROUP BY PROD_NO
-		)
-		) t ON p.PROD_NO = t.PROD_NO
+		tr.TRAN_STATUS_CODE,
+		ROW_NUMBER() OVER
+		(PARTITION BY tr.PROD_NO ORDER BY tr.TRAN_NO DESC) AS rn
+		FROM
+		TRANSACTION tr
+		) t
+		ON p.PROD_NO = t.PROD_NO
+		AND t.rn = 1
+
 		<include refid="Search_Where" />
 
-		<!-- 동적 ORDER BY 부분 수정 -->
 		<choose>
-			<when test="sort == 'priceAsc'">
-				ORDER BY p.PRICE ASC
-			</when>
-			<when test="sort == 'priceDesc'">
-				ORDER BY p.PRICE DESC
-			</when>
-			<otherwise>
-				ORDER BY p.PROD_NO DESC
-			</otherwise>
+			<when test="sort == 'priceAsc'"> ORDER BY p.PRICE ASC </when>
+			<when test="sort == 'priceDesc'"> ORDER BY p.PRICE DESC </when>
+			<otherwise> ORDER BY p.PROD_NO DESC </otherwise>
 		</choose>
-
 		) A
 		WHERE ROWNUM &lt;= #{endRowNum}
 		)

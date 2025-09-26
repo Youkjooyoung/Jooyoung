@@ -10,8 +10,17 @@
 <meta charset="UTF-8">
 <title>상품 수정</title>
 <link rel="stylesheet" href="${ctx}/css/admin.css" type="text/css">
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script>
+  if (!window.jQuery) {
+    document.write('<script src="${ctx}/javascript/jquery-2.1.4.min.js"><\\/script>');
+  }
+</script>
+<!-- jQuery 다음에 페이지 전용 JS -->
+<script src="${ctx}/javascript/updateProduct.js"></script>
+
 </head>
-<body>
+<body data-ctx="${ctx}">
 	<table width="100%" height="37" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td width="15"><img src="${ctx}/images/ct_ttl_img01.gif" width="15" height="37"/></td>
@@ -59,14 +68,19 @@
 					<td class="ct_list_pop">
 						<div style="display:flex; flex-wrap:wrap; gap:10px;">
 							<c:forEach var="img" items="${productImages}">
-								<div style="position:relative; display:inline-block;">
-									<img src="${ctx}/images/uploadFiles/${img.fileName}" 
-									     alt="${p.prodName}" style="width:100px; border:1px solid #ccc; border-radius:4px;"/>
-									<span class="delete-existing" data-imgid="${img.imgId}"
-									      style="position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:#fff;
-									             font-size:12px; width:20px; height:20px; text-align:center; line-height:20px;
-									             border-radius:50%; cursor:pointer;">✖</span>
-								</div>
+									  <div class="img-box" style="position:relative; display:inline-block;">
+									    <img class="img-existing"
+									         src="${ctx}/upload/${img.fileName}"
+									         data-filename="${img.fileName}"
+									         alt="${p.prodName}"
+									         style="width:100px; border:1px solid #ccc; border-radius:4px;"
+									         onerror="this.onerror=null; this.src='${ctx}/images/uploadFiles/${img.fileName}';" />
+									    <span class="delete-existing" 
+										    		data-imgid="${img.imgId}"
+										          	style="position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:#fff;
+										                 font-size:12px; width:20px; height:20px; text-align:center; line-height:20px;
+										                 border-radius:50%; cursor:pointer;">✖</span>
+									  </div>
 							</c:forEach>
 						</div>
 					</td>
@@ -80,14 +94,14 @@
 				</tr>
 			</table>
 
-			<div style="margin-top:12px; text-align:right;">
-				<button type="submit" class="ct_btn01">저장</button>
-				<a class="ct_btn01" href="${ctx}/product/getProduct?prodNo=${p.prodNo}">취소</a>
+			<div style="text-align:right; margin-top:12px;">
+			  <button type="submit" class="ct_btn01">저장</button>
+			  <button type="button" id="btnCancel" class="ct_btn01" data-prodno="${p.prodNo}">취소</button>
 			</div>
 		</form>
 	</c:otherwise>
 </c:choose>
 
-<script src="${ctx}/javascript/preview.js"></script>
+<%-- <script src="${ctx}/javascript/preview.js"></script> --%>
 </body>
 </html>
