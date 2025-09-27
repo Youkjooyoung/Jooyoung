@@ -1,22 +1,9 @@
-/* listManageProduct.js - 관리자 판매상품 관리 (jQuery 2.1.4)
- * 요구조건
- *  - HTML에 a태그/폼 method,action 선언 금지 → JS 동적 form submit 사용
- *  - 이벤트는 전부 JS에서 처리
- *  - jQuery 2.1.4 사용, AJAX 미사용
- *  - View/JS 100% 디커플링 (컨텍스트 등은 data-* 속성으로 전달)
- */
 (function(w) {
 	'use strict';
 
-	// --- jQuery 존재 보장 ------------------------------------------------------
 	var jQuery = w.jQuery;
 	if (!jQuery) { console.error('[listManageProduct] jQuery not loaded'); return; }
 	var $ = jQuery;
-
-	// --- AppNav : 단일 전역 유틸 (중복 설치 방지) -------------------------------
-	// - ctx() : <body data-ctx="/컨텍스트"> 읽기
-	// - go()  : GET 이동 (쿼리스트링 구성)
-	// - post(): POST 이동 (동적 form 생성/제출)  *AJAX 미사용*
 	w.AppNav = w.AppNav || (function() {
 		function ctx() { return $('body').data('ctx') || ''; }
 		function qs(params) { return $.param(params || {}); }
@@ -36,8 +23,8 @@
 
 	// --- 페이지 공통 파라미터 ---------------------------------------------------
 	var ctx = AppNav.ctx();
-	var uploadBase = $('body').data('upload-base') || (ctx + '/upload/');             // C:/upload → /upload/**
-	var legacyBase = $('body').data('legacy-base') || (ctx + '/images/uploadFiles/'); // 기존 샘플 경로 폴백
+	var uploadBase = $('body').data('upload-base') || (ctx + '/upload/');
+	var legacyBase = $('body').data('legacy-base') || (ctx + '/images/uploadFiles/'); 
 
 	// hover 컨테이너 보장
 	var $hover = $('#hoverThumb');
@@ -46,7 +33,6 @@
 		$('body').append($hover);
 	}
 
-	// --- 내비게이션/상태전환 ----------------------------------------------------
 	// 상품 상세 이동
 	$(document).on('click', '.prod-link', function() {
 		var prodNo = $(this).data('prodno');
@@ -59,6 +45,13 @@
 		var tranCode = $(this).data('trancode');
 		if (!prodNo || !tranCode) return;
 		AppNav.post('/purchase/product/' + prodNo + '/status', { tranCode: tranCode });
+	});
+	
+	// 취소확인(004 → 005)
+	$(document).on('click', '.btn-ack-cancel', function() {
+	  var prodNo = $(this).data('prodno');
+	  if (!prodNo) return;
+	  AppNav.post('/purchase/product/' + prodNo + '/ack-cancel');
 	});
 
 	// 페이징 (pageNavigator.jsp에서 호출)
@@ -77,7 +70,7 @@
 	  var fileName = $(this).data('filename');
 	  if (!fileName) return;
 
-	  var filePath = AppNav.ctx() + '/upload/' + encodeURIComponent(fileName);
+	  var filePath = AppNav.ctx() + '/upload/uploadFiles/' + encodeURIComponent(fileName);
 	  $('#hoverThumb')
 	    .html("<img src='" + filePath + "' width='150' height='150' alt='thumbnail'/>")
 	    .css({ top: e.pageY + 15, left: e.pageX + 15, display: 'block' });

@@ -1,107 +1,104 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<c:set var="ctxPath" value="${pageContext.request.contextPath}" />
 <c:set var="p" value="${requestScope.product}" />
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>상품 수정</title>
-<link rel="stylesheet" href="${ctx}/css/admin.css" type="text/css">
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script>
-  if (!window.jQuery) {
-    document.write('<script src="${ctx}/javascript/jquery-2.1.4.min.js"><\\/script>');
-  }
-</script>
-<!-- jQuery 다음에 페이지 전용 JS -->
-<script src="${ctx}/javascript/updateProduct.js"></script>
-
+  <meta charset="UTF-8">
+  <title>상품 수정</title>
+  <!-- 공통 CSS -->
+  <link rel="stylesheet" href="${ctxPath}/css/admin.css" type="text/css">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <!-- 공통(미리보기) / 수정전용 -->
+  <script src="${ctxPath}/javascript/preview.js"></script>
+  <script src="${ctxPath}/javascript/updateProduct.js"></script>
 </head>
-<body data-ctx="${ctx}">
-	<table width="100%" height="37" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td width="15"><img src="${ctx}/images/ct_ttl_img01.gif" width="15" height="37"/></td>
-			<td background="${ctx}/images/ct_ttl_img02.gif" style="padding-left:10px;">
-				<span class="ct_ttl01">상품 수정</span>
-			</td>
-			<td width="12"><img src="${ctx}/images/ct_ttl_img03.gif" width="12" height="37"/></td>
-		</tr>
-	</table>
-<c:choose>
-	<c:when test="${empty p}">
-		<p style="color:red;">상품을 찾을 수 없습니다.</p>
-	</c:when>
-	<c:otherwise>
-		<form method="post" action="${ctx}/product/updateProduct" enctype="multipart/form-data">
-			<input type="hidden" name="prodNo" value="${p.prodNo}"/>
+<body data-ctx="${ctxPath}">
+<div class="container">
 
-			<table width="100%" border="0" cellspacing="0" cellpadding="6" style="margin-top:10px;">
-				<tr>
-					<td class="ct_list_b">상품명</td>
-					<td class="ct_list_pop">
-						<input type="text" name="prodName" value="${p.prodName}" required/>
-					</td>
-				</tr>
-				<tr>
-					<td class="ct_list_b">상세정보</td>
-					<td class="ct_list_pop">
-						<input type="text" name="prodDetail" value="${p.prodDetail}"/>
-					</td>
-				</tr>
-				<tr>
-					<td class="ct_list_b">제조일자</td>
-					<td class="ct_list_pop">
-						<input type="text" name="manuDate" value="${p.manuDate}" readonly="readonly"/>
-					</td>
-				</tr>
-				<tr>
-					<td class="ct_list_b">가격</td>
-					<td class="ct_list_pop">
-						<input type="text" id="price" name="price" value="${p.price}" required/> 원
-					</td>
-				</tr>
-				<tr>
-					<td class="ct_list_b">기존 이미지</td>
-					<td class="ct_list_pop">
-						<div style="display:flex; flex-wrap:wrap; gap:10px;">
-							<c:forEach var="img" items="${productImages}">
-									  <div class="img-box" style="position:relative; display:inline-block;">
-									    <img class="img-existing"
-									         src="${ctx}/upload/${img.fileName}"
-									         data-filename="${img.fileName}"
-									         alt="${p.prodName}"
-									         style="width:100px; border:1px solid #ccc; border-radius:4px;"
-									         onerror="this.onerror=null; this.src='${ctx}/images/uploadFiles/${img.fileName}';" />
-									    <span class="delete-existing" 
-										    		data-imgid="${img.imgId}"
-										          	style="position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:#fff;
-										                 font-size:12px; width:20px; height:20px; text-align:center; line-height:20px;
-										                 border-radius:50%; cursor:pointer;">✖</span>
-									  </div>
-							</c:forEach>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td class="ct_list_b">새 이미지 업로드</td>
-					<td class="ct_list_pop">
-						<input type="file" id="uploadFiles" name="uploadFiles" multiple="multiple"/>
-						<div id="preview-container" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;"></div>
-					</td>
-				</tr>
-			</table>
+  <table width="100%" height="37" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="15"><img src="${ctxPath}/images/ct_ttl_img01.gif" width="15" height="37"/></td>
+      <td background="${ctxPath}/images/ct_ttl_img02.gif" style="padding-left:10px;">
+        <span class="ct_ttl01">상품 수정</span>
+      </td>
+      <td width="12"><img src="${ctxPath}/images/ct_ttl_img03.gif" width="12" height="37"/></td>
+    </tr>
+  </table>
 
-			<div style="text-align:right; margin-top:12px;">
-			  <button type="submit" class="ct_btn01">저장</button>
-			  <button type="button" id="btnCancel" class="ct_btn01" data-prodno="${p.prodNo}">취소</button>
-			</div>
-		</form>
-	</c:otherwise>
-</c:choose>
+  <c:choose>
+    <c:when test="${empty p}">
+      <p class="msg-error">상품을 찾을 수 없습니다.</p>
+    </c:when>
+    <c:otherwise>
+      <form id="updateProductForm">
+        <input type="hidden" name="prodNo" id="prodNo" value="${p.prodNo}"/>
 
-<%-- <script src="${ctx}/javascript/preview.js"></script> --%>
+        <table class="ct_box">
+          <tr>
+            <td class="ct_write">상품명</td>
+            <td class="ct_write01">
+              <input type="text" name="prodName" id="prodName" value="${p.prodName}" maxlength="20" class="hp_input">
+            </td>
+          </tr>
+          <tr>
+            <td class="ct_write">상품상세정보</td>
+            <td class="ct_write01">
+              <input type="text" name="prodDetail" id="prodDetail" value="${p.prodDetail}" maxlength="100" class="hp_input">
+            </td>
+          </tr>
+          <tr>
+            <td class="ct_write">제조일자</td>
+            <td class="ct_write01">
+              <input type="text" id="manuDate" name="manuDate" value="${p.manuDate}" readonly class="hp_input_bg">
+            </td>
+          </tr>
+          <tr>
+            <td class="ct_write">가격</td>
+            <td class="ct_write01">
+              <input type="text" id="price" name="price" value="${p.price}" class="hp_input"> 원
+            </td>
+          </tr>
+
+          <!-- 기존 이미지 (삭제 가능) -->
+          <tr>
+            <td class="ct_write">기존 이미지</td>
+            <td class="ct_write01">
+              <div class="img-grid" id="existingImages">
+                <c:forEach var="img" items="${productImages}">
+                  <div class="img-box" data-imgid="${img.imgId}">
+                    <img class="img-existing"
+                         src="${ctxPath}/upload/uploadFiles/${img.fileName}"
+                         data-filename="${img.fileName}"
+                         alt="${p.prodName}">
+                    <button type="button" class="btn-delete-existing" title="이미지 삭제" data-imgid="${img.imgId}">✖</button>
+                  </div>
+                </c:forEach>
+              </div>
+            </td>
+          </tr>
+
+          <!-- 새 이미지 (미리보기) -->
+          <tr>
+            <td class="ct_write">새 이미지</td>
+            <td class="ct_write01">
+              <input type="file" id="uploadFiles" name="uploadFiles" multiple class="hp_input">
+              <div id="preview-container"></div>
+            </td>
+          </tr>
+        </table>
+        
+        <div class="btn-area">
+          <span class="ct_btn01" id="btnSave">수정완료</span>
+          <span class="ct_btn01" id="btnCancel" data-prodno="${p.prodNo}">수정취소</span>
+        </div>
+      </form>
+
+    </c:otherwise>
+  </c:choose>
+</div>
 </body>
 </html>

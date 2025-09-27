@@ -112,3 +112,37 @@ select {border:1x solid #ADAEAD; color:#777777; background-color:#ffffff; font-f
 
 
 
+/* ====== updateProduct.jsp 전용 보강 (admin.css 하단에 추가) ====== */
+
+/* 메시지 */
+.msg-error { color: red; padding: 8px 4px; }
+
+/* 편집 테이블 공통 */
+.tbl-edit { margin-top:10px; }
+
+/* 버튼 영역 우측정렬 */
+.btn-area-right { text-align:right; margin-top:12px; }
+
+/* 이미지 그리드 */
+.img-grid { display:flex; flex-wrap:wrap; gap:10px; }
+
+/* 이미지 박스(기존/신규 공통) */
+.img-box { position:relative; display:inline-block; }
+.img-box img { width:100px; border:1px solid #ccc; border-radius:4px; }
+
+/* 기존 이미지 삭제 버튼(우상단 원형) */
+.btn-delete-existing,
+.btn-delete-preview {
+  position:absolute; top:2px; right:2px;
+  background:rgba(0,0,0,0.6);
+  color:#fff; font-size:12px; width:20px; height:20px;
+  text-align:center; line-height:20px;
+  border-radius:50%; cursor:pointer; border:none;
+}
+
+/* 삭제 표시된 기존 이미지 흐림 */
+.img-box.to-delete img { opacity:0.4; filter:grayscale(60%); }
+
+/* 새 이미지 미리보기 컨테이너 */
+.preview-container { margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
+.img-preview { width:100px; border:1px solid #ccc; border-radius:4px; }

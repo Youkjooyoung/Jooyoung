@@ -74,33 +74,45 @@
 					<td class="ct_list_pop">
 					  <c:set var="code" value="${latestCodeMap[product.prodNo]}"/>
 					  <c:choose>
-					    <c:when test="${not empty code and (fn:trim(code) eq '001' or fn:trim(code) eq '002')}">
-					      재고없음
-					    </c:when>
-					    <c:otherwise>
-					      판매중
-					    </c:otherwise>
-					  </c:choose>
+						  <c:when test="${product.tranStatusCode == '001' or product.tranStatusCode == '002'}">재고없음</c:when>
+						  <c:otherwise>판매중</c:otherwise>
+						</c:choose>
 					</td>
 
                 <!-- 배송 관리 -->
                 <c:set var="code" value="${latestCodeMap[product.prodNo]}"/>
-
-				<td class="ct_list_pop">
-				  <c:choose>
-				    <c:when test="${code eq '001'}">
-				      <button type="button" class="ct_btn01 btn-ship"
-							            data-prodno="${product.prodNo}" data-trancode="002">
-							        배송하기
-				      </button>
-				    </c:when>
-					    <c:when test="${code eq '002'}">배송중</c:when>
-					    <c:when test="${code eq '003'}">배송완료</c:when>
-					    <c:when test="${code eq '004'}"><span style="color:red;">취소됨</span></c:when>
-				    <c:otherwise>-</c:otherwise>
-				  </c:choose>
-				</td>
-            </tr>
+                <c:set var="info" value="${latestInfoMap[product.prodNo]}"/>
+                
+					<!-- 상태 컬럼 -->
+						<td class="ct_list_pop">
+						  <c:choose>
+						    <c:when test="${code == '001' || code == '002' || code == '003'}">재고없음</c:when>
+						    <c:when test="${code == '004'}">
+						      취소대기
+						    </c:when>
+						    <c:otherwise>판매중</c:otherwise>
+						  </c:choose>
+						</td>
+						<td class="ct_list_pop">
+						  <c:choose>
+						    <c:when test="${code == '001'}">
+						      <button type="button" class="ct_btn01 btn-ship"
+						              data-prodno="${product.prodNo}" data-trancode="002">배송하기</button>
+						    </c:when>
+						    <c:when test="${code == '002'}">배송중</c:when>
+						    <c:when test="${code == '003'}">배송완료</c:when>
+						    <c:when test="${code == '004'}">
+						      <span style="color:red;">취소됨</span>
+						      <c:if test="${not empty info}">
+						        (<c:out value="${info.buyerId}"/> / <c:out value="${info.orderDate}"/>)
+						      </c:if>
+						      <button type="button" class="ct_btn01 btn-ack-cancel"
+						              data-prodno="${product.prodNo}">취소확인</button>
+						    </c:when>
+						    <c:otherwise>-</c:otherwise>
+						  </c:choose>
+						</td>
+            	</tr>
         </c:forEach>
     </tbody>
 </table>

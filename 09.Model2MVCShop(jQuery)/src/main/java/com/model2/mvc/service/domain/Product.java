@@ -19,6 +19,8 @@ public class Product implements Serializable {
 	private String buyerId;
 	private String buyDate;
 
+	private String tranStatusCode; // 최근 거래 상태코드(001/002/003/004)
+
 	public int getProdNo() {
 		return prodNo;
 	}
@@ -114,6 +116,14 @@ public class Product implements Serializable {
 
 	public void setBuyDate(String buyDate) {
 		this.buyDate = buyDate;
+	}
+
+	public String getTranStatusCode() {
+		return tranStatusCode;
+	}
+
+	public void setTranStatusCode(String tranStatusCode) {
+		this.tranStatusCode = tranStatusCode;
 	}
 
 	@Override

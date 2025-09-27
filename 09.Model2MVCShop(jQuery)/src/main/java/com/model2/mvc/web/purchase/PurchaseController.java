@@ -149,9 +149,8 @@ public class PurchaseController {
 
 	// 구매자 수령 확인
 	@PostMapping("{tranNo}/confirm")
-	public ModelAndView confirmReceive(@PathVariable int tranNo, @RequestParam int prodNo) throws Exception {
+	public ModelAndView confirmReceive(@PathVariable int tranNo) throws Exception {
 		purchaseService.updateTranCode(tranNo, "003");
-		purchaseService.updateTranCodeByProd(prodNo, "003");
 		return new ModelAndView("redirect:/purchase/" + tranNo);
 	}
 
@@ -159,6 +158,13 @@ public class PurchaseController {
 	@PostMapping("product/{prodNo}/status")
 	public ModelAndView updateTranCodeByProd(@PathVariable int prodNo, @RequestParam String tranCode) throws Exception {
 		purchaseService.updateTranCodeByProd(prodNo, tranCode);
+		return new ModelAndView("redirect:/product/listProduct?menu=manage");
+	}
+
+	// 관리자 주문취소확인 후 재판매
+	@PostMapping("product/{prodNo}/ack-cancel")
+	public ModelAndView acknowledgeCancel(@PathVariable int prodNo) throws Exception {
+		purchaseService.updateTranCodeByProd(prodNo, "005");
 		return new ModelAndView("redirect:/product/listProduct?menu=manage");
 	}
 }

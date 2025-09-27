@@ -46,7 +46,6 @@
       e.preventDefault();
       var cond = $('#searchCondition').val();
       var kw   = $.trim($('#searchKeyword').val() || '');
-      // 전체(0)는 키워드 없어도 허용, 나머지는 키워드 필요
       if (cond !== '0' && !kw) { alert('검색어를 입력하세요.'); return; }
       movePage(1, false);
     })
@@ -62,12 +61,12 @@
       movePage(1, true);
     })
 
-    // 4) 페이지크기 변경 시 즉시 반영
+    // 4) 페이지크기 변경
     .on('change', '#pageSize', function(){
       movePage(1, false);
     })
 
-    // 5) 정렬(가격 ▲/▼)
+    // 5) 정렬(가격)
     .on('click', '.sort-btn', function(){
       $('#sort').val($(this).data('sort'));
       movePage(1, false);
@@ -86,20 +85,22 @@
     })
 
     // 8) Hover 썸네일
-    .on('mouseenter', '.prod-link', function(e){
-      var fileName = $(this).data('filename');
-      if (!fileName) return;
-      var filePath = AppNav.ctx() + '/upload/' + encodeURIComponent(fileName);
-      $('#hoverThumb')
-        .html("<img src='" + filePath + "' width='150' height='150' alt='thumbnail'/>")
-        .css({ top: e.pageY + 15, left: e.pageX + 15, display: 'block' });
-    })
-    .on('mousemove', '.prod-link', function(e){
-      $('#hoverThumb').css({ top: e.pageY + 15, left: e.pageX + 15 });
-    })
-    .on('mouseleave', '.prod-link', function(){
-      $('#hoverThumb').hide().empty();
-    })
+	.on('mouseenter', '.prod-link', function(e){
+	  var fileName = $(this).data('filename');
+	  if (!fileName) return;
+
+	  var filePath = AppNav.ctx() + '/upload/uploadFiles/' + encodeURIComponent(fileName);
+
+	  $('#hoverThumb')
+	    .html("<img src=\"" + filePath + "\" width=\"150\" height=\"150\" alt=\"thumbnail\"/>")
+	    .css({ top: e.pageY + 15, left: e.pageX + 15, display: 'block' });
+	})
+	.on('mousemove', '.prod-link', function(e){
+	  $('#hoverThumb').css({ top: e.pageY + 15, left: e.pageX + 15 });
+	})
+	.on('mouseleave', '.prod-link', function(){
+	  $('#hoverThumb').hide().empty();
+	})
 
     // 9) 페이징(span[data-page]) 클릭
     .on('click', '.page-link', function(){
@@ -108,7 +109,7 @@
       if (page) movePage(page, false);
     });
 
-  // 10) pageNavigator.jsp에서 호출하던 함수 호환 유지
+  // 10) pageNavigator.jsp에서 호출하던 함수
   w.fncGetUserList = function(page) {
     movePage(page || 1, false);
   };

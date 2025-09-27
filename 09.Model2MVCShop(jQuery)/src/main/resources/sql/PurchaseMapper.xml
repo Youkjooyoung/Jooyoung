@@ -5,12 +5,15 @@
 
 <mapper namespace="PurchaseMapper">
 
+	<!-- ========================================================= 공통 ResultMap 
+		========================================================== -->
+
 	<!-- Purchase + (buyer:User) + (purchaseProd:Product) -->
 	<resultMap id="purchaseResultMap"
 		type="com.model2.mvc.service.domain.Purchase">
 		<id property="tranNo" column="TRAN_NO" />
 		<result property="tranCode" column="TRAN_CODE" />
-		<result property="orderDate" column="ORDER_DATE" />
+		<result property="orderDate" column="ORDER_DATA" />
 		<result property="divyAddr" column="DIVY_ADDR" />
 		<result property="divyDate" column="DIVY_DATE" jdbcType="DATE" />
 		<result property="divyRequest" column="DLVY_REQUEST" />
@@ -40,11 +43,22 @@
 		</association>
 	</resultMap>
 
+	<!-- 관리자 목록에서 “구매자ID/구매일자/상태” 출력용 -->
+	<resultMap id="latestPurchaseInfoMap"
+		type="java.util.HashMap">
+		<!-- 아래 column 값들은 SELECT에서 alias 로 맞춤 -->
+		<result property="prodNo" column="PROD_NO" />
+		<result property="buyerId" column="BUYER_ID" />
+		<result property="orderDate" column="ORDER_DATA" />
+		<result property="tranCode" column="TRAN_STATUS_CODE" />
+	</resultMap>
+
+	<!-- ========================================================= 공통 SQL 조각 ========================================================== -->
 	<sql id="purchaseSelectColumns">
 		T.TRAN_NO,
 		T.TRAN_STATUS_CODE AS TRAN_CODE,
 		T.ORDER_DATA AS
-		ORDER_DATE,
+		ORDER_DATA,
 		T.DEMAILADDR AS DIVY_ADDR,
 		TO_CHAR(T.DLVY_DATE,'YYYY-MM-DD') AS DIVY_DATE,
 		T.DLVY_REQUEST,
@@ -102,7 +116,7 @@
 		</if>
 	</sql>
 
-	<!-- INSERT -->
+	<!-- ========================================================= INSERT ========================================================== -->
 	<insert id="addPurchase"
 		parameterType="com.model2.mvc.service.domain.Purchase">
 		<selectKey keyProperty="tranNo" resultType="int"
@@ -125,7 +139,7 @@
 		)
 	</insert>
 
-	<!-- SELECT ONE -->
+	<!-- ========================================================= SELECT ONE ========================================================== -->
 	<select id="getPurchase" parameterType="int"
 		resultMap="purchaseResultMap">
 		SELECT
@@ -161,7 +175,7 @@
 		<include refid="searchWhere" />
 	</select>
 
-	<!-- 판매관리 목록 -->
+	<!-- 판매관리 목록(관리자) -->
 	<select id="getSaleList"
 		parameterType="com.model2.mvc.common.Search"
 		resultMap="purchaseResultMap">
@@ -187,7 +201,7 @@
 		<include refid="searchWhere" />
 	</select>
 
-	<!-- UPDATE -->
+	<!-- ========================================================= UPDATE ========================================================== -->
 	<update id="updatePurchase"
 		parameterType="com.model2.mvc.service.domain.Purchase">
 		UPDATE TRANSACTION
@@ -214,25 +228,33 @@
 	</update>
 
 	<update id="updateTranCodeByProd" parameterType="map">
-		UPDATE
-		TRANSACTION
-		SET TRAN_STATUS_CODE = #{tranCode}
-		WHERE PROD_NO = #{prodNo}
-	</update>
+	UPDATE TRANSACTION t
+	SET t.TRAN_STATUS_CODE = #{tranCode}
+	WHERE t.PROD_NO = #{prodNo}
+	AND t.TRAN_NO = (
+	SELECT MAX(t2.TRAN_NO) FROM TRANSACTION t2 WHERE t2.PROD_NO = #{prodNo}
+	)
+	AND (
+	(#{tranCode} = '002' AND t.TRAN_STATUS_CODE = '001')
+	OR (#{tranCode} = '003' AND t.TRAN_STATUS_CODE = '002')
+	OR (#{tranCode} = '005' AND t.TRAN_STATUS_CODE = '004')
+	)
+</update>
 
-	<!-- 최신 상태 조회 -->
-	<select id="getLatestTranCodeByProd" parameterType="int"
-		resultType="string">
-		SELECT tranCode FROM (
-		SELECT t.TRAN_STATUS_CODE AS
-		tranCode,
-		ROW_NUMBER() OVER (ORDER BY t.TRAN_NO DESC) AS rn
-		FROM
-		TRANSACTION t
-		WHERE t.PROD_NO = #{prodNo}
-		)
-		WHERE rn = 1
-	</select>
+
+	<!-- ========================================================= 최신 상태/구매정보 조회 ========================================================== -->
+<select id="getLatestTranCodeByProd" parameterType="int"
+	resultType="string">
+	SELECT tranCode
+	FROM (
+	SELECT t.TRAN_STATUS_CODE AS tranCode,
+	ROW_NUMBER() OVER (ORDER BY t.TRAN_NO DESC) AS rn
+	FROM TRANSACTION t
+	WHERE t.PROD_NO = #{prodNo}
+	AND t.TRAN_STATUS_CODE &lt;&gt; '004'
+	)
+	WHERE rn = 1
+</select>
 
 	<select id="getLatestTranCodeByProdNos" parameterType="list"
 		resultType="map">
@@ -257,20 +279,26 @@
 		WHERE rn = 1
 	</select>
 
+	<!-- 관리자 그리드용: prodNo → 구매자ID/주문일/상태 묶음 조회 -->
 	<select id="getLatestPurchaseInfoByProdNos" parameterType="list"
-		resultType="map">
-		SELECT prodNo,
-		user_id AS buyerId,
-		TO_CHAR(order_date, 'YYYY-MM-DD') AS orderDate,
-		tran_status_code AS tranCode
+		resultMap="latestPurchaseInfoMap">
+		SELECT
+		PROD_NO,
+		BUYER_ID,
+		TO_CHAR(ORDER_DATA, 'YYYY-MM-DD') AS
+		ORDER_DATA,
+		TRAN_STATUS_CODE
 		FROM (
-		SELECT t.PROD_NO AS prodNo,
-		t.USER_ID,
-		t.ORDER_DATE,
+		SELECT
+		t.PROD_NO,
+		t.BUYER_ID,
+		t.ORDER_DATA,
 		t.TRAN_STATUS_CODE,
-		ROW_NUMBER() OVER (PARTITION BY t.PROD_NO ORDER BY t.TRAN_NO DESC) AS rn
+		ROW_NUMBER() OVER (PARTITION BY
+		t.PROD_NO ORDER BY t.TRAN_NO DESC) AS rn
 		FROM TRANSACTION t
-		WHERE t.PROD_NO IN
+		WHERE
+		t.PROD_NO IN
 		<foreach collection="list" item="value" open="(" separator=","
 			close=")">
 			#{value}
@@ -278,6 +306,5 @@
 		)
 		WHERE rn = 1
 	</select>
-
 
 </mapper>

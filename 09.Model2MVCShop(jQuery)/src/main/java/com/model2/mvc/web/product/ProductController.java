@@ -3,11 +3,10 @@ package com.model2.mvc.web.product;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -34,91 +33,58 @@ import com.model2.mvc.service.purchase.PurchaseService;
 @RequestMapping("/product/*")
 public class ProductController {
 
+	@Autowired
 	@Qualifier("productServiceImpl")
-	private final PurchaseService purchaseService;
-	private final ProductService productService;
+	private ProductService productService;
 
-	@Value("#{commonProperties['pageUnit'] ?: 5}")
+	@Autowired
+	@Qualifier("purchaseServiceImpl")
+	private PurchaseService purchaseService;
+
+	@Value("#{commonProperties['pageUnit'] ?: 3}")
 	private int pageUnit;
 
-	@Value("#{commonProperties['pageSize'] ?: 5}")
+	@Value("#{commonProperties['pageSize'] ?: 3}")
 	private int pageSize;
+
+	private static final String UPLOAD_DIR = "C:/upload/uploadFiles/";
 
 	public ProductController(ProductService productService, PurchaseService purchaseService) {
 		this.productService = productService;
 		this.purchaseService = purchaseService;
 	}
 
-	// =============== 등록 ===============
+	// =============== 등록 ==================
 	@PostMapping("addProduct")
 	public String addProduct(@ModelAttribute Product product,
-			@RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
-			HttpServletRequest request, HttpSession session) throws Exception {
+			@RequestParam(value = "uploadFiles", required = false) MultipartFile[] files, HttpSession session)
+			throws Exception {
 
-		product.setManuDate(cleanDate(product.getManuDate()));
+		product.setManuDate(clean(product.getManuDate()));
 		productService.addProduct(product);
-
-		if (uploadFiles != null && uploadFiles.length > 0) {
-			String uploadPath = resolveUploadPath(request);
-			List<ProductImage> images = FileUploadHelper.saveFiles(uploadFiles, product.getProdNo(), uploadPath);
-
-			if (!images.isEmpty()) {
-				// 대표 이미지 파일명만 세팅 후 서비스에 위임
-				product.setFileName(images.get(0).getFileName());
-				productService.updateProduct(product); // IMAGE_FILE 반영
-
-				for (ProductImage img : images) {
-					productService.addProductImage(img);
-				}
-			}
-		}
-
+		attachImagesAndSetPrimary(product, files);
 		return isAdmin(session) ? "redirect:/product/listProduct?menu=manage"
 				: "redirect:/product/listProduct?menu=search";
 	}
 
-	// =============== 상세 ===============
+	// =============== 상세 ==================
 	@GetMapping("getProduct")
 	public String getProduct(@RequestParam("prodNo") int prodNo, HttpSession session, Model model) throws Exception {
-
-		String userId = getUserId(session);
+		String userId = currentUserId(session);
 		String viewedKey = "viewed:" + prodNo + ":" + userId;
-		boolean firstView = session.getAttribute(viewedKey) == null;
-		if (firstView) {
+		boolean first = session.getAttribute(viewedKey) == null;
+		if (first)
 			session.setAttribute(viewedKey, true);
-		}
 
-		// 상품 상세 조회
-		Product product = productService.getProduct(prodNo, firstView ? viewedKey : null);
-		List<ProductImage> productImages = productService.getProductImages(prodNo);
+		Product p = productService.getProduct(prodNo, first ? viewedKey : null);
+		List<ProductImage> imgs = productService.getProductImages(prodNo);
 		String latestCode = purchaseService.getLatestTranCodeByProd(prodNo);
 
-		model.addAttribute("product", product);
-		model.addAttribute("productImages", productImages);
+		model.addAttribute("product", p);
+		model.addAttribute("productImages", imgs);
 		model.addAttribute("latestCode", latestCode);
 
-		// ==============================
-		// ★ 최근 본 상품 관리 (세션)
-		// ==============================
-		@SuppressWarnings("unchecked")
-		List<Product> recentList = (List<Product>) session.getAttribute("recentList");
-		if (recentList == null) {
-			recentList = new ArrayList<>();
-		}
-
-		// 중복 제거
-		recentList.removeIf(p -> p.getProdNo() == product.getProdNo());
-
-		// 앞쪽에 추가
-		recentList.add(0, product);
-
-		// 최대 5개까지만 유지
-		if (recentList.size() > 5) {
-			recentList = recentList.subList(0, 5);
-		}
-
-		session.setAttribute("recentList", recentList);
-
+		pushRecent(session, p);
 		return "product/getProduct";
 	}
 
@@ -133,21 +99,13 @@ public class ProductController {
 	// =============== 수정 처리 ===============
 	@PostMapping("updateProduct")
 	public String updateProduct(@ModelAttribute Product product,
-			@RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
-			@RequestParam(value = "deleteImageIds", required = false) List<Integer> deleteImageIds,
-			HttpServletRequest request) throws Exception {
+			@RequestParam(value = "uploadFiles", required = false) MultipartFile[] files,
+			@RequestParam(value = "deleteImageIds", required = false) List<Integer> deleteIds) throws Exception {
 
-		if (!CollectionUtils.isEmpty(deleteImageIds)) {
-			for (Integer imgId : deleteImageIds) {
-				productService.deleteProductImage(imgId);
-			}
-		}
-
-		handleFileUpload(uploadFiles, product, resolveUploadPath(request));
-
-		product.setManuDate(cleanDate(product.getManuDate()));
+		deleteImages(deleteIds);
+		attachImagesAndSetPrimary(product, files);
+		product.setManuDate(clean(product.getManuDate()));
 		productService.updateProduct(product);
-
 		return "redirect:/product/getProduct?prodNo=" + product.getProdNo();
 	}
 
@@ -161,62 +119,87 @@ public class ProductController {
 	// =============== 목록 ===============
 	@GetMapping("listProduct")
 	public String listProduct(@ModelAttribute("search") Search search,
-			@RequestParam(value = "sort", required = false, defaultValue = "") String sort, Model model)
+			@RequestParam(value = "sort", required = false, defaultValue = "") String sort,
+			@RequestParam(value = "menu", required = false) String menu, HttpSession session, Model model)
 			throws Exception {
 
-		// 기본값 통일
 		if (search.getCurrentPage() <= 0)
 			search.setCurrentPage(1);
 		if (search.getPageSize() <= 0)
-			search.setPageSize(5); // << 한 가지 규칙만 사용
+			search.setPageSize(5);
 
 		Map<String, Object> result = productService.getProductList(search, sort);
+		@SuppressWarnings("unchecked")
+		List<Product> list = (List<Product>) result.get("list");
 		int totalCount = (int) result.getOrDefault("totalCount", 0);
 
-		Page resultPage = new Page(search.getCurrentPage(), totalCount, pageUnit, // 블록 단위 (규칙: '<'은 1페이지, '>'은 블록 이동)
-				search.getPageSize());
+		List<Integer> prodNos = new java.util.ArrayList<>();
+		if (list != null)
+			for (Product p : list)
+				prodNos.add(p.getProdNo());
 
-		// JSP에서 쓰는 모델 키들
-		model.addAttribute("list", result.get("list"));
-		model.addAttribute("latestCodeMap", result.get("latestCodeMap")); // 상태 표시에 사용 중이면 유지
-		model.addAttribute("resultPage", resultPage);
+		Map<Integer, Map<String, Object>> latestInfo = purchaseService.getLatestPurchaseInfoByProdNos(prodNos);
 
-		return "forward:/product/listProduct.jsp";
+		model.addAttribute("list", list);
+		model.addAttribute("latestInfo", latestInfo);
+		model.addAttribute("resultPage", new Page(search.getCurrentPage(), totalCount, pageUnit, search.getPageSize()));
+		model.addAttribute("latestCodeMap", result.get("latestCodeMap"));
+		model.addAttribute("latestInfoMap", result.get("latestInfoMap"));
+
+		User user = (User) session.getAttribute("user");
+		boolean admin = (user != null) && ("admin".equals(user.getUserId()) || "admin".equals(user.getRole()));
+		return (admin && "manage".equalsIgnoreCase(menu)) ? "forward:/product/listManageProduct.jsp"
+				: "forward:/product/listProduct.jsp";
 	}
 
-	// --------- helpers ---------
-	private String resolveUploadPath(HttpServletRequest request) {
-		return "C:/upload/"; // 무조건 C:/upload 밑으로 저장
-	}
-
-	private void handleFileUpload(MultipartFile[] uploadFiles, Product product, String uploadPath) throws Exception {
-		if (uploadFiles == null || uploadFiles.length == 0 || uploadFiles[0].isEmpty()) {
+	// ---------- 내부 헬퍼(컨트롤러 내부에만 유지) ----------
+	private void attachImagesAndSetPrimary(Product product, MultipartFile[] files) throws Exception {
+		if (files == null || files.length == 0 || files[0].isEmpty())
 			return;
-		}
-
-		List<ProductImage> images = FileUploadHelper.saveFiles(uploadFiles, product.getProdNo(), uploadPath);
-		if (images != null && !images.isEmpty()) {
-			for (ProductImage img : images) {
-				productService.addProductImage(img);
-			}
-			// 대표 이미지 설정
-			product.setFileName(images.get(0).getFileName());
-			productService.updateProduct(product);
-		}
+		List<ProductImage> saved = FileUploadHelper.saveFiles(files, product.getProdNo(), UPLOAD_DIR);
+		if (CollectionUtils.isEmpty(saved))
+			return;
+		for (ProductImage img : saved)
+			productService.addProductImage(img);
+		product.setFileName(saved.get(0).getFileName());
+		productService.updateProduct(product);
 	}
 
-	private String cleanDate(String manuDate) {
-		return (manuDate != null) ? DateUtil.cleanManuDate(manuDate) : null;
+	// =============== 상세 이미지 삭제===============
+	private void deleteImages(List<Integer> ids) throws Exception {
+		if (CollectionUtils.isEmpty(ids))
+			return;
+		for (Integer id : ids)
+			productService.deleteProductImage(id);
 	}
 
-	private String getUserId(HttpSession session) {
-		User user = (User) session.getAttribute("user");
-		return (user != null) ? user.getUserId() : "guest";
+	// =============== 제조일자 문자열 ===============
+	private String clean(String manuDate) {
+		return manuDate != null ? DateUtil.cleanManuDate(manuDate) : null;
 	}
 
-	private boolean isAdmin(HttpSession session) {
-		User user = (User) session.getAttribute("user");
-		return user != null && "admin".equals(user.getUserId());
+	// =============== 세션(관리자 OR USER) ===============
+	private boolean isAdmin(HttpSession s) {
+		User u = (User) s.getAttribute("user");
+		return u != null && "admin".equals(u.getUserId());
 	}
 
+	// =============== 사용자 ID OR Guest ===============
+	private String currentUserId(HttpSession s) {
+		User u = (User) s.getAttribute("user");
+		return u != null ? u.getUserId() : "guest";
+	}
+
+	// =============== 상세보기화면에서의 본상품 ===============
+	@SuppressWarnings("unchecked")
+	private void pushRecent(HttpSession s, Product p) {
+		List<Product> list = (List<Product>) s.getAttribute("recentList");
+		if (list == null)
+			list = new ArrayList<>();
+		list.removeIf(x -> x.getProdNo() == p.getProdNo());
+		list.add(0, p);
+		if (list.size() > 5)
+			list = list.subList(0, 5);
+		s.setAttribute("recentList", list);
+	}
 }

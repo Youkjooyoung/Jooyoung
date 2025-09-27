@@ -10,11 +10,6 @@
 <link rel="stylesheet" href="${ctx}/css/ProductDetail.css" type="text/css">
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js" defer></script>
-<script>
-  if (!window.jQuery) {
-    document.write('<script src="${ctx}/javascript/jquery-2.1.4.min.js" defer><\/script>');
-  }
-</script>
 <script src="${ctx}/javascript/getProduct.js" defer></script>
 </head>
 
@@ -23,11 +18,15 @@
 	<div class="container">
 
 		<!-- 제목 -->
-		<div class="title-bar">
-			<img src="${ctx}/images/ct_ttl_img01.gif" /> <span
-				class="title-text">상품 상세</span> <img
-				src="${ctx}/images/ct_ttl_img03.gif" />
-		</div>
+		<table width="100%" height="37" border="0" cellpadding="0" cellspacing="0">
+		    <tr>
+		      <td width="15"><img src="${ctxPath}/images/ct_ttl_img01.gif" width="15" height="37"/></td>
+		      <td background="${ctxPath}/images/ct_ttl_img02.gif" style="padding-left:10px;">
+		        <span class="ct_ttl01">상품 상세</span>
+		      </td>
+		      <td width="12"><img src="${ctxPath}/images/ct_ttl_img03.gif" width="12" height="37"/></td>
+		    </tr>
+		  </table>
 
 		<!-- 상품 기본정보 -->
 		<table class="ct_box mt-10">
@@ -61,7 +60,7 @@
 					<div class="product-img-container">
 						<c:forEach var="img" items="${productImages}">
 							<div class="product-img-box">
-								<img src="${ctx}/upload/${img.fileName}"
+								<img src="${ctx}/upload/uploadFiles/${img.fileName}"
 									alt="${product.prodName}" width="300" height="300" />
 							</div>
 						</c:forEach>
@@ -70,7 +69,6 @@
 			</tr>
 		</table>
 
-		<!-- 상태/구매 버튼 : form 제거, 버튼에 데이터만 부여 -->
 		<div class="status-area">
 			<c:choose>
 				<c:when test="${not empty latestCode}">

@@ -3,6 +3,7 @@ package com.model2.mvc.service.product.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -15,7 +16,8 @@ import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.ProductImage;
 import com.model2.mvc.service.product.ProductDao;
-import com.model2.mvc.service.product.ProductService;;
+import com.model2.mvc.service.product.ProductService;
+import com.model2.mvc.service.purchase.PurchaseService;;
 
 @Service("productServiceImpl")
 public class ProductServiceImpl implements ProductService {
@@ -25,15 +27,19 @@ public class ProductServiceImpl implements ProductService {
 	@Qualifier("productDaoImpl")
 	@Resource(name = "productDao")
 	private ProductDao productDao;
+	private PurchaseService purchaseService;
 
 	public void setProductDao(ProductDao productDao) {
 		this.productDao = productDao;
+
 	}
 
 	/// Constructor
 	@Autowired
-	public ProductServiceImpl(@Qualifier("productDao") ProductDao productDao) {
+	public ProductServiceImpl(@Qualifier("productDao") ProductDao productDao,
+			@Qualifier("purchaseServiceImpl") PurchaseService purchaseService) {
 		this.productDao = productDao;
+		this.purchaseService = purchaseService;
 		System.out.println("==> ProductServiceImpl 실행됨 : " + this.getClass());
 	}
 
@@ -79,9 +85,20 @@ public class ProductServiceImpl implements ProductService {
 		List<Product> list = productDao.getProductList(param);
 		int totalCount = productDao.getTotalCount(search);
 
+		// 상품별 최신 거래상태 조회 (001/002/003/004)
+		Map<Integer, String> latestCodeMap = new HashMap<>();
+		Map<Integer, Map<String, Object>> latestInfoMap = new HashMap<>();
+		if (!list.isEmpty()) {
+			List<Integer> prodNos = list.stream().map(Product::getProdNo).collect(Collectors.toList());
+			latestCodeMap = purchaseService.getLatestTranCodeByProdNos(prodNos);
+			latestInfoMap = purchaseService.getLatestPurchaseInfoByProdNos(prodNos);
+		}
+
 		Map<String, Object> map = new HashMap<>();
 		map.put("list", list);
 		map.put("totalCount", totalCount);
+		map.put("latestCodeMap", latestCodeMap);
+		map.put("latestInfoMap", latestInfoMap);
 		return map;
 	}
 

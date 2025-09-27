@@ -17,6 +17,7 @@
 		<result property="viewCount" column="VIEW_COUNT" />
 		<result property="buyerId" column="BUYER_ID" />
 		<result property="buyDate" column="BUY_DATE" />
+		<result property="tranStatusCode" column="TRAN_STATUS_CODE"/>
 	</resultMap>
 
 	<!-- 공통 컬럼 -->
@@ -82,7 +83,8 @@
 		INSERT INTO PRODUCT_IMAGE
 		(IMG_ID, PROD_NO, FILE_NAME)
 		VALUES
-		(#{imgId}, #{prodNo}, #{fileName})
+		(#{imgId},
+		#{prodNo}, #{fileName})
 	</insert>
 
 	<!-- 수정 -->
@@ -132,16 +134,13 @@
 		p.IMAGE_FILE,
 		p.REG_DATE,
 		p.VIEW_COUNT,
-
 		CASE WHEN t.TRAN_STATUS_CODE = '004' THEN NULL
 		ELSE t.BUYER_ID END AS
 		BUYER_ID,
 		CASE WHEN t.TRAN_STATUS_CODE = '004'
 		THEN NULL ELSE
 		TO_CHAR(t.ORDER_DATA,'YYYY-MM-DD') END AS BUY_DATE,
-
 		t.TRAN_STATUS_CODE
-
 		FROM PRODUCT p
 		LEFT JOIN (
 		SELECT
@@ -222,7 +221,6 @@
 		tx.BUYER_ID AS BUYER_ID,
 		TO_CHAR(tx.TRAN_DATE,'YYYYMMDD') AS BUY_DATE
 		FROM PRODUCT p
-		/* 상품별 최근 거래 1건 */
 		LEFT JOIN (
 		SELECT PROD_NO, BUYER_ID,
 		TRAN_DATE

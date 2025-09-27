@@ -67,7 +67,7 @@
 			<td class="ct_list_b" width="150">조회수</td>
 			<td class="ct_line02"></td>
 			<td class="ct_list_b" width="100">상태</td>
-			<td class="ct_line02"></td>
+			<!-- <td class="ct_line02"></td> -->
 			<td class="ct_list_b" width="150">관리</td>
 		</tr>
 
@@ -91,28 +91,29 @@
 		    <td></td>
 		    <td align="center">${product.viewCount}</td>
 		    <td></td>
-		    <td align="center">
-		      <c:choose>
-		        <c:when test="${not empty latestCodeMap[product.prodNo]}">재고없음</c:when>
-		        <c:otherwise>판매중</c:otherwise>
-		      </c:choose>
-		    </td>
-		    <td></td>
-		    <td align="center">
-		      <c:choose>
-		        <c:when test="${sessionScope.user.role == 'admin'}">
-		          -
-		        </c:when>
-		        <c:otherwise>
-		          <c:choose>
-		            <c:when test="${empty latestCodeMap[product.prodNo]}">
-		              <button type="button" class="ct_btn01 btn-buy" data-prodno="${product.prodNo}">구매하기</button>
-		            </c:when>
-		            <c:otherwise>-</c:otherwise>
-		          </c:choose>
-		        </c:otherwise>
-		      </c:choose>
-		    </td>
+		    
+	<c:set var="code" value="${latestCodeMap[product.prodNo]}"/>
+				<!-- 상태 -->
+				<td align="center">
+				  <c:choose>
+				    <c:when test="${code == '001' || code == '002' || code == '003'}">재고없음</c:when>
+				    <c:when test="${code == '004'}">취소대기</c:when>
+				    <c:otherwise>판매중</c:otherwise>
+				  </c:choose>
+				</td>
+				<td align="center">
+				  <c:choose>
+				    <c:when test="${sessionScope.user.role == 'admin'}">-</c:when>
+				    <c:otherwise>
+				      <c:choose>
+				        <c:when test="${empty code || code == '005'}">
+				          <button type="button" class="ct_btn01 btn-buy" data-prodno="${product.prodNo}">구매하기</button>
+				        </c:when>
+				        <c:otherwise>-</c:otherwise>
+				      </c:choose>
+				    </c:otherwise>
+				  </c:choose>
+				</td>
 		  </tr>
 		  <tr><td colspan="13" bgcolor="D6D7D6" height="1"></td></tr>
 		</c:forEach>
