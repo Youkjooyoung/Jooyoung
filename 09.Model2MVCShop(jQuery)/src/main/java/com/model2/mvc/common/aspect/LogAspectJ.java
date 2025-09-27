@@ -1,35 +1,33 @@
 package com.model2.mvc.common.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/*
- * FileName : PojoAspectJ.java
- *	:: XML 에 선언적으로 aspect 의 적용   
-  */
 public class LogAspectJ {
 
-	///Constructor
-	public LogAspectJ() {
-		System.out.println("\nCommon :: "+this.getClass()+"\n");
-	}
-	
-	//Around  Advice
-	public Object invoke(ProceedingJoinPoint joinPoint) throws Throwable {
-			
-		System.out.println("");
-		System.out.println("[Around before] 타겍객체.메서드 :"+
-													joinPoint.getTarget().getClass().getName() +"."+
-													joinPoint.getSignature().getName());
-		if(joinPoint.getArgs().length !=0){
-			System.out.println("[Around before]method에 전달되는 인자 : "+ joinPoint.getArgs()[0]);
-		}
-		//==> 타겟 객체의 Method 를 호출 하는 부분 
-		Object obj = joinPoint.proceed();
+	private static final Logger logger = LoggerFactory.getLogger(LogAspectJ.class);
 
-		System.out.println("[Around after] 타겟 객체return value  : "+obj);
-		System.out.println("");
-		
-		return obj;
+	public Object invoke(ProceedingJoinPoint joinPoint) throws Throwable {
+
+		String className = joinPoint.getTarget().getClass().getSimpleName();
+		String methodName = joinPoint.getSignature().getName();
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("[AOP-BEFORE] {}.{}", className, methodName);
+
+			Object[] args = joinPoint.getArgs();
+			if (args != null && args.length > 0) {
+				logger.debug("  ▶ args[0]: {}", args[0]);
+			}
+		}
+
+		Object result = joinPoint.proceed();
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("[AOP-AFTER] {}.{} → return={}", className, methodName, result);
+		}
+
+		return result;
 	}
-	
-}//end of class
+}

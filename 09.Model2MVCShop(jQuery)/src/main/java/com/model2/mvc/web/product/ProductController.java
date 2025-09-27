@@ -143,8 +143,6 @@ public class ProductController {
 		model.addAttribute("list", list);
 		model.addAttribute("latestInfo", latestInfo);
 		model.addAttribute("resultPage", new Page(search.getCurrentPage(), totalCount, pageUnit, search.getPageSize()));
-		model.addAttribute("latestCodeMap", result.get("latestCodeMap"));
-		model.addAttribute("latestInfoMap", result.get("latestInfoMap"));
 
 		User user = (User) session.getAttribute("user");
 		boolean admin = (user != null) && ("admin".equals(user.getUserId()) || "admin".equals(user.getRole()));

@@ -49,9 +49,10 @@
 	
 	// 취소확인(004 → 005)
 	$(document).on('click', '.btn-ack-cancel', function() {
-	  var prodNo = $(this).data('prodno');
-	  if (!prodNo) return;
-	  AppNav.post('/purchase/product/' + prodNo + '/ack-cancel');
+		var prodNo = $(this).data('prodno');
+		if (!prodNo) return;
+		if (!confirm('이 주문의 취소를 확인 처리하시겠습니까?')) return;
+		AppNav.post('/purchase/product/' + prodNo + '/status', { tranCode: '005' });
 	});
 
 	// 페이징 (pageNavigator.jsp에서 호출)
