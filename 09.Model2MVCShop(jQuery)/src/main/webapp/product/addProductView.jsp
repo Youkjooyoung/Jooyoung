@@ -12,7 +12,7 @@
   <script src="${ctxPath}/javascript/calendar.js"></script>
   <script src="${ctxPath}/javascript/preview.js"></script>
   <script src="${ctxPath}/javascript/addProduct.js"></script>
-  <script src="${ctx}/javascript/app-core.js"></script>
+  <script src="${ctxPath}/javascript/app-core.js"></script>
 </head>
 <body data-ctx="${ctxPath}">
 <div class="container">

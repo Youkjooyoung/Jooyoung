@@ -7,7 +7,7 @@
 <head>
 <title>상품 상세</title>
 <link rel="stylesheet" href="${ctx}/css/admin.css" type="text/css">
-<link rel="stylesheet" href="${ctx}/css/ProductDetail.css" type="text/css">
+<link rel="stylesheet" href="${ctx}/css/getProduct.css" type="text/css">
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js" defer></script>
 <script src="${ctx}/javascript/app-core.js" defer></script>

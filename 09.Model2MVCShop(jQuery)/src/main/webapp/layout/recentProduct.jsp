@@ -2,39 +2,42 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-<title>최근 본 상품</title>
-<!-- 공통 CSS -->
-<link rel="stylesheet" href="${ctx}/css/admin.css" type="text/css">
-<!-- 최근 본 상품 전용 CSS -->
-<link rel="stylesheet" href="${ctx}/css/recentProduct.css"type="text/css">
+  <meta charset="UTF-8"/>
+  <title>최근 본 상품</title>
+  <!-- 공통 CSS만 사용 -->
+  <link rel="stylesheet" href="${ctx}/css/admin.css" type="text/css"/>
+  <!-- jQuery & 공용 JS -->
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="${ctx}/javascript/app-core.js"></script>
   <script src="${ctx}/javascript/recentProduct.js"></script>
-  
 </head>
+
 <body data-ctx="${ctx}">
   <h2 class="recent-title">최근 본 상품</h2>
-
   <c:if test="${empty sessionScope.recentList}">
     <p class="no-data">최근 본 상품이 없습니다.</p>
   </c:if>
-
   <c:if test="${not empty sessionScope.recentList}">
-	    <ul class="recent-list">
-	  		<c:forEach var="prod" items="${sessionScope.recentList}">
-	   		 <li>
-	      		 <a href="${ctx}/product/getProduct?prodNo=${prod.prodNo}"
-			         data-prodno="${prod.prodNo}"
-			         data-filename="${prod.fileName}">
-			        ${prod.prodName}
-	     		 </a>
-	    	</li>
-	  		</c:forEach>
-		</ul>
+    <ul class="recent-list" aria-label="최근 본 상품 목록">
+      <c:forEach var="prod" items="${sessionScope.recentList}">
+        <li class="recent-list-item">
+          <span class="recent-item"
+                role="link"
+                tabindex="0"
+                data-prodno="${prod.prodNo}"
+                data-filename="${prod.fileName}">
+            ${prod.prodName}
+          </span>
+        </li>
+      </c:forEach>
+    </ul>
   </c:if>
-
-  <!-- hover 시 표시될 미리보기 -->
-  <div id="preview-box"><img id="preview-img" src=""/></div>
+  <!-- Hover 미리보기 오버레이 -->
+  <div id="preview-box" aria-hidden="true">
+    <img id="preview-img" src="" alt="상품 이미지 미리보기"/>
+  </div>
 </body>
 </html>

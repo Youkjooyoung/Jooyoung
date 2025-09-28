@@ -1,49 +1,77 @@
-// /javascript/recentProduct.js
 (function(w, d, $) {
-	'use strict'; if (!$) return;
+	'use strict';
+	if (!$) return;
 
-	var $box = $('#preview-box');    // 미리보기 컨테이너(페이지에 존재)
-	var $img = $('#preview-img');    // 미리보기 <img>(페이지에 존재)
-	var loadingFlag = {};            // prodNo별 1회 조회 락
+	function ctx() { return (w.App && w.App.ctx ? w.App.ctx() : $('body').data('ctx') || ''); }
+	function go(path, params) {
+		if (w.App && w.App.go) { w.App.go(path, params); return; }
+		var qs = params ? ('?' + $.param(params)) : '';
+		w.location.href = ctx() + path + qs;
+	}
+
+	var $box = $('#preview-box');
+	var $img = $('#preview-img');
+	var loadingFlag = {};
 
 	function place(e) {
 		if (!$box.length) return;
 		$box.css({ top: (e.clientY + 15), left: (e.clientX + 15) });
 	}
 
-	function show(src, e) {
+	function candidateUrls(fileName) {
+		var enc = encodeURIComponent(fileName || '');
+		var c = ctx();
+		return [
+			c + '/upload/' + enc,
+			c + '/upload/uploadFiles/' + enc,
+			c + '/uploadFiles/' + enc
+		];
+	}
+
+	function loadWithFallback(urls, e) {
+		if (!urls.length) { $box.hide(); return; }
+		var url = urls[0];
+		console.debug('[recent] try image:', url);
+
+		$img.off('error load').attr('src', '');
+		$img.one('load', function() { place(e); $box.show(); });
+		$img.one('error', function() {
+			console.debug('[recent] image error -> fallback');
+			loadWithFallback(urls.slice(1), e);
+		});
+		$img.attr('src', url);
+	}
+
+	function showByFileName(fileName, e) {
 		if (!$box.length || !$img.length) return;
-		if (!src) return $box.hide();
-		$img.off('error').attr('src', '');
-		$img.one('error', function() { $box.hide(); });
-		$img.attr('src', src);
-		place(e);
-		$box.show();
+		if (!fileName) { $box.hide(); return; }
+		loadWithFallback(candidateUrls(fileName), e);
 	}
 
-	function fileUrl(fileName) {
-		return App.ctx() + '/upload/uploadFiles/' + encodeURIComponent(fileName);
-	}
-
-	// 최근목록 항목: a 또는 .recent-item(span 등) 모두 지원
+	// === Hover 미리보기 ===
 	$(d)
-		.on('mouseenter', '.recent-list a, .recent-list .recent-item', function(e) {
+		.on('mouseenter', '.recent-item', function(e) {
 			var $el = $(this);
 			var fileName = $el.data('filename');
 			var prodNo = $el.data('prodno');
 
-			// 1) fileName 이미 있으면 바로 표시
-			if (fileName) return show(fileUrl(fileName), e);
+			if (fileName) { showByFileName(fileName, e); return; }
 
-			// 2) 최초 1회만 REST 조회 후 캐시
 			if (prodNo && !loadingFlag[prodNo]) {
 				loadingFlag[prodNo] = true;
-				$.getJSON(App.ctx() + '/api/products/' + encodeURIComponent(prodNo) + '/images')
+				$.getJSON(ctx() + '/api/products/' + encodeURIComponent(prodNo) + '/images')
 					.done(function(arr) {
+						console.debug('[recent] images resp:', arr);
 						if (arr && arr.length) {
-							fileName = arr[0].fileName;
-							$el.data('filename', fileName);     // 캐시
-							show(fileUrl(fileName), e);
+							var item = arr[0] || {};
+							fileName = item.fileName || item.imageFile || item.storedName || item.saveName || item.filename;
+							console.debug('[recent] pick fileName:', fileName);
+							if (fileName) {
+								$el.data('filename', fileName);
+								showByFileName(fileName, e);
+							} else {
+								$box.hide();
+							}
 						} else {
 							$box.hide();
 						}
@@ -51,6 +79,22 @@
 					.always(function() { loadingFlag[prodNo] = false; });
 			}
 		})
-		.on('mousemove', '.recent-list a, .recent-list .recent-item', function(e) { place(e); })
-		.on('mouseleave', '.recent-list a, .recent-list .recent-item', function() { $box.hide(); });
+		.on('mousemove', '.recent-item', function(e) { place(e); })
+		.on('mouseleave', '.recent-item', function() { $box.hide(); });
+
+	// === 키보드/클릭 네비게이션 ===
+	$(d)
+		.on('click', '.recent-item', function() {
+			var prodNo = $(this).data('prodno');
+			if (prodNo) go('/product/getProduct', { prodNo: prodNo });
+		})
+		.on('keydown', '.recent-item', function(e) {
+			if (e.key === 'Enter' || e.keyCode === 13) {
+				var prodNo = $(this).data('prodno');
+				if (prodNo) go('/product/getProduct', { prodNo: prodNo });
+			}
+		});
+
+	$box.hide();
+
 })(window, document, window.jQuery);

@@ -33,6 +33,7 @@ public class PurchaseRestController {
 		this.purchaseService = purchaseService;
 	}
 
+	// 구매등록
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Purchase addPurchase(@RequestBody Purchase purchase) throws Exception {
@@ -40,11 +41,13 @@ public class PurchaseRestController {
 		return purchase;
 	}
 
+	// 구매상세조회
 	@GetMapping("/{tranNo}")
 	public Purchase getPurchase(@PathVariable int tranNo) throws Exception {
 		return purchaseService.getPurchase(tranNo);
 	}
 
+	// 구매내역조회(사용자)
 	@GetMapping
 	public Map<String, Object> getPurchaseList(Search search, @RequestParam String buyerId,
 			@RequestParam(defaultValue = "10") int pageUnit) throws Exception {
@@ -59,6 +62,7 @@ public class PurchaseRestController {
 		return result;
 	}
 
+	// 판매내역조회(관리자)
 	@GetMapping("/sales")
 	public Map<String, Object> getSaleList(Search search, @RequestParam(defaultValue = "10") int pageUnit)
 			throws Exception {
@@ -73,6 +77,7 @@ public class PurchaseRestController {
 		return result;
 	}
 
+	// 구매정보수정
 	@PutMapping("/{tranNo}")
 	public Purchase updatePurchase(@PathVariable int tranNo, @RequestBody Purchase purchase) throws Exception {
 		purchase.setTranNo(tranNo);
@@ -80,6 +85,7 @@ public class PurchaseRestController {
 		return purchase;
 	}
 
+	// 거래상태코드변경(거래번호)
 	@PatchMapping("/{tranNo}/tranCode")
 	public Map<String, Object> updateTranCode(@PathVariable int tranNo, @RequestParam String tranCode)
 			throws Exception {
@@ -91,6 +97,7 @@ public class PurchaseRestController {
 		return body;
 	}
 
+	// 거래상태코드변경(상품번호)
 	@PatchMapping("/products/{prodNo}/tranCode")
 	public Map<String, Object> updateTranCodeByProd(@PathVariable int prodNo, @RequestParam String tranCode)
 			throws Exception {
@@ -102,6 +109,7 @@ public class PurchaseRestController {
 		return body;
 	}
 
+	// 최신거래상태조회(상품번호)
 	@GetMapping("/products/{prodNo}/latestTranCode")
 	public Map<String, Object> getLatestTranCodeByProd(@PathVariable int prodNo) throws Exception {
 		String code = purchaseService.getLatestTranCodeByProd(prodNo);
@@ -111,6 +119,7 @@ public class PurchaseRestController {
 		return body;
 	}
 
+	// 최신거래상태조회(여러상품)
 	@PostMapping("/products/latestTranCodes")
 	public Map<Integer, String> getLatestTranCodeByProdNos(@RequestBody List<Integer> prodNos) throws Exception {
 		if (CollectionUtils.isEmpty(prodNos)) {
@@ -119,7 +128,7 @@ public class PurchaseRestController {
 		return purchaseService.getLatestTranCodeByProdNos(prodNos);
 	}
 
-	// 공용 에러 응답
+	// 잘못된 요청 에러
 	@ExceptionHandler(IllegalArgumentException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public Map<String, Object> handleBadRequest(IllegalArgumentException e) {
@@ -129,6 +138,7 @@ public class PurchaseRestController {
 		return err;
 	}
 
+	// 서버 에러
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public Map<String, Object> handleServerError(Exception e) {

@@ -13,9 +13,9 @@
 	border-radius: 8px;
 	background-color: #fff;
 	display: flex;
-	align-items: center; /* 수직 중앙 */
-	justify-content: center; /* 수평 중앙 */
-	overflow: hidden; /* 넘치는 부분 자르기 */
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
 }
 
 .product-img-box img {

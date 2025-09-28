@@ -23,7 +23,6 @@ import com.model2.mvc.service.purchase.PurchaseService;;
 public class ProductServiceImpl implements ProductService {
 
 	/// Field
-
 	@Qualifier("productDaoImpl")
 	@Resource(name = "productDao")
 	private ProductDao productDao;
@@ -73,7 +72,6 @@ public class ProductServiceImpl implements ProductService {
 		return productDao.getProduct(prodNo); // 단순 조회
 	}
 
-	// 상품리스트
 	public Map<String, Object> getProductList(Search search, String sort) throws Exception {
 		Map<String, Object> param = new HashMap<>();
 		param.put("searchCondition", search.getSearchCondition());

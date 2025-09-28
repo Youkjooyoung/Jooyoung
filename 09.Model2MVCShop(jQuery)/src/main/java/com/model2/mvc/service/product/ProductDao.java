@@ -7,7 +7,6 @@ import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.ProductImage;
 
-//==> 회원관리에서 CRUD 추상화/캡슐화한 DAO Interface Definition
 public interface ProductDao {
 
 	// 상품등록
@@ -25,7 +24,7 @@ public interface ProductDao {
 	// 상품삭제
 	public void deleteProduct(int prodNo) throws Exception;
 
-	// 게시판 Page 처리를 위한 전체Row(totalCount) return
+	// 게시판 Page 처리를 위한 전체Row
 	public int getTotalCount(Search search) throws Exception;
 
 	// 상품이미지 삭제
@@ -39,7 +38,7 @@ public interface ProductDao {
 
 	// 조회수
 	public void updateViewCount(int prodNo) throws Exception;
-
+	//관리자 상품리스트
 	List<Product> getProductListForManage(Map<String, Object> map) throws Exception;
 
 }

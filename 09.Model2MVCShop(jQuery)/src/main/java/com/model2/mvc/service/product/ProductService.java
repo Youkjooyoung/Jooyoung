@@ -7,7 +7,6 @@ import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.ProductImage;
 
-//==> 회원관리에서 서비스할 내용 추상화/캡슐화한 Service  Interface Definition  
 public interface ProductService {
 
 	// 상품등록
@@ -35,7 +34,7 @@ public interface ProductService {
 
 	// 상품이미지 조회/다중
 	List<ProductImage> getProductImages(int prodNo) throws Exception;
-
+	//관리자 상품리스트
 	Map<String,Object> getProductListForManage(Search search) throws Exception;
 	
 
