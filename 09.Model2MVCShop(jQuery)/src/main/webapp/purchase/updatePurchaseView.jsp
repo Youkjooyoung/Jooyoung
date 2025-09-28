@@ -31,7 +31,7 @@
       <p>수정할 주문 정보가 없습니다.</p>
     </c:when>
     <c:otherwise>
-      <fmt:formatDate value="${t.divyDate}" pattern="yyyy-MM-dd" var="divyYmd"/>
+      <c:set var="divyYmd" value="${empty t.divyDate ? '' : t.divyDate}"/>
       <form name="purchaseForm">
         <input type="hidden" name="tranNo" value="${t.tranNo}"/>
 

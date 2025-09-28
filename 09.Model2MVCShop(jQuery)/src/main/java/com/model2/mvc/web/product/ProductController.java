@@ -1,6 +1,7 @@
 package com.model2.mvc.web.product;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +79,13 @@ public class ProductController {
 
 		Product p = productService.getProduct(prodNo, first ? viewedKey : null);
 		List<ProductImage> imgs = productService.getProductImages(prodNo);
-		String latestCode = purchaseService.getLatestTranCodeByProd(prodNo);
+
+		Map<Integer, Map<String, Object>> info = purchaseService.getLatestPurchaseInfoByProdNos(Arrays.asList(prodNo));
+		String latestCode = null;
+		if (info != null && info.get(prodNo) != null) {
+			Object codeObj = info.get(prodNo).get("tranCode");
+			latestCode = (codeObj == null) ? null : String.valueOf(codeObj);
+		}
 
 		model.addAttribute("product", p);
 		model.addAttribute("productImages", imgs);
@@ -128,22 +135,43 @@ public class ProductController {
 		if (search.getPageSize() <= 0)
 			search.setPageSize(5);
 
+		// 1) 상품 목록 조회
 		Map<String, Object> result = productService.getProductList(search, sort);
 		@SuppressWarnings("unchecked")
 		List<Product> list = (List<Product>) result.get("list");
 		int totalCount = (int) result.getOrDefault("totalCount", 0);
 
 		List<Integer> prodNos = new java.util.ArrayList<>();
-		if (list != null)
-			for (Product p : list)
-				prodNos.add(p.getProdNo());
+		if (list != null) {
+			for (Product p : list) {
+				if (p != null)
+					prodNos.add(p.getProdNo());
+			}
+		}
 
-		Map<Integer, Map<String, Object>> latestInfo = purchaseService.getLatestPurchaseInfoByProdNos(prodNos);
+		// 3) 최신 구매정보
+		Map<Integer, Map<String, Object>> latestInfo = java.util.Collections.emptyMap();
+		Map<Integer, String> latestCodeMap = new java.util.HashMap<>();
 
+		if (!prodNos.isEmpty()) {
+
+			latestInfo = purchaseService.getLatestPurchaseInfoByProdNos(prodNos); 
+			
+			for (Map.Entry<Integer, Map<String, Object>> e : latestInfo.entrySet()) {
+				Integer prodNo = e.getKey();
+				Map<String, Object> row = e.getValue();
+				String code = (row == null || row.get("tranCode") == null) ? null : String.valueOf(row.get("tranCode"));
+				latestCodeMap.put(prodNo, code);
+			}
+		}
+
+		// 4) 모델 바인딩
 		model.addAttribute("list", list);
-		model.addAttribute("latestInfo", latestInfo);
+		model.addAttribute("latestInfo", latestInfo); 
+		model.addAttribute("latestCodeMap", latestCodeMap);
 		model.addAttribute("resultPage", new Page(search.getCurrentPage(), totalCount, pageUnit, search.getPageSize()));
 
+		// 5) 뷰 선택
 		User user = (User) session.getAttribute("user");
 		boolean admin = (user != null) && ("admin".equals(user.getUserId()) || "admin".equals(user.getRole()));
 		return (admin && "manage".equalsIgnoreCase(menu)) ? "forward:/product/listManageProduct.jsp"

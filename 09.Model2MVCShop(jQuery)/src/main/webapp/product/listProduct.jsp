@@ -79,7 +79,7 @@
 		    <td align="left">
 			  <div class="prod-link" 
 			       data-prodno="${product.prodNo}" 
-			       data-filename="${product.fileName}">
+			       data-filename="${product.fileName}"style="text-align: center;">
 			    ${product.prodName}
 			  </div>
 			</td>

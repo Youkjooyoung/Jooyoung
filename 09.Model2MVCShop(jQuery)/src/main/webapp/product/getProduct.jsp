@@ -10,25 +10,22 @@
 <link rel="stylesheet" href="${ctx}/css/ProductDetail.css" type="text/css">
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js" defer></script>
+<script src="${ctx}/javascript/app-core.js" defer></script>
 <script src="${ctx}/javascript/getProduct.js" defer></script>
-<script src="${ctx}/javascript/app-core.js"></script>
-</head>
 
-<!-- 컨텍스트를 data-ctx로 주입 -->
+</head>
 <body data-ctx="${ctx}">
 	<div class="container">
-
 		<!-- 제목 -->
 		<table width="100%" height="37" border="0" cellpadding="0" cellspacing="0">
 		    <tr>
-		      <td width="15"><img src="${ctxPath}/images/ct_ttl_img01.gif" width="15" height="37"/></td>
-		      <td background="${ctxPath}/images/ct_ttl_img02.gif" style="padding-left:10px;">
-		        <span class="ct_ttl01">상품 상세</span>
-		      </td>
-		      <td width="12"><img src="${ctxPath}/images/ct_ttl_img03.gif" width="12" height="37"/></td>
+		      	<td width="15"><img src="${ctx}/images/ct_ttl_img01.gif" width="15" height="37"/></td>
+				<td background="${ctx}/images/ct_ttl_img02.gif" style="padding-left:10px;">
+				  <span class="ct_ttl01">상품 상세</span>
+				</td>
+				<td width="12"><img src="${ctx}/images/ct_ttl_img03.gif" width="12" height="37"/></td>
 		    </tr>
 		  </table>
-
 		<!-- 상품 기본정보 -->
 		<table class="ct_box mt-10">
 			<tr>
@@ -75,21 +72,21 @@
 		</table>
 
 		<div class="status-area">
-			<c:choose>
-				<c:when test="${not empty latestCode}">
-					<p class="sold-out">해당상품은 품절된 상태입니다.</p>
-				</c:when>
-				<c:otherwise>
-					<c:if
-						test="${!(sessionScope.user != null && sessionScope.user.role == 'admin')}">
-						<button type="button" class="ct_btn01 btn-purchase"
-							data-prodno="${product.prodNo}">구매하기</button>
-					</c:if>
-				</c:otherwise>
-			</c:choose>
+		  <c:choose>
+		    <c:when test="${latestCode == '001' || latestCode == '002' || latestCode == '003'}">
+		      <p class="sold-out">해당상품은 품절된 상태입니다.</p>
+		    </c:when>
+		    <c:when test="${latestCode == '004'}">
+		      <p class="sold-out">해당상품은 취소 대기 상태입니다.</p>
+		    </c:when>
+		    <c:otherwise>
+		      <c:if test="${!(sessionScope.user != null && sessionScope.user.role == 'admin')}">
+		        <button type="button" class="ct_btn01 btn-purchase" data-prodno="${product.prodNo}">구매하기</button>
+		      </c:if>
+		    </c:otherwise>
+		  </c:choose>
 		</div>
 
-		<!-- 관리자 기능 : form 제거, 버튼 + data-* -->
 		<c:if
 			test="${sessionScope.user != null && sessionScope.user.role == 'admin'}">
 			<div class="admin-area">

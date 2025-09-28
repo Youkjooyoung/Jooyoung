@@ -63,7 +63,9 @@
                 </button>
               </c:when>
               <c:when test="${p.tranCode == '003'}">배송완료</c:when>
-              <c:when test="${p.tranCode == '004'}"><span style="color:red;">취소됨</span></c:when>
+               <c:when test="${p.tranCode == '004' || p.tranCode == '005'}">
+			      <span style="color:red;">주문취소</span>
+			    </c:when>
               <c:otherwise>-</c:otherwise>
             </c:choose>
           </td>

@@ -4,7 +4,7 @@
 
 
 body { margin-top:0; margin-left:2; margin-right:0; margin-bottom:0}
-td { font-size: 9pt; color: #58595B; font-style: normal; font-weight: normal; font-family:"돋움", "굴림"}
+td { font-size: 9pt;vertical-align: middle; color: #58595B; font-style: normal; font-weight: normal; font-family:"돋움", "굴림"}
 
 
 
@@ -84,7 +84,7 @@ select {border:1x solid #ADAEAD; color:#777777; background-color:#ffffff; font-f
 .ct_list_b {font-size: 9pt; color: #000000; text-decoration: none; font-family:"돋움", "굴림"; height:30px; background-color:#E3E3E3; text-align:center;}
 
 
-.ct_list_pop          {font-size: 9pt; color: #666666; font-family:"돋움", "굴림"; padding-top:2px; height:30px;}
+.ct_list_pop          {font-size: 9pt; color: #666666; font-family:"돋움", "굴림"; padding-top:2px; height:30px;text-align: center;}
 .ct_list_pop A:link    {font-size: 9pt; color: #666666; text-decoration: underline; font-family:"돋움", "굴림"}
 .ct_list_pop A:visited {font-size: 9pt; color: #666666; text-decoration: underline; font-family:"돋움", "굴림"}
 .ct_list_pop A:active  {font-size: 9pt; color: #666666; text-decoration: underline; font-family:"돋움", "굴림"}
