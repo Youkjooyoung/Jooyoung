@@ -66,4 +66,9 @@ public interface PurchaseDao {
 	List<Map<String, Object>> getLatestTranCodeByProdNos(List<Integer> prodNos) throws Exception;
 
 	Map<Integer, Map<String, Object>> getLatestPurchaseInfoByProdNos(List<Integer> prodNos) throws Exception;
+
+	List<Purchase> getPurchaseHistoryByProduct(int prodNo) throws Exception;
+
+	List<Map<String, Object>> getLatestActiveTranCodeByProdNos(List<Integer> prodNos) throws Exception;
+
 }

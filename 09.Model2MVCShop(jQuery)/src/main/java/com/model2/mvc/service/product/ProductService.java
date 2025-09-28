@@ -37,5 +37,7 @@ public interface ProductService {
 	List<ProductImage> getProductImages(int prodNo) throws Exception;
 
 	Map<String,Object> getProductListForManage(Search search) throws Exception;
+	
+
 
 }

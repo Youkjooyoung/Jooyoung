@@ -1,85 +1,54 @@
-/* /javascript/updateProduct.js — POST multipart, preview.js 재사용 (ES5) */
-(function($, w, d){
-  'use strict';
-  if (!w.jQuery) return;
+// /javascript/updateProduct.js
+(function(w, d, $) {
+	'use strict'; if (!$) return;
 
-  var ctx = $('body').data('ctx') || '';
-  var deleteImageIds = [];
+	$(function() {
+		// 저장
+		$(d).on('click', '#btnUpdate', function(e) {
+			e.preventDefault();
 
-  function digits(s){ return (s||'').replace(/\D/g,''); }
-  function fmtPrice($i){
-    var r = digits($i.val());
-    $i.val(r ? Number(r).toLocaleString('ko-KR') : '');
-  }
+			var $f = $('form[name="detailForm"]');
+			var prodNo = $.trim($f.find('[name="prodNo"]').val());
+			var name = $.trim($f.find('[name="prodName"]').val());
+			var detail = $.trim($f.find('[name="prodDetail"]').val());
+			var manu = $.trim($f.find('[name="manuDate"]').val());
+			var price = $.trim($f.find('[name="price"]').val());
 
-  $(function(){
-    // 가격 포맷
-    $('#price').on('input blur', function(){ fmtPrice($(this)); });
+			if (!prodNo) { alert('제품 번호가 없습니다.'); return; }
+			if (!name) { alert('상품명을 입력하세요.'); $f.find('[name="prodName"]').focus(); return; }
+			if (!detail) { alert('상품상세를 입력하세요.'); $f.find('[name="prodDetail"]').focus(); return; }
+			if (!price) { alert('가격을 입력하세요.'); $f.find('[name="price"]').focus(); return; }
 
-    // 기존 이미지 onerror fallback (조회 경로 통일)
-    $('#existingImages').on('error', 'img.img-existing', function(){
-      var f = $(this).data('filename') || '';
-      $(this).off('error').attr('src', ctx + '/upload/uploadFiles/' + f);
-    });
+			// 규칙: form에는 method/action 없음 ⇒ JS에서만 지정
+			var form = $f[0];
+			form.action = App.ctx() + '/product/updateProduct';
+			form.method = 'post';
 
-    // 기존 이미지 삭제 표시 수집
-    $(d).on('click', '.btn-delete-existing', function(){
-      var id = $(this).data('imgid');
-      if (!id) return;
-      if ($.inArray(String(id), deleteImageIds) < 0) deleteImageIds.push(String(id));
-      $(this).closest('.img-box').addClass('to-delete');
-    });
+			// 숫자 정규화
+			$f.find('[name="price"]').val(App.digits(price));
+			if (manu) $f.find('[name="manuDate"]').val(App.digits(manu));
 
-    // 수정완료
-    $(d).on('click', '#btnSave', function(){
-      var prodNo = $('#prodNo').val();
-      var name   = $.trim($('#prodName').val());
-      var detail = $.trim($('#prodDetail').val());
-      var manu   = $.trim($('#manuDate').val());
-      var priceS = $('#price').val(); // "12,345"도 허용 → 도메인 setPrice(String)
+			// 파일: AppPreview 있으면 우선 사용
+			if (w.AppPreview && typeof w.AppPreview.getFiles === 'function') {
+				// 업로드를 REST로 처리하는 게 아니라면, 폼 제출로 넘겨도 됨(서버에서 multipart 처리)
+				// 이 구현은 서버 기존 흐름을 유지: 단순 submit
+			}
 
-      if (!name){ alert('상품명을 입력하세요.'); $('#prodName').focus(); return; }
-      if (!digits(priceS)){ alert('가격을 입력하세요.'); $('#price').focus(); return; }
+			form.submit();
+		});
 
-      // 새 이미지: preview.js 확정 목록
-      var files = [];
-      if (w.AppPreview && typeof w.AppPreview.getFiles === 'function') {
-        files = w.AppPreview.getFiles() || [];
-      } else {
-        var $uf = $('#uploadFiles');
-        if ($uf.length && $uf[0] && $uf[0].files) files = $uf[0].files;
-      }
+		// 취소
+		$(d).on('click', '#btnCancel', function(e) {
+			e.preventDefault();
+			var prodNo = $('form[name="detailForm"]').find('[name="prodNo"]').val();
+			if (prodNo) App.go('/product/getProduct', { prodNo: prodNo });
+			else history.back();
+		});
 
-      var fd = new FormData();
-      fd.append('prodName',   name);
-      fd.append('prodDetail', detail);
-      fd.append('manuDate',   manu);
-      fd.append('price',      priceS);
-
-      for (var i=0;i<deleteImageIds.length;i++) fd.append('deleteImageIds', deleteImageIds[i]);
-      for (var j=0;j<files.length;j++)         fd.append('uploadFiles', files[j]);
-
-      $.ajax({
-        url: ctx + '/api/products/' + encodeURIComponent(prodNo),
-        type: 'POST',            // 파일 포함 업데이트는 POST
-        data: fd,
-        processData: false,
-        contentType: false,
-        success: function(){
-          w.location.href = ctx + '/product/getProduct?prodNo=' + encodeURIComponent(prodNo);
-        },
-        error: function(xhr){
-          console.log('상태코드:', xhr.status);
-          console.log('응답본문:', xhr.responseText);
-          alert('상품 수정에 실패했습니다.');
-        }
-      });
-    });
-
-    // 수정취소
-    $(d).on('click', '#btnCancel', function(){
-      var prodNo = $(this).data('prodno');
-      w.location.href = ctx + '/product/getProduct?prodNo=' + encodeURIComponent(prodNo);
-    });
-  });
-})(jQuery, window, document);
+		// 가격 콤마(보기용)
+		$(d).on('keyup', 'input[name="price"]', function() {
+			var v = App.digits($(this).val());
+			$(this).val(v ? Number(v).toLocaleString('ko-KR') : '');
+		});
+	});
+})(window, document, window.jQuery);

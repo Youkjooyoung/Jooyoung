@@ -5,8 +5,7 @@
 
 <mapper namespace="PurchaseMapper">
 
-	<!-- ========================================================= 공통 ResultMap 
-		========================================================== -->
+	<!-- ========================================================= 공통 ResultMap 	========================================================== -->
 
 	<!-- Purchase + (buyer:User) + (purchaseProd:Product) -->
 	<resultMap id="purchaseResultMap"
@@ -15,11 +14,13 @@
 		<result property="tranCode" column="TRAN_CODE" />
 		<result property="orderDate" column="ORDER_DATA" />
 		<result property="divyAddr" column="DIVY_ADDR" />
-		<result property="divyDate" column="DIVY_DATE" jdbcType="DATE" />
+		<result property="divyDate" column="DIVY_DATE" />
 		<result property="divyRequest" column="DLVY_REQUEST" />
 		<result property="paymentOption" column="PAYMENT_OPTION" />
 		<result property="receiverName" column="RECEIVER_NAME" />
 		<result property="receiverPhone" column="RECEIVER_PHONE" />
+		<result property="cancelDate" column="CANCEL_DATE"
+			jdbcType="DATE" />
 
 		<association property="buyer"
 			javaType="com.model2.mvc.service.domain.User">
@@ -53,7 +54,7 @@
 		<result property="tranCode" column="TRAN_STATUS_CODE" />
 	</resultMap>
 
-	<!-- ========================================================= 공통 SQL 조각 ========================================================== -->
+	<!-- ========================================================= 공통 SQL 조각	========================================================== -->
 	<sql id="purchaseSelectColumns">
 		T.TRAN_NO,
 		T.TRAN_STATUS_CODE AS TRAN_CODE,
@@ -228,32 +229,38 @@
 	</update>
 
 	<update id="updateTranCodeByProd" parameterType="map">
-		UPDATE TRANSACTION t
+		UPDATE
+		TRANSACTION t
 		SET t.TRAN_STATUS_CODE = #{tranCode}
-		WHERE t.PROD_NO = #{prodNo}
-		AND t.TRAN_NO = (SELECT MAX(t2.TRAN_NO) FROM TRANSACTION t2 WHERE
+		WHERE t.PROD_NO =
+		#{prodNo}
+		AND t.TRAN_NO = (SELECT MAX(t2.TRAN_NO) FROM TRANSACTION t2
+		WHERE
 		t2.PROD_NO = #{prodNo})
 		AND (
-		(#{tranCode} = '002' AND t.TRAN_STATUS_CODE = '001') OR
-		(#{tranCode} = '003' AND t.TRAN_STATUS_CODE = '002') OR
-		(#{tranCode} = '005' AND t.TRAN_STATUS_CODE = '004')
+		(#{tranCode} = '002' AND
+		t.TRAN_STATUS_CODE = '001') OR
+		(#{tranCode} = '003' AND
+		t.TRAN_STATUS_CODE = '002') OR
+		(#{tranCode} = '005' AND
+		t.TRAN_STATUS_CODE = '004')
 		)
 	</update>
 
 
 	<!-- ========================================================= 최신 상태/구매정보 조회 ========================================================== -->
-<select id="getLatestTranCodeByProd" parameterType="int"
-	resultType="string">
-	SELECT tranCode
-	FROM (
-	SELECT t.TRAN_STATUS_CODE AS tranCode,
-	ROW_NUMBER() OVER (ORDER BY t.TRAN_NO DESC) AS rn
-	FROM TRANSACTION t
-	WHERE t.PROD_NO = #{prodNo}
-	AND t.TRAN_STATUS_CODE &lt;&gt; '004'
-	)
-	WHERE rn = 1
-</select>
+	<select id="getLatestTranCodeByProd" parameterType="int"
+		resultType="string">
+		SELECT tranCode
+		FROM (
+		SELECT t.TRAN_STATUS_CODE AS tranCode,
+		ROW_NUMBER() OVER (ORDER BY t.TRAN_NO DESC) AS rn
+		FROM TRANSACTION t
+		WHERE t.PROD_NO = #{prodNo}
+		AND t.TRAN_STATUS_CODE &lt;&gt; '004'
+		)
+		WHERE rn = 1
+	</select>
 
 	<select id="getLatestTranCodeByProdNos" parameterType="list"
 		resultType="map">
@@ -280,25 +287,59 @@
 
 	<!-- 관리자 그리드용: prodNo → 구매자ID/주문일/상태 묶음 조회 -->
 	<select id="getLatestPurchaseInfoByProdNos" parameterType="list"
-	resultMap="latestPurchaseInfoMap">
-	SELECT
-	t.PROD_NO,
-	t.BUYER_ID,
-	TO_CHAR(t.ORDER_DATA , 'YYYY-MM-DD') AS ORDER_DATA,
-	TO_CHAR(t.CANCEL_DATE, 'YYYY-MM-DD') AS CANCEL_DATE,
-	t.TRAN_STATUS_CODE
+		resultMap="latestPurchaseInfoMap">
+		SELECT
+		t.PROD_NO,
+		t.BUYER_ID,
+		TO_CHAR(t.ORDER_DATA , 'YYYY-MM-DD') AS ORDER_DATA,
+		TO_CHAR(t.CANCEL_DATE, 'YYYY-MM-DD') AS CANCEL_DATE,
+		t.TRAN_STATUS_CODE
+		FROM (
+		SELECT
+		t.*,
+		ROW_NUMBER() OVER (PARTITION BY t.PROD_NO ORDER BY t.TRAN_NO DESC) AS rn
+		FROM TRANSACTION t
+		WHERE t.PROD_NO IN
+		<foreach collection="list" item="value" open="(" separator=","
+			close=")">
+			#{value}
+		</foreach>
+		) t
+		WHERE t.rn = 1
+	</select>
+
+	<!-- 상품별 전체 거래 히스토리(최신순) -->
+	<select id="getPurchaseHistoryByProduct" parameterType="int"
+		resultMap="purchaseResultMap">
+		SELECT
+		<include refid="purchaseSelectColumns" />
+		,
+		T.CANCEL_DATE AS CANCEL_DATE
+		<include refid="purchaseJoins" />
+		WHERE T.PROD_NO = #{prodNo}
+		ORDER BY T.TRAN_NO DESC
+	</select>
+
+	<select id="getLatestActiveTranCodeByProdNos"
+	parameterType="list" resultType="map">
+	SELECT prodNo, tranCode
 	FROM (
-	SELECT
-	t.*,
+	SELECT t.PROD_NO AS prodNo,
+	t.TRAN_STATUS_CODE AS tranCode,
 	ROW_NUMBER() OVER (PARTITION BY t.PROD_NO ORDER BY t.TRAN_NO DESC) AS rn
 	FROM TRANSACTION t
-	WHERE t.PROD_NO IN
-	<foreach collection="list" item="value" open="(" separator=","
-		close=")">
-		#{value}
-	</foreach>
-	) t
-	WHERE t.rn = 1
+	<where>
+		<if test="list != null and list.size > 0">
+			t.PROD_NO IN
+			<foreach collection="list" item="value" open="("
+				separator="," close=")">
+				#{value}
+			</foreach>
+		</if>
+		AND t.TRAN_STATUS_CODE NOT IN ('004','005')
+	</where>
+	)
+	WHERE rn = 1
 </select>
 
 </mapper>

@@ -1,19 +1,22 @@
-$(function() {
-	// 컨텍스트 경로 가져오기
-	const ctx = $("body").data("ctx") || $("base").attr("href") || "";
+// /javascript/addPurchase.js
+(function($, w, d) {
+	'use strict'; if (!$) return;
 
-	// 주문 등록 버튼
-	$("#btnSubmit").on("click", function() {
-		const form = document.purchaseForm;
+	$(function() {
+		var ctx = App.ctx();
 
-		// action과 method를 JS에서 설정
-		form.action = ctx + "/purchase/add";
-		form.method = "post";
-		form.submit();
+		$('#btnSubmit').on('click', function(e) {
+			e.preventDefault();
+			// form 태그에는 method/action 없음(규칙) — JS에서만 지정
+			var form = d.purchaseForm;
+			form.action = ctx + '/purchase/add';
+			form.method = 'post';
+			form.submit();
+		});
+
+		$('#btnCancel').on('click', function(e) {
+			e.preventDefault();
+			App.go('/product/listProduct');
+		});
 	});
-
-	// 취소 버튼
-	$("#btnCancel").on("click", function() {
-		window.location.href = ctx + "/product/listProduct";
-	});
-});
+})(jQuery, window, document);

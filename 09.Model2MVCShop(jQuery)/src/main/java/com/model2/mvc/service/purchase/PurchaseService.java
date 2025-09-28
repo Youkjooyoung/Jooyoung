@@ -58,4 +58,8 @@ public interface PurchaseService {
 	Map<Integer, String> getLatestTranCodeByProdNos(List<Integer> prodNos) throws Exception;
 
 	Map<Integer, Map<String, Object>> getLatestPurchaseInfoByProdNos(List<Integer> prodNos) throws Exception;
+
+	List<Purchase> getPurchaseHistoryByProduct(int prodNo) throws Exception;
+
+	Map<Integer, String> getLatestActiveTranCodeByProdNos(List<Integer> prodNos) throws Exception;
 }

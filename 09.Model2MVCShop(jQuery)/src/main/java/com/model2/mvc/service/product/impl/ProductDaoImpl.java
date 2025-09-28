@@ -67,12 +67,15 @@ public class ProductDaoImpl implements ProductDao {
 		return sqlSession.selectOne("ProductMapper.getTotalCount", search);
 	}
 
-	@Override
 	public void updateViewCount(int prodNo) throws Exception {
 		sqlSession.update("ProductMapper.updateViewCount", prodNo);
 	}
 
 	public List<Product> getProductListForManage(Map<String, Object> map) throws Exception {
 		return sqlSession.selectList("ProductMapper.getProductListForManage", map);
+	}
+
+	public List<Map<String, Object>> getLatestActiveTranCodeByProdNos(List<Integer> prodNos) throws Exception {
+		return sqlSession.selectList("PurchaseMapper.getLatestActiveTranCodeByProdNos", prodNos);
 	}
 }

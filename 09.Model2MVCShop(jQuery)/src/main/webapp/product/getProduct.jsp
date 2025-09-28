@@ -11,6 +11,7 @@
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js" defer></script>
 <script src="${ctx}/javascript/getProduct.js" defer></script>
+<script src="${ctx}/javascript/app-core.js"></script>
 </head>
 
 <!-- 컨텍스트를 data-ctx로 주입 -->
@@ -37,6 +38,10 @@
 			<tr>
 				<td class="ct_list_b">상품명</td>
 				<td class="ct_list_pop">${product.prodName}</td>
+			</tr>
+			<tr>
+				<td class="ct_list_b">가격</td>
+				<td class="ct_list_pop">${product.price}</td>
 			</tr>
 			<tr>
 				<td class="ct_list_b">상세 설명</td>

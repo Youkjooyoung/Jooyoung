@@ -9,6 +9,7 @@
   <meta charset="UTF-8"/>
   <title>구매 등록</title>
   <link rel="stylesheet" href="${ctx}/css/admin.css"/>
+  <script src="${ctx}/javascript/app-core.js"></script>
 </head>
 <body>
 

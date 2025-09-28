@@ -15,6 +15,7 @@
   <!-- 공통(미리보기) / 수정전용 -->
   <script src="${ctxPath}/javascript/preview.js"></script>
   <script src="${ctxPath}/javascript/updateProduct.js"></script>
+  <script src="${ctx}/javascript/app-core.js"></script>
 </head>
 <body data-ctx="${ctxPath}">
 <div class="container">

@@ -1,6 +1,5 @@
 package com.model2.mvc.service.purchase.impl;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -80,6 +79,18 @@ public class PurchaseDaoImpl implements PurchaseDao {
 	public Map<Integer, Map<String, Object>> getLatestPurchaseInfoByProdNos(List<Integer> prodNos) throws Exception {
 		List<Map<String, Object>> list = sqlSession.selectList("PurchaseMapper.getLatestPurchaseInfoByProdNos",
 				prodNos);
-		return list.stream().collect(Collectors.toMap(row -> ((BigDecimal) row.get("prodNo")).intValue(), row -> row));
+
+		return list.stream().collect(Collectors.toMap(row -> ((Number) row.get("prodNo")).intValue(), row -> row));
 	}
+
+	@Override
+	public List<Map<String, Object>> getLatestActiveTranCodeByProdNos(List<Integer> prodNos) throws Exception {
+		return sqlSession.selectList("PurchaseMapper.getLatestActiveTranCodeByProdNos", prodNos);
+	}
+
+	@Override
+	public List<Purchase> getPurchaseHistoryByProduct(int prodNo) throws Exception {
+		return sqlSession.selectList("PurchaseMapper.getPurchaseHistoryByProduct", prodNo);
+	}
+
 }

@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="${ctx}/css/admin.css" type="text/css">
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="${ctx}/javascript/listProduct.js"></script>
+<script src="${ctx}/javascript/app-core.js"></script>
 </head>
 <body data-ctx="${ctx}">
 

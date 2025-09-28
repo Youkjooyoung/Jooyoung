@@ -1,27 +1,30 @@
-$(function() {
-	const ctx = $("body").data("ctx");
+// /javascript/getPurchase.js
+(function($, w, d) {
+	'use strict'; if (!$) return;
 
-	// 수정
-	$("#btnEdit").on("click", function() {
-		const tranNo = $(this).data("tranno");
-		location.href = ctx + "/purchase/" + tranNo + "/edit";
+	var ctx = function() { return App.ctx(); };
+
+	// 수정 화면
+	$(d).on('click', '#btnEdit', function(e) {
+		e.preventDefault();
+		var tranNo = $(this).data('tranno');
+		if (tranNo) w.location.href = ctx() + '/purchase/' + tranNo + '/edit';
 	});
 
 	// 구매 취소
-	$("#btnCancel").on("click", function() {
-		const tranNo = $(this).data("tranno");
-		if (confirm("정말로 구매를 취소하시겠습니까?")) {
-			const form = $("<form>", { method: "post", action: ctx + "/purchase/" + tranNo + "/cancel" });
-			form.appendTo("body").submit();
-		}
+	$(d).on('click', '#btnCancel', function(e) {
+		e.preventDefault();
+		var tranNo = $(this).data('tranno');
+		if (!tranNo) return;
+		if (!confirm('정말로 구매를 취소하시겠습니까?')) return;
+		App.post('/purchase/' + tranNo + '/cancel');
 	});
 
-	// 물품 수령 확인
-	$("#btnConfirm").on("click", function() {
-		const tranNo = $(this).data("tranno");
-		const prodNo = $(this).data("prodno");
-		const form = $("<form>", { method: "post", action: ctx + "/purchase/" + tranNo + "/confirm" });
-		form.append($("<input>", { type: "hidden", name: "prodNo", value: prodNo }));
-		form.appendTo("body").submit();
+	// 수령 확인
+	$(d).on('click', '#btnConfirm', function(e) {
+		e.preventDefault();
+		var tranNo = $(this).data('tranno'), prodNo = $(this).data('prodno');
+		if (!tranNo || !prodNo) return;
+		App.post('/purchase/' + tranNo + '/confirm', { prodNo: prodNo });
 	});
-});
+})(jQuery, window, document);

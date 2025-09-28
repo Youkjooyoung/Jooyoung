@@ -117,4 +117,22 @@ public class PurchaseServiceImpl implements PurchaseService {
 	public Map<Integer, Map<String, Object>> getLatestPurchaseInfoByProdNos(List<Integer> prodNos) throws Exception {
 		return purchaseDao.getLatestPurchaseInfoByProdNos(prodNos);
 	}
+
+	@Override
+	public List<Purchase> getPurchaseHistoryByProduct(int prodNo) throws Exception {
+		return purchaseDao.getPurchaseHistoryByProduct(prodNo);
+	}
+
+	@Override
+	public Map<Integer, String> getLatestActiveTranCodeByProdNos(List<Integer> prodNos) throws Exception {
+		List<Map<String, Object>> rows = purchaseDao.getLatestActiveTranCodeByProdNos(prodNos);
+		Map<Integer, String> result = new java.util.HashMap<>();
+		for (Map<String, Object> r : rows) {
+			Object noObj = (r.get("prodNo") != null) ? r.get("prodNo") : r.get("PROD_NO");
+			Object codeObj = (r.get("tranCode") != null) ? r.get("tranCode") : r.get("TRAN_STATUS_CODE");
+			if (noObj != null && codeObj != null)
+				result.put(((Number) noObj).intValue(), codeObj.toString());
+		}
+		return result;
+	}
 }

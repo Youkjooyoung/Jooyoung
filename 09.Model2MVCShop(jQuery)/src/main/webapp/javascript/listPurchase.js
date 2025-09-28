@@ -1,25 +1,21 @@
-$(function() {
-  const ctx = $("body").data("ctx");  // JSP에서 data-ctx로 받은 contextPath
+// /javascript/listPurchase.js
+(function($, w, d) {
+	'use strict'; if (!$) return;
 
-  // 구매내역 상세 이동
-  $(document).on("click", ".purchase-link", function() {
-    const tranNo = $(this).data("tranno");
-    if (tranNo) {
-      location.href = ctx + "/purchase/" + tranNo;  // RESTful 방식
-    }
-  });
+	var ctx = function() { return App.ctx(); };
 
-  // 물품 수령 확인
-  $(document).on("click", ".btn-confirm", function() {
-    const tranNo = $(this).data("tranno");
-    const prodNo = $(this).data("prodno");
+	// 구매 상세 이동
+	$(d).on('click', '.purchase-link', function() {
+		var no = $(this).data('tranno'); if (no) w.location.href = ctx() + '/purchase/' + no;
+	});
 
-    if (tranNo && prodNo) {
-      if (confirm("물품을 수령하셨습니까?")) {
-        $.post(ctx + "/purchase/" + tranNo + "/confirm", { prodNo: prodNo })
-          .done(() => location.reload())
-          .fail(() => alert("처리 중 오류가 발생했습니다."));
-      }
-    }
-  });
-});
+	// 수령 확인
+	$(d).on('click', '.btn-confirm', function() {
+		var no = $(this).data('tranno'), prodNo = $(this).data('prodno');
+		if (!no || !prodNo) return;
+		if (!confirm('물품을 수령하셨습니까?')) return;
+		$.post(ctx() + '/purchase/' + no + '/confirm', { prodNo: prodNo })
+			.done(function() { location.reload(); })
+			.fail(function() { alert('처리 중 오류가 발생했습니다.'); });
+	});
+})(jQuery, window, document);

@@ -167,4 +167,13 @@ public class PurchaseController {
 		purchaseService.updateTranCodeByProd(prodNo, "005");
 		return new ModelAndView("redirect:/product/listProduct?menu=manage");
 	}
+	
+	// 관리자: 상품별 주문 내역 팝업
+	@GetMapping("product/{prodNo}/history")
+	public ModelAndView getHistoryByProduct(@PathVariable int prodNo) throws Exception {
+		ModelAndView mav = new ModelAndView("forward:/purchase/historyByProduct.jsp");
+		mav.addObject("prodNo", prodNo);
+		mav.addObject("list", purchaseService.getPurchaseHistoryByProduct(prodNo));
+		return mav;
+	}
 }

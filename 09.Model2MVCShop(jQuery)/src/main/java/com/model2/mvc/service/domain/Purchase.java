@@ -15,6 +15,15 @@ public class Purchase {
 	private String tranCode;
 	private int tranNo;
 
+	private Date cancelDate;
+	private String cancelUser;
+
+	String ORDERED = "001"; // 주문완료
+	String SHIPPING = "002"; // 배송중
+	String DELIVERED = "003"; // 배송완료
+	String CANCEL_REQUESTED = "004"; // 취소요청
+	String CANCEL_CONFIRMED = "005"; // 취소확인
+
 	public Purchase() {
 	}
 
@@ -118,6 +127,22 @@ public class Purchase {
 					+ receiverPhone.substring(7);
 		}
 		return receiverPhone; // 11자리가 아니면 그대로 반환
+	}
+
+	public Date getCancelDate() {
+		return cancelDate;
+	}
+
+	public void setCancelDate(Date cancelDate) {
+		this.cancelDate = cancelDate;
+	}
+
+	public String getCancelUser() {
+		return cancelUser;
+	}
+
+	public void setCancelUser(String cancelUser) {
+		this.cancelUser = cancelUser;
 	}
 
 	@Override

@@ -17,7 +17,7 @@
 		<result property="viewCount" column="VIEW_COUNT" />
 		<result property="buyerId" column="BUYER_ID" />
 		<result property="buyDate" column="BUY_DATE" />
-		<result property="tranStatusCode" column="TRAN_STATUS_CODE"/>
+		<result property="tranStatusCode" column="TRAN_STATUS_CODE" />
 	</resultMap>
 
 	<!-- 공통 컬럼 -->
@@ -25,6 +25,10 @@
 		PROD_NO, PROD_NAME, PROD_DETAIL, MANUFACTURE_DAY,
 		PRICE,
 		IMAGE_FILE AS fileName, REG_DATE, VIEW_COUNT
+	</sql>
+
+	<sql id="Cancelled_Status_List">
+		('004','005')
 	</sql>
 
 	<!-- 검색 조건(where) -->
@@ -121,8 +125,7 @@
 	<!-- 목록 (페이징) -->
 	<select id="getProductList" parameterType="map"
 		resultMap="product">
-		SELECT *
-		FROM (
+		SELECT * FROM (
 		SELECT ROWNUM rnum, A.*
 		FROM (
 		SELECT
@@ -134,12 +137,12 @@
 		p.IMAGE_FILE,
 		p.REG_DATE,
 		p.VIEW_COUNT,
-		CASE WHEN t.TRAN_STATUS_CODE = '004' THEN NULL
-		ELSE t.BUYER_ID END AS
-		BUYER_ID,
-		CASE WHEN t.TRAN_STATUS_CODE = '004'
-		THEN NULL ELSE
-		TO_CHAR(t.ORDER_DATA,'YYYY-MM-DD') END AS BUY_DATE,
+		CASE WHEN t.TRAN_STATUS_CODE IN
+		<include refid="Cancelled_Status_List" />
+		THEN NULL ELSE t.BUYER_ID END AS BUYER_ID,
+		CASE WHEN t.TRAN_STATUS_CODE IN
+		<include refid="Cancelled_Status_List" />
+		THEN NULL ELSE TO_CHAR(t.ORDER_DATA,'YYYY-MM-DD') END AS BUY_DATE,
 		t.TRAN_STATUS_CODE
 		FROM PRODUCT p
 		LEFT JOIN (
@@ -148,16 +151,12 @@
 		tr.BUYER_ID,
 		tr.ORDER_DATA,
 		tr.TRAN_STATUS_CODE,
-		ROW_NUMBER() OVER
-		(PARTITION BY tr.PROD_NO ORDER BY tr.TRAN_NO DESC) AS rn
-		FROM
-		TRANSACTION tr
+		ROW_NUMBER() OVER (PARTITION BY tr.PROD_NO ORDER BY tr.TRAN_NO DESC) AS rn
+		FROM TRANSACTION tr
 		) t
 		ON p.PROD_NO = t.PROD_NO
 		AND t.rn = 1
-
 		<include refid="Search_Where" />
-
 		<choose>
 			<when test="sort == 'priceAsc'"> ORDER BY p.PRICE ASC </when>
 			<when test="sort == 'priceDesc'"> ORDER BY p.PRICE DESC </when>
@@ -227,12 +226,14 @@
 		FROM (
 		SELECT t.*,
 		ROW_NUMBER() OVER(PARTITION BY t.PROD_NO
-		ORDER BY t.TRAN_DATE DESC) rn
+		ORDER BY
+		t.TRAN_DATE DESC) rn
 		FROM TRANSACTION t
 		)
 		WHERE rn = 1
 		) tx ON
-		tx.PROD_NO = p.PROD_NO
+		tx.PROD_NO =
+		p.PROD_NO
 		<include refid="Search_Where" />
 		<choose>
 			<when test="sort == 'priceAsc'"> ORDER BY p.PRICE ASC </when>
