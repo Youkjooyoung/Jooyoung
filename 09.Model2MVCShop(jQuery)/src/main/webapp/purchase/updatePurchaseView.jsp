@@ -32,17 +32,62 @@
     </c:when>
     <c:otherwise>
       <c:set var="divyYmd" value="${empty t.divyDate ? '' : t.divyDate}"/>
+
       <form name="purchaseForm">
-        <input type="hidden" name="tranNo" value="${t.tranNo}"/>
+        <input type="hidden" name="tranNo" id="tranNo" value="${t.tranNo}"/>
 
         <table width="100%" border="0" cellspacing="0" cellpadding="6" style="margin-top:10px;">
-          <tr><td class="ct_list_b" width="150">주문상태</td><td class="ct_list_pop">${t.tranCode}</td></tr>
-          <tr><td class="ct_list_b">지불방식</td><td class="ct_list_pop"><input type="text"  name="paymentOption"  value="${t.paymentOption}" class="ct_input_g"/></td></tr>
-          <tr><td class="ct_list_b">배송희망일</td><td class="ct_list_pop"><input type="date" name="divyDate"       value="${divyYmd}"        class="ct_input_g"/></td></tr>
-          <tr><td class="ct_list_b">수령인</td><td class="ct_list_pop"><input type="text"  name="receiverName"   value="${fn:escapeXml(t.receiverName)}"  required class="ct_input_g"/></td></tr>
-          <tr><td class="ct_list_b">연락처</td><td class="ct_list_pop"><input type="tel"   name="receiverPhone"  value="${fn:escapeXml(t.receiverPhone)}" required class="ct_input_g"/></td></tr>
-          <tr><td class="ct_list_b">배송주소</td><td class="ct_list_pop"><input type="text" name="divyAddr"       value="${fn:escapeXml(t.divyAddr)}"      required class="ct_input_g"/></td></tr>
-          <tr><td class="ct_list_b">요청사항</td><td class="ct_list_pop"><textarea name="divyRequest" rows="4" class="ct_input_g"><c:out value="${t.divyRequest}"/></textarea></td></tr>
+          <colgroup>
+            <col width="150"/>
+            <col/>
+          </colgroup>
+
+          <tr>
+            <td class="ct_list_b" align="left">주문상태</td>
+            <td class="ct_list_pop" align="left">${t.tranCode}</td>
+          </tr>
+          <tr>
+            <td class="ct_list_b" align="left">지불방식</td>
+            <td class="ct_list_pop" align="left">
+              <input type="text" name="paymentOption" id="paymentOption"
+                     value="${t.paymentOption}" class="ct_input_g" readonly="readonly"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="ct_list_b" align="left">배송희망일</td>
+            <td class="ct_list_pop" align="left">
+              <input type="date" name="divyDate" id="divyDate"
+                     value="${divyYmd}" class="ct_input_g"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="ct_list_b" align="left">수령인</td>
+            <td class="ct_list_pop" align="left">
+              <input type="text" name="receiverName" id="receiverName"
+                     value="${fn:escapeXml(t.receiverName)}" class="ct_input_g" required/>
+            </td>
+          </tr>
+          <tr>
+            <td class="ct_list_b" align="left">연락처</td>
+            <td class="ct_list_pop" align="left">
+              <input type="tel" name="receiverPhone" id="receiverPhone"
+                     value="${fn:escapeXml(t.receiverPhone)}" class="ct_input_g" required/>
+            </td>
+          </tr>
+          <tr>
+            <td class="ct_list_b" align="left">배송주소</td>
+            <td class="ct_list_pop" align="left">
+              <input type="text" name="divyAddr" id="divyAddr"
+                     value="${fn:escapeXml(t.divyAddr)}" class="ct_input_g" required/>
+            </td>
+          </tr>
+          <tr>
+            <td class="ct_list_b" align="left">요청사항</td>
+            <td class="ct_list_pop" align="left">
+            <!-- textarea 사용 시 개행 금지  -->
+              <textarea name="divyRequest" id="divyRequest" rows="10" class="ct_input_g" style="width:500px;"><c:out value="${t.divyRequest}"/></textarea>
+            </td>
+          </tr>
         </table>
 
         <div style="margin-top:12px; text-align:right;">

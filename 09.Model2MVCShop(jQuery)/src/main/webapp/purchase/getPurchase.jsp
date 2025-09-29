@@ -57,10 +57,11 @@
 
   <!-- 버튼 영역 -->
   <div style="margin-top:10px; text-align:right;">
-    <c:if test="${purchase.tranCode == '001'}">
-      <button type="button" class="ct_btn01" id="btnEdit" data-tranno="${purchase.tranNo}">수정</button>
-      <button type="button" class="ct_btn01" id="btnCancel" data-tranno="${purchase.tranNo}">구매취소</button>
-    </c:if>
+	    <c:if test="${purchase.tranCode == '001'}">
+		  <button type="button" class="ct_btn01" id="btnEdit" data-tranno="${purchase.tranNo}">수정</button>
+		  <button type="button" class="ct_btn01" id="btnCancel"data-tranno="${purchase.tranNo}"
+		  					data-url="${ctx}/purchase/${purchase.tranNo}/cancel">구매취소</button>
+		</c:if>
 
     <c:if test="${purchase.tranCode == '002'}">
       <button type="button" class="ct_btn01" id="btnConfirm" 
@@ -76,7 +77,8 @@
 </div>
 
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="${ctx}/javascript/getPurchase.js"></script>
 <script src="${ctx}/javascript/app-core.js"></script>
+<script src="${ctx}/javascript/getPurchase.js"></script>
+<script src="${ctx}/javascript/cancel-order.js"></script>
 </body>
 </html>

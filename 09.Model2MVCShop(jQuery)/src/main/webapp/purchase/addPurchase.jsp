@@ -9,14 +9,15 @@
   <meta charset="UTF-8"/>
   <title>구매 등록</title>
   <link rel="stylesheet" href="${ctx}/css/admin.css"/>
-  <script src="${ctx}/javascript/app-core.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="${ctx}/javascript/app-core.js"></script>
+<script src="${ctx}/javascript/addPurchase.js"></script>
 </head>
 <body>
 
 <div style="width:98%; margin-left:10px;">
   <h2 class="ct_ttl01">구매 등록</h2>
 
-  <!-- ✅ form에는 name만 -->
   <form name="purchaseForm">
     <input type="hidden" name="purchaseProd.prodNo" value="${empty p ? param.prodNo : p.prodNo}" />
 
@@ -29,7 +30,7 @@
       <tr><td class="ct_list_b">제조일자</td><td class="ct_list_pop"><c:out value="${empty p ? param.manuDate : p.manuDate}"/></td></tr>
     </table>
 
-    <table width="100%" border="0" cellspacing="0" cellpadding="6" style="margin-top:10px;">
+    <table width="100%" border="0" cellspacing="0" cellpadding="6">
       <tr><td class="ct_list_b" width="150">구매자 ID</td><td class="ct_list_pop">${sessionScope.user.userId}</td></tr>
       <tr>
         <td class="ct_list_b">결제수단</td>
@@ -45,7 +46,7 @@
       <tr><td class="ct_list_b">연락처</td><td class="ct_list_pop"><input type="tel" name="receiverPhone" placeholder="01012345678" required/></td></tr>
       <tr><td class="ct_list_b">배송주소</td><td class="ct_list_pop"><input type="text" name="divyAddr"/></td></tr>
       <tr><td class="ct_list_b">희망배송일</td><td class="ct_list_pop"><input type="date" name="divyDate" required/></td></tr>
-      <tr><td class="ct_list_b">요청사항</td><td class="ct_list_pop"><textarea name="divyRequest" rows="4"></textarea></td></tr>
+      <tr><td class="ct_list_b">요청사항</td><td class="ct_list_pop"><textarea name="divyRequest" rows="10" class="ct_input_g" style="width:500px;"></textarea></td></tr>
     </table>
 
     <div style="margin-top:12px; text-align:right;">
@@ -55,7 +56,5 @@
   </form>
 </div>
 
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="${ctx}/javascript/addPurchase.js"></script>
 </body>
 </html>

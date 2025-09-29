@@ -10,10 +10,9 @@
   <title>구매 내역</title>
   <link rel="stylesheet" href="${ctx}/css/admin.css" type="text/css"/>
   <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <!-- App 유틸 먼저 -->
   <script src="${ctx}/javascript/app-core.js"></script>
-  <!-- 페이지 스크립트 다음 -->
   <script src="${ctx}/javascript/listPurchase.js"></script>
+  <script src="${ctx}/javascript/cancel-order.js"></script>
 </head>
 <body data-ctx="${ctx}">
 <div style="width:98%; margin-left:10px;">

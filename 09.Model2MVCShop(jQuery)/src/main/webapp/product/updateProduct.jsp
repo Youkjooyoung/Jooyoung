@@ -11,11 +11,10 @@
   <!-- 공통 CSS -->
   <link rel="stylesheet" href="${ctxPath}/css/admin.css" type="text/css">
   <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <!-- 공통(미리보기) / 수정전용 -->
-  <script src="${ctxPath}/javascript/preview.js"></script>
-  <script src="${ctxPath}/javascript/updateProduct.js"></script>
-  <script src="${ctx}/javascript/app-core.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="${ctxPath}/javascript/app-core.js"></script>
+<script src="${ctxPath}/javascript/preview.js"></script>
+<script src="${ctxPath}/javascript/updateProduct.js"></script>
 </head>
 <body data-ctx="${ctxPath}">
 <div class="container">

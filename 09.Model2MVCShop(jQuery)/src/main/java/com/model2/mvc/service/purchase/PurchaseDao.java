@@ -50,5 +50,7 @@ public interface PurchaseDao {
 
 	// 여러 상품 번호(prodNos)에 대해 "가장 최근 거래상태코드
 	List<Map<String, Object>> getLatestActiveTranCodeByProdNos(List<Integer> prodNos) throws Exception;
+	
+	void updateCancelInfo(int tranNo, String reason) throws Exception;
 
 }

@@ -1,5 +1,6 @@
 package com.model2.mvc.service.purchase.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -104,6 +105,14 @@ public class PurchaseDaoImpl implements PurchaseDao {
 	@Override
 	public List<Purchase> getPurchaseHistoryByProduct(int prodNo) throws Exception {
 		return sqlSession.selectList("PurchaseMapper.getPurchaseHistoryByProduct", prodNo);
+	}
+
+	@Override
+	public void updateCancelInfo(int tranNo, String reason) throws Exception {
+		Map<String, Object> p = new HashMap<>();
+		p.put("tranNo", tranNo);
+		p.put("reason", reason);
+		sqlSession.update("PurchaseMapper.updateCancelInfo", p);
 	}
 
 }

@@ -24,7 +24,7 @@ import com.model2.mvc.service.domain.Purchase;
 import com.model2.mvc.service.purchase.PurchaseService;
 
 @RestController
-@RequestMapping("/json/purchases")
+@RequestMapping("/api/purchases")
 public class PurchaseRestController {
 
 	private final PurchaseService purchaseService;
@@ -41,7 +41,7 @@ public class PurchaseRestController {
 		return purchase;
 	}
 
-	// 구매상세조회
+	// 상세보기
 	@GetMapping("/{tranNo}")
 	public Purchase getPurchase(@PathVariable int tranNo) throws Exception {
 		return purchaseService.getPurchase(tranNo);
@@ -51,15 +51,14 @@ public class PurchaseRestController {
 	@GetMapping
 	public Map<String, Object> getPurchaseList(Search search, @RequestParam String buyerId,
 			@RequestParam(defaultValue = "10") int pageUnit) throws Exception {
-		if (search.getCurrentPage() == 0)
+		if (search.getCurrentPage() <= 0)
 			search.setCurrentPage(1);
-		if (search.getPageSize() == 0)
+		if (search.getPageSize() <= 0)
 			search.setPageSize(10);
-
-		Map<String, Object> result = purchaseService.getPurchaseList(search, buyerId);
-		int totalCount = (int) result.getOrDefault("totalCount", 0);
-		result.put("resultPage", new Page(search.getCurrentPage(), totalCount, pageUnit, search.getPageSize()));
-		return result;
+		Map<String, Object> map = purchaseService.getPurchaseList(search, buyerId);
+		int total = (int) map.getOrDefault("totalCount", 0);
+		map.put("page", new Page(search.getCurrentPage(), total, pageUnit, search.getPageSize()));
+		return map;
 	}
 
 	// 판매내역조회(관리자)

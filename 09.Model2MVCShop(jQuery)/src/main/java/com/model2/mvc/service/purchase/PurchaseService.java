@@ -43,4 +43,6 @@ public interface PurchaseService {
 
 	// 최신활성거래상태조회(여러상품)
 	Map<Integer, String> getLatestActiveTranCodeByProdNos(List<Integer> prodNos) throws Exception;
+
+	void cancelPurchaseWithReason(int tranNo, String reason) throws Exception;
 }

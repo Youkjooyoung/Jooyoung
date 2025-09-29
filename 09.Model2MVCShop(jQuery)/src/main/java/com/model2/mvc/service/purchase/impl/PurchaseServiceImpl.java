@@ -145,4 +145,14 @@ public class PurchaseServiceImpl implements PurchaseService {
 		}
 		return result;
 	}
+
+	@Override
+	public void cancelPurchaseWithReason(int tranNo, String reason) throws Exception {
+		Map<String, Object> param = new HashMap<>();
+		param.put("tranNo", tranNo);
+		param.put("tranCode", "004");
+
+		purchaseDao.updateTranCode(param);
+		purchaseDao.updateCancelInfo(tranNo, reason);
+	}
 }

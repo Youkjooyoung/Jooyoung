@@ -105,14 +105,15 @@ public class PurchaseController {
 
 	// 구매 취소
 	@PostMapping("{tranNo}/cancel")
-	public ModelAndView cancelPurchase(@PathVariable int tranNo) throws Exception {
+	public ModelAndView cancelPurchase(@PathVariable int tranNo,
+			@RequestParam(name = "reason", required = false) String reason) throws Exception {
 		Purchase purchase = purchaseService.getPurchase(tranNo);
 		if ("002".equals(purchase.getTranCode()) || "003".equals(purchase.getTranCode())) {
 			ModelAndView err = new ModelAndView("forward:/common/error.jsp");
 			err.addObject("errorMessage", "배송 중 또는 배송 완료된 주문은 취소할 수 없습니다.");
 			return err;
 		}
-		purchaseService.updateTranCode(tranNo, "004");
+		purchaseService.cancelPurchaseWithReason(tranNo, reason == null ? "" : reason.trim());
 		return new ModelAndView("redirect:/purchase/list");
 	}
 

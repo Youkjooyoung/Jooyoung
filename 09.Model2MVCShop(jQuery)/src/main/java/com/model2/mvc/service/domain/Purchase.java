@@ -17,6 +17,7 @@ public class Purchase {
 
 	private Date cancelDate;
 	private String cancelUser;
+	private String cancelReason;
 
 	String ORDERED = "001"; // 주문완료
 	String SHIPPING = "002"; // 배송중
@@ -143,6 +144,14 @@ public class Purchase {
 
 	public void setCancelUser(String cancelUser) {
 		this.cancelUser = cancelUser;
+	}
+
+	public String getCancelReason() {
+		return cancelReason;
+	}
+
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
 	}
 
 	@Override
