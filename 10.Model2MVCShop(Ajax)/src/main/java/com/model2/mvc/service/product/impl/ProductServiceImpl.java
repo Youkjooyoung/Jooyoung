@@ -136,4 +136,16 @@ public class ProductServiceImpl implements ProductService {
 		return out;
 	}
 
+	public List<String> suggestProductNames(String prefix) throws Exception {
+		if (prefix == null)
+			return java.util.Collections.emptyList();
+		return productDao.suggestProductNames(prefix.trim());
+	}
+
+	public List<String> suggestProductDetails(String keyword) throws Exception {
+		if (keyword == null)
+			return java.util.Collections.emptyList();
+		return productDao.suggestProductDetails(keyword.trim());
+	}
+
 }

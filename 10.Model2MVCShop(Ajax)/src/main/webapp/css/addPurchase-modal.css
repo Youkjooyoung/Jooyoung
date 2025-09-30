@@ -1,87 +1,65 @@
-/* === 모달 오버레이 === */
-.modal {
-  display: none;
+@charset "UTF-8";
+
+/* 모달 오버레이 */
+#confirmModal {
+  display: none; /* JS에서 fadeIn/fadeOut */
   position: fixed;
-  z-index: 9999;
-  inset: 0; /* top, right, bottom, left 0 */
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(2px); /* 배경 블러 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
 }
 
-/* === 모달 박스 === */
-.modal-content {
+/* 모달 박스 */
+#confirmModal .modal-content {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  width: 380px;
+  width: 420px;
   max-width: 90%;
-  padding: 28px 30px;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
   text-align: center;
-  animation: fadeUp 0.3s ease;
+  animation: modalPop 0.18s ease-out;
 }
 
-/* === 제목 === */
-.modal-content h3 {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 600;
-  color: #222;
-}
-
-/* === 본문 === */
-.modal-content p {
+#confirmModal .modal-content p {
+  margin: 0 0 16px;
   font-size: 15px;
-  color: #555;
-  margin-bottom: 24px;
+  color: #333;
+  line-height: 1.5;
 }
 
-/* === 버튼 그룹 === */
-.modal-actions {
+/* 버튼 영역 */
+#confirmModal .btn-area {
   display: flex;
+  justify-content: center;
   gap: 10px;
 }
 
-/* 버튼 기본 */
-.modal-actions input[type="button"] {
-  flex: 1;
-  height: 42px;
-  border-radius: 8px;
-  border: none;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-/* 확인 버튼 (메인컬러) */
-#btnConfirm {
-  background: #03c75a; /* 네이버 그린 느낌 */
+/* 프로젝트 공통 버튼 스타일과 잘 어울리도록 최소 정의만 */
+#confirmModal .btn-green {
+  background-color: #03c75a;
   color: #fff;
+  border: 0;
+  padding: 8px 16px;
+  border-radius: 6px;
   font-weight: 600;
+  cursor: pointer;
 }
-#btnConfirm:hover {
-  background: #02b150;
-}
+#confirmModal .btn-green:hover { background-color: #02b150; }
 
-/* 취소 버튼 (그레이톤) */
-#btnClose {
-  background: #f1f3f5;
+#confirmModal .btn-gray {
+  background-color: #f1f3f5;
   color: #333;
+  border: 0;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
 }
-#btnClose:hover {
-  background: #e5e8eb;
-}
+#confirmModal .btn-gray:hover { background-color: #e5e8eb; }
 
-/* === 애니메이션 === */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes modalPop {
+  from { transform: translateY(10px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }

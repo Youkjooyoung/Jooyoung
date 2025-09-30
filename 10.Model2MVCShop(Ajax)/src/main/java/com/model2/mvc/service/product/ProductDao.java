@@ -38,7 +38,12 @@ public interface ProductDao {
 
 	// 조회수
 	public void updateViewCount(int prodNo) throws Exception;
-	//관리자 상품리스트
+
+	// 관리자 상품리스트
 	List<Product> getProductListForManage(Map<String, Object> map) throws Exception;
+
+	List<String> suggestProductNames(String prefix) throws Exception;
+
+	List<String> suggestProductDetails(String keyword) throws Exception;
 
 }

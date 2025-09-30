@@ -66,5 +66,17 @@
     </div>
   </form>
 </div>
+
+<!-- 구매 확인 모달 -->
+<div id="confirmModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <p>입력하신 구매정보로 주문을 진행하시겠습니까?</p>
+    <div class="btn-area">
+      <button type="button" id="btnConfirm" class="btn-green">확인</button>
+      <button type="button" id="btnClose" class="btn-gray">취소</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

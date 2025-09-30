@@ -78,4 +78,20 @@ public class ProductDaoImpl implements ProductDao {
 	public List<Map<String, Object>> getLatestActiveTranCodeByProdNos(List<Integer> prodNos) throws Exception {
 		return sqlSession.selectList("PurchaseMapper.getLatestActiveTranCodeByProdNos", prodNos);
 	}
+
+	public List<String> suggestProductNames(Map<String, Object> param) throws Exception {
+		return sqlSession.selectList("ProductMapper.suggestProductNames", param);
+	}
+
+	public List<String> suggestProductNames(String prefix) throws Exception {
+		Map<String, Object> p = new java.util.HashMap<>();
+		p.put("prefix", prefix);
+		return sqlSession.selectList("ProductMapper.suggestProductNames", p);
+	}
+
+	public List<String> suggestProductDetails(String keyword) throws Exception {
+		Map<String, Object> p = new java.util.HashMap<>();
+		p.put("keyword", keyword);
+		return sqlSession.selectList("ProductMapper.suggestProductDetails", p);
+	}
 }

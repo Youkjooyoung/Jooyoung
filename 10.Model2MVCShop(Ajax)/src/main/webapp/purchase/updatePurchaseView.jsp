@@ -28,7 +28,7 @@
     </c:when>
     <c:otherwise>
       <form name="purchaseForm">
-        <input type="hidden" name="tranNo" id="tranNo" value="${t.tranNo}"/>
+        <input type="hidden" name="tranNo" value="${t.tranNo}"/>
 
         <table class="form-table">
           <tr><th>주문상태</th><td>${t.tranCode}</td></tr>
@@ -41,8 +41,8 @@
         </table>
 
         <div class="btn-area">
-          <button type="button" class="btn-green" id="btnUpdate" data-tranno="${t.tranNo}">수정완료</button>
-          <button type="button" class="btn-gray" id="btnCancel" data-tranno="${t.tranNo}">취소</button>
+          <button type="button" class="btn-green" id="btnUpdate">수정완료</button>
+          <button type="button" class="btn-gray" id="btnCancel">취소</button>
         </div>
       </form>
     </c:otherwise>

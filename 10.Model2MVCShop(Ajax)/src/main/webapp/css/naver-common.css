@@ -356,3 +356,59 @@
   border-radius: 6px;
   background: #fff;
 }
+
+/* ===================== 상품 관리 페이지 전용 ===================== */
+
+/* 자동완성 드롭다운 */
+.ac-wrap { position: relative; display: inline-block; }
+.ac-list { 
+  position: absolute; top: 100%; left: 0; right: 0; 
+  background: #fff; border: 1px solid #ccc;
+  z-index: 1000; max-height: 210px; overflow-y: auto; display: none;
+}
+.ac-item { padding: 6px 8px; cursor: pointer; }
+.ac-item:hover, .ac-item.active { background: #f2f6ff; }
+
+/* 무한스크롤 로딩/마지막 */
+#infiniteLoader, #endOfList { 
+  padding: 14px; text-align: center; font-size: 13px;
+}
+#infiniteLoader { color: #666; display: none; }
+#endOfList { color: #999; display: none; }
+
+/* 정렬 버튼 */
+.sort-btn { cursor: pointer; font-size: 11px; margin-left: 4px; }
+
+/* 상태 강조 */
+.text-red { color: #d33; }
+
+/* 버튼 그룹 */
+.btn-group { white-space: nowrap; }
+
+/* ===================== 상품명 UI 보강 ===================== */
+.list-table td .prod-link {
+  display: inline-block;
+  max-width: 200px;           /* 적당한 폭 (테이블 폭에 맞춰 조절) */
+  white-space: nowrap;        /* 줄바꿈 방지 */
+  overflow: hidden;           /* 넘치는 부분 숨김 */
+  text-overflow: ellipsis;    /* ... 처리 */
+  vertical-align: middle;
+  cursor: pointer;
+  color: #000;
+}
+
+.list-table td .prod-link:hover {
+  text-decoration: underline;
+  color: #03c75a; /* 네이버 그린 강조 */
+}
+
+/* Hover 썸네일 */
+#hoverThumb {
+  display: none;
+  position: absolute;
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 5px;
+  z-index: 999;
+}
+

@@ -3,6 +3,8 @@ package com.model2.mvc.service.domain;
 import java.io.Serializable;
 import java.sql.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class Product implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -10,6 +12,7 @@ public class Product implements Serializable {
 	private int prodNo;
 	private String prodName;
 	private String prodDetail;
+	@DateTimeFormat(pattern = "yyyyMMdd")
 	private String manuDate; // MANUFACTURE_DAY
 	private int price;
 	private String fileName; // IMAGE_FILE

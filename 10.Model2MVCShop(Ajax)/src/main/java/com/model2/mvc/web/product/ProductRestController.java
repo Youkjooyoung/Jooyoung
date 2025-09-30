@@ -123,4 +123,20 @@ public class ProductRestController {
 		for (Integer id : ids)
 			productService.deleteProductImage(id);
 	}
+	
+	// === AutoComplete ===
+	@GetMapping("/suggest")
+	public Map<String, Object> suggest(@RequestParam String type, @RequestParam String keyword) throws Exception {
+					List<String> items;
+		if ("prodDetail".equalsIgnoreCase(type)) {
+			items = productService.suggestProductDetails(keyword);
+		} else {
+			items = productService.suggestProductNames(keyword);
+		}
+		Map<String, Object> res = new java.util.HashMap<>();
+		res.put("items", items);
+		return res;
+	}
+	
+	
 }

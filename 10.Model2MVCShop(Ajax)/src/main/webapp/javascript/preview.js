@@ -1,4 +1,4 @@
-// /javascript/preview.js
+/* preview.js */
 (function(w, d, $) {
   'use strict'; if (!$) return;
 
@@ -40,7 +40,7 @@
       var files = e.target.files || [];
       merge(files);
       render();
-      this.value = ''; // 같은 파일 다시 선택 가능하게 초기화
+      this.value = ''; // 같은 파일 다시 선택 가능
     });
 
     $(d).on('click', '.preview-remove', function() {
@@ -50,18 +50,8 @@
         render();
       }
     });
-
-    // 달력 아이콘 클릭 → date input focus/showPicker
-    $(d).on('click', '.btn-calendar', function() {
-      var $input = $('input[name="manuDate"]')[0];
-      if ($input) {
-        if ($input.showPicker) $input.showPicker();
-        else $input.focus();
-      }
-    });
   });
 
-  // 외부에서 선택 파일 가져오기
   w.AppPreview = { getFiles: function() { return selected.slice(); } };
 
 })(window, document, window.jQuery);

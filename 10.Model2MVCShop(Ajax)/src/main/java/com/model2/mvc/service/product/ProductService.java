@@ -34,9 +34,12 @@ public interface ProductService {
 
 	// 상품이미지 조회/다중
 	List<ProductImage> getProductImages(int prodNo) throws Exception;
-	//관리자 상품리스트
-	Map<String,Object> getProductListForManage(Search search) throws Exception;
-	
 
+	// 관리자 상품리스트
+	Map<String, Object> getProductListForManage(Search search) throws Exception;
+
+	List<String> suggestProductNames(String prefix) throws Exception;
+
+	List<String> suggestProductDetails(String keyword) throws Exception;
 
 }

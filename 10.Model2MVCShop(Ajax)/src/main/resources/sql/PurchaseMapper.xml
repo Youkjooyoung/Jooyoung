@@ -12,7 +12,7 @@
 		type="com.model2.mvc.service.domain.Purchase">
 		<id property="tranNo" column="TRAN_NO" />
 		<result property="tranCode" column="TRAN_CODE" />
-		<result property="orderDate" column="ORDER_DATA" />
+		<result property="orderDate" column="ORDER_DATE" />
 		<result property="divyAddr" column="DIVY_ADDR" />
 		<result property="divyDate" column="DIVY_DATE" />
 		<result property="divyRequest" column="DLVY_REQUEST" />
@@ -49,7 +49,7 @@
 	<resultMap id="latestPurchaseInfoMap" type="java.util.HashMap">
 		<result property="prodNo" column="PROD_NO" />
 		<result property="buyerId" column="BUYER_ID" />
-		<result property="orderDate" column="ORDER_DATA" />
+		<result property="orderDate" column="ORDER_DATE" />
 		<result property="cancelDate" column="CANCEL_DATE" />
 		<result property="tranCode" column="TRAN_STATUS_CODE" />
 		<result property="cancelReason" column="CANCEL_REASON" />
@@ -59,7 +59,7 @@
 	<sql id="purchaseSelectColumns">
 	T.TRAN_NO,
 	T.TRAN_STATUS_CODE AS TRAN_CODE,
-	T.ORDER_DATA AS ORDER_DATA,
+	T.ORDER_DATE AS ORDER_DATE,
 	T.DEMAILADDR AS DIVY_ADDR,
 	TO_CHAR(T.DLVY_DATE,'YYYY-MM-DD') AS DIVY_DATE,
 	T.DLVY_REQUEST,
@@ -129,7 +129,7 @@
 		INSERT INTO TRANSACTION (
 		TRAN_NO, PROD_NO, BUYER_ID, PAYMENT_OPTION,
 		RECEIVER_NAME, RECEIVER_PHONE, DEMAILADDR, DLVY_REQUEST,
-		TRAN_STATUS_CODE, ORDER_DATA, DLVY_DATE
+		TRAN_STATUS_CODE, ORDER_DATE, DLVY_DATE
 		) VALUES (
 		#{tranNo},
 		#{purchaseProd.prodNo}, #{buyer.userId}, #{paymentOption},
@@ -293,7 +293,7 @@
 	SELECT
 	t.PROD_NO,
 	t.BUYER_ID,
-	TO_CHAR(t.ORDER_DATA , 'YYYY-MM-DD') AS ORDER_DATA,
+	TO_CHAR(t.ORDER_DATE , 'YYYY-MM-DD') AS ORDER_DATE,
 	TO_CHAR(t.CANCEL_DATE, 'YYYY-MM-DD') AS CANCEL_DATE,
 	t.TRAN_STATUS_CODE,
 	t.CANCEL_REASON

@@ -26,10 +26,11 @@
     <div class="detail-row"><span class="detail-label">상품번호</span><span class="detail-value">${product.prodNo}</span></div>
     <div class="detail-row"><span class="detail-label">상품명</span><span class="detail-value">${product.prodName}</span></div>
     <div class="detail-row"><span class="detail-label">가격</span><span class="detail-value"><fmt:formatNumber value="${product.price}" type="number"/> 원</span></div>
-    <div class="detail-row"><span class="detail-label">상세내용</span>
-		  <div class="detail-value detail-html">
-		    	<c:out value="${product.prodDetail}" escapeXml="false"/>
-		  </div>
+    <div class="detail-row">
+		  <span class="detail-label">상세내용</span>
+			 	<div class="detail-value detail-html">
+				  <c:out value="${product.prodDetail}" escapeXml="false"/>
+				</div>
 	</div>
     <div class="detail-row"><span class="detail-label">제조일자</span><span class="detail-value">${product.formattedManuDate}</span></div>
     <div class="detail-row"><span class="detail-label">등록일자</span><span class="detail-value">${product.regDate}</span></div>
@@ -41,8 +42,8 @@
         <div class="product-img-container">
           <c:forEach var="img" items="${productImages}">
             <div class="product-img-box">
-              <img src="${ctx}/upload/uploadFiles/${img.fileName}" 
-                   alt="${product.prodName}" width="300" height="300"/>
+              <img src="${ctx}/upload/${img.fileName}" 
+    				 alt="${product.prodName}" width="300" height="300"/>
             </div>
           </c:forEach>
         </div>
