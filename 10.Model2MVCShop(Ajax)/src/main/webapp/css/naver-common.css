@@ -2,9 +2,9 @@
 
 /* ===================== 공통 컨테이너 ===================== */
 .container {
-  width: 90%;
-  max-width: 900px;
-  margin: 20px auto;
+   /* width: 90%;
+ max-width: 900px;
+ margin: 20px auto; */
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -26,46 +26,77 @@
   border-left: 5px solid #03c75a;
 }
 
-/* ===================== 입력 그룹 ===================== */
-.form-group {
-  margin-bottom: 15px;
+/* 검색 영역 (테이블 헤더와 맞춤) */
+.search-bar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;                 
+  margin-bottom: 0;             /* 테이블과 간격 제거 */
+  border: 1px solid #e5e8eb;    /* 테이블과 같은 경계선 */
+  border-bottom: none;          /* 아래쪽은 테이블 헤더와 연결 */
+  border-radius: 0;             /* 둥근 모서리 제거 */
+  background: #f8f9fa;          /* 테이블 헤더 배경과 통일 */
+  box-sizing: border-box;
+  padding: 8px 10px;            /* 테이블 헤더의 padding과 유사 */
 }
-.form-group label {
-  width: 120px;
+
+/* 검색 입력 박스 */
+.search-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.search-keyword {
+  flex: 2;
+  min-width: 180px;
+}
+
+.price-input {
+  width: 100px;
+}
+
+/* 검색 버튼 */
+#btnSearch {
+  margin-left: 8px;
+}
+
+/* 오른쪽 뷰 전환 버튼 */
+.view-switch {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.label-inline {
   font-weight: 600;
   color: #333;
+  margin: 0 4px;
 }
-.form-group input[type="text"],
-.form-group input[type="file"],
-.form-group input[type="date"],
-.form-group textarea,
-.hp_input,
+.label-tilde {
+  margin: 0 2px;
+  color: #666;
+}
+
+/* ===================== 입력 공통 ===================== */
 .input-text,
 .input-select {
-  flex: 1;
   padding: 8px 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.2s;
 }
-.hp_input:focus,
 .input-text:focus,
 .input-select:focus {
   border-color: #03c75a;
   outline: none;
 }
 
-/* ===================== 에러 메시지 ===================== */
-.error-msg {
-  display: inline-block;
-  margin-left: 10px;
-  color: #c00;
-  font-size: 12px;
-  vertical-align: middle;
-}
+/* 입력 폭 유틸 */
+.w-120 { width: 120px; }
+.w-200 { width: 200px; }
 
 /* ===================== 버튼 ===================== */
 .btn-green, .btn-gray, .ct_btn01 {
@@ -113,6 +144,16 @@
 }
 .list-table tbody tr:hover { background: #f9f9f9; }
 
+/* 센티널은 항상 자리를 차지 */
+#infiniteLoader {
+  min-height: 48px;
+  margin: 16px 0;
+}
+
+/* 문구만 숨김: display:none 절대 금지 */
+#infiniteLoader.hidden {
+  visibility: hidden;
+}
 /* ===================== 폼 테이블 ===================== */
 .form-table {
   width: 100%;
@@ -257,149 +298,20 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===================== 달력 버튼 ===================== */
-.btn-calendar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px; height: 36px;
-  margin-left: 6px;
-  background: #f8f9fa;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  color: #555;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.btn-calendar:hover {
-  border-color: #03c75a;
-  background: #e6f7ee;
-  color: #03c75a;
-}
-
-/* ===================== 상품 상세 ===================== */
-.detail-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 20px;
-}
-.detail-row {
-  display: flex;
-  align-items: flex-start;
-  padding: 6px 0;
-  border-bottom: 1px solid #f1f3f5;
-}
-.detail-label {
-  width: 120px;
-  font-weight: 600;
-  color: #333;
-  flex-shrink: 0;
-}
-.detail-value {
-  flex: 1;
-  color: #555;
-  word-break: break-word;
-}
-
-/* 상품 이미지 */
-.product-img-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 6px;
-}
-.product-img-box img {
-  width: 200px; height: 200px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  object-fit: cover;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-/* 상태 메시지 */
-.status-area { margin-top: 20px; padding: 10px; }
-.sold-out { color: #c00; font-weight: 600; font-size: 15px; }
-
-/* 버튼 영역(상세/관리자) */
-.admin-area, .status-area .btn-green { margin-top: 15px; }
-
-.detail-html {
-  flex: 1;
-  color: #555;
-  word-break: break-word;
-  line-height: 1.6;
-}
-
-.detail-html p {
-  margin: 0 0 10px;
-}
-
-
-/* ===================== Toast UI Editor 전용 ===================== */
-.form-group.editor-group {
-  flex-direction: column;   /* 가로배치 → 세로배치 */
-  align-items: flex-start;  /* 라벨 왼쪽 정렬 */
-}
-
-.form-group.editor-group label {
-  width: 100%;              /* 라벨 한 줄 전체 차지 */
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #333;
-}
-
-#prodDetail {
-  width: 100%;
-  min-height: 300px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: #fff;
-}
-
-/* ===================== 상품 관리 페이지 전용 ===================== */
-
-/* 자동완성 드롭다운 */
-.ac-wrap { position: relative; display: inline-block; }
-.ac-list { 
-  position: absolute; top: 100%; left: 0; right: 0; 
-  background: #fff; border: 1px solid #ccc;
-  z-index: 1000; max-height: 210px; overflow-y: auto; display: none;
-}
-.ac-item { padding: 6px 8px; cursor: pointer; }
-.ac-item:hover, .ac-item.active { background: #f2f6ff; }
-
-/* 무한스크롤 로딩/마지막 */
-#infiniteLoader, #endOfList { 
-  padding: 14px; text-align: center; font-size: 13px;
-}
-#infiniteLoader { color: #666; display: none; }
-#endOfList { color: #999; display: none; }
-
-/* 정렬 버튼 */
-.sort-btn { cursor: pointer; font-size: 11px; margin-left: 4px; }
-
-/* 상태 강조 */
-.text-red { color: #d33; }
-
-/* 버튼 그룹 */
-.btn-group { white-space: nowrap; }
-
 /* ===================== 상품명 UI 보강 ===================== */
 .list-table td .prod-link {
   display: inline-block;
-  max-width: 200px;           /* 적당한 폭 (테이블 폭에 맞춰 조절) */
-  white-space: nowrap;        /* 줄바꿈 방지 */
-  overflow: hidden;           /* 넘치는 부분 숨김 */
-  text-overflow: ellipsis;    /* ... 처리 */
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   vertical-align: middle;
   cursor: pointer;
   color: #000;
 }
-
 .list-table td .prod-link:hover {
   text-decoration: underline;
-  color: #03c75a; /* 네이버 그린 강조 */
+  color: #03c75a;
 }
 
 /* Hover 썸네일 */
@@ -412,3 +324,95 @@
   z-index: 999;
 }
 
+/* ===== 썸네일(그리드) ===== */
+/* ===== 썸네일(그리드) ===== */
+.thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+  gap: 20px;
+  margin-top: 16px;
+}
+
+/* 카드 */
+.thumb-card {
+  background: #fff;
+  border: 1px solid #e5e8eb;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: box-shadow .15s ease, transform .15s ease;
+  display: flex;
+  flex-direction: column;
+  height: 300px;          /* 카드 높이 통일 */
+}
+
+.thumb-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+/* 이미지 영역 */
+.thumb-img-wrap {
+  width: 100%;
+  height: 180px;         /* 고정 높이 */
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* 이미지 비율 유지하며 꽉 채움 */
+}
+
+/* 카드 내용 */
+.thumb-info {
+  padding: 10px 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.thumb-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: #222;
+  margin-bottom: 6px;
+  cursor: pointer;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.thumb-name:hover { color: #03c75a; text-decoration: underline; }
+.thumb-price {
+  color: #03c75a;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.thumb-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+}
+.thumb-actions { text-align: right; }
+.thumb-actions .btn-green { padding: 6px 10px; font-size: 13px; }
+
+
+/* ===================== 자동완성 드롭다운 ===================== */
+.ac-wrap { position: relative; display: inline-block; }
+.ac-list {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: #fff; border: 1px solid #ccc;
+  z-index: 1000; max-height: 210px; overflow-y: auto; display: none;
+}
+.ac-item { padding: 6px 8px; cursor: pointer; }
+.ac-item:hover, .ac-item.active { background: #f2f6ff; }
+
+/* ===================== 유틸 ===================== */
+.text-red { color: #d33; }
+.btn-group { white-space: nowrap; }

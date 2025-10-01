@@ -10,16 +10,14 @@
   <meta charset="UTF-8"/>
   <title>구매 등록</title>
   <link rel="stylesheet" href="${ctx}/css/naver-common.css"/>
-  <link rel="stylesheet" href="${ctx}/css/addPurchase-modal.css"/>
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="${ctx}/javascript/app-core.js"></script>
   <script src="${ctx}/javascript/addPurchase.js"></script>
 </head>
 <body data-ctx="${ctx}">
 <div class="container">
-  <div class="page-title">
-    <h2>구매 등록</h2>
-  </div>
+
+  <div class="page-title"><h2>구매 등록</h2></div>
 
   <form name="purchaseForm">
     <input type="hidden" name="purchaseProd.prodNo" value="${empty p ? param.prodNo : p.prodNo}" />
@@ -37,7 +35,7 @@
       </tr>
       <tr><th>등록일자</th><td><c:out value="${empty p ? param.regDate : p.regDate}"/></td></tr>
       <tr><th>가격</th><td><fmt:formatNumber value="${p.price}" type="number"/> 원</td></tr>
-      <tr><th>제조일자</th><td><c:out value="${empty p ? param.manuDate : p.manuDate}"/></td></tr>
+      <tr><th>제조일자</th><td><c:out value="${empty p ? param.formattedManuDate : p.formattedManuDate}"/></td></tr>
     </table>
 
     <!-- 주문 정보 -->
@@ -54,10 +52,10 @@
         </td>
       </tr>
       <tr><th>수령인</th><td><input type="text" name="receiverName" class="input-text" required/></td></tr>
-      <tr><th>연락처</th><td><input type="tel" name="receiverPhone" placeholder="01012345678" class="input-text" required/></td></tr>
+      <tr><th>연락처</th><td><input type="tel" name="receiverPhone" placeholder="- 빼고 입력" class="input-text" required/></td></tr>
       <tr><th>배송주소</th><td><input type="text" name="divyAddr" class="input-text"/></td></tr>
       <tr><th>희망배송일</th><td><input type="date" name="divyDate" class="input-text" required/></td></tr>
-      <tr><th>요청사항(선택)</th><td><textarea name="divyRequest" rows="5" class="input-text"></textarea></td></tr>
+      <tr><th>요청사항</th><td><textarea name="divyRequest" rows="5" class="input-text"></textarea></td></tr>
     </table>
 
     <div class="btn-area">
@@ -68,10 +66,11 @@
 </div>
 
 <!-- 구매 확인 모달 -->
-<div id="confirmModal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <p>입력하신 구매정보로 주문을 진행하시겠습니까?</p>
-    <div class="btn-area">
+<div id="confirmModal" class="dlg-mask">
+  <div class="dlg dlg-sm">
+    <div class="dlg-hd">구매 확인</div>
+    <div class="dlg-bd">입력하신 구매정보로 주문을 진행하시겠습니까?</div>
+    <div class="dlg-ft">
       <button type="button" id="btnConfirm" class="btn-green">확인</button>
       <button type="button" id="btnClose" class="btn-gray">취소</button>
     </div>

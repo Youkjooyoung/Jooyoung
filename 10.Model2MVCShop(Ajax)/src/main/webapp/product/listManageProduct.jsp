@@ -14,10 +14,11 @@
 
   <!-- jQuery + JS -->
   <script src="https://code.jquery.com/jquery-2.1.4.min.js" defer></script>
-  <script src="${ctx}/javascript/app-core.js?v=20250930" defer></script>
-  <script src="${ctx}/javascript/listManageProduct.js?v=20251001" defer></script>
+  <script src="${ctx}/javascript/app-core.js" defer></script>
+  <script src="${ctx}/javascript/listManageProduct.js" defer></script>
+  <script src="${ctx}/javascript/listCommon.js" defer></script>
 </head>
-<body data-ctx="${ctx}">
+<body data-ctx="${ctx}" data-role="admin">
 <div class="container">
 
   <div class="page-title">
@@ -38,7 +39,7 @@
 
     <input type="hidden" id="sort" value="">
     <button type="button" id="btnSearch" class="btn-green">검색</button>
-    <button type="button" id="btnAll" class="btn-gray">전체보기</button>
+    <!-- <button type="button" id="btnAll" class="btn-gray">전체보기</button> -->
   </div>
 
   <!-- 리스트 -->

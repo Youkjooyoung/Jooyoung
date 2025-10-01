@@ -18,6 +18,9 @@ public class Search {
 
 	private String sort;
 
+	private Integer minPrice;
+	private Integer maxPrice;
+
 	/// Constructor
 	public Search() {
 	}
@@ -71,6 +74,22 @@ public class Search {
 
 	public void setSort(String sort) {
 		this.sort = sort;
+	}
+
+	public Integer getMinPrice() {
+		return minPrice;
+	}
+
+	public void setMinPrice(Integer minPrice) {
+		this.minPrice = minPrice;
+	}
+
+	public Integer getMaxPrice() {
+		return maxPrice;
+	}
+
+	public void setMaxPrice(Integer maxPrice) {
+		this.maxPrice = maxPrice;
 	}
 
 	@Override

@@ -56,7 +56,6 @@ public class ProductServiceImpl implements ProductService {
 		return productDao.getProductImages(prodNo);
 	}
 
-	@Override
 	public Product getProduct(int prodNo, String sessionKey) throws Exception {
 		// 세션 키 검사 (prodNo + userId 조합)
 		if (sessionKey == null) {
@@ -112,7 +111,6 @@ public class ProductServiceImpl implements ProductService {
 		productDao.deleteProductImage(imgId);
 	}
 
-	@Override
 	public Map<String, Object> getProductListForManage(Search search) throws Exception {
 		// 페이징 계산 (기존 규칙 사용)
 		int currentPage = (search.getCurrentPage() == 0) ? 1 : search.getCurrentPage();
@@ -136,16 +134,12 @@ public class ProductServiceImpl implements ProductService {
 		return out;
 	}
 
-	public List<String> suggestProductNames(String prefix) throws Exception {
-		if (prefix == null)
-			return java.util.Collections.emptyList();
-		return productDao.suggestProductNames(prefix.trim());
+	public List<String> suggestProductNames(String keyword) throws Exception {
+		return productDao.suggestProductNames(keyword);
 	}
 
 	public List<String> suggestProductDetails(String keyword) throws Exception {
-		if (keyword == null)
-			return java.util.Collections.emptyList();
-		return productDao.suggestProductDetails(keyword.trim());
+		return productDao.suggestProductDetails(keyword);
 	}
 
 }

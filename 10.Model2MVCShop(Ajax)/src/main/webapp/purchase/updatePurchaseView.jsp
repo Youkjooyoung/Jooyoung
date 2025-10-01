@@ -17,9 +17,7 @@
 <body data-ctx="${ctx}">
 <div class="container">
 
-  <div class="page-title">
-    <h2>구매 수정</h2>
-  </div>
+  <div class="page-title"><h2>구매 수정</h2></div>
 
   <c:set var="t" value="${requestScope.purchase}"/>
   <c:choose>

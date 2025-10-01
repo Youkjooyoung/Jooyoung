@@ -17,13 +17,7 @@
 <body data-ctx="${ctx}">
 <div class="container">
 
-  <div class="page-title">
-    <h2>구매 상세</h2>
-  </div>
-
-  <c:if test="${not empty msg}">
-    <div class="alert-box">${msg}</div>
-  </c:if>
+  <div class="page-title"><h2>구매 상세</h2></div>
 
   <table class="form-table">
     <tr><th>주문번호</th><td>${purchase.tranNo}</td></tr>
@@ -54,13 +48,10 @@
   <div class="btn-area">
     <c:if test="${purchase.tranCode == '001'}">
       <button type="button" class="btn-green" id="btnEdit" data-tranno="${purchase.tranNo}">수정</button>
-      <button type="button" class="btn-gray" id="btnCancel"
-              data-tranno="${purchase.tranNo}"
-              data-url="${ctx}/purchase/${purchase.tranNo}/cancel">구매취소</button>
+      <button type="button" class="btn-gray" id="btnCancel" data-tranno="${purchase.tranNo}" data-url="${ctx}/purchase/${purchase.tranNo}/cancel">구매취소</button>
     </c:if>
     <c:if test="${purchase.tranCode == '002'}">
-      <button type="button" class="btn-green" id="btnConfirm"
-              data-tranno="${purchase.tranNo}" data-prodno="${purchase.purchaseProd.prodNo}">물품수령</button>
+      <button type="button" class="btn-green" id="btnConfirm" data-tranno="${purchase.tranNo}" data-prodno="${purchase.purchaseProd.prodNo}">물품수령</button>
     </c:if>
     <c:if test="${purchase.tranCode == '003'}"><span class="text-green">구매가 완료되었습니다.</span></c:if>
     <c:if test="${purchase.tranCode == '004'}"><span class="text-red">해당 주문은 취소되었습니다.</span></c:if>
