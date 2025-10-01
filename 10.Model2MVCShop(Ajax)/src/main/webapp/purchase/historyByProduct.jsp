@@ -54,11 +54,6 @@
       </c:if>
     </tbody>
   </table>
-
-  <div class="btn-area">
-    <button type="button" class="btn-gray btn-close" onclick="window.close();">닫기</button>
-  </div>
-
 </div>
 </body>
 </html>

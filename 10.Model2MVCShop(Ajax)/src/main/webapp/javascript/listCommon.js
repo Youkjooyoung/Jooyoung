@@ -1,7 +1,7 @@
 // /javascript/listCommon.js
 (function (w, d) {
   'use strict';
-  var $ = w.jQuery;
+  var $ = w.jQuery || w.$;
   if (!$) return;
   if (w.__LIST_COMMON_INITED__) return; // 중복 초기화 방지
   w.__LIST_COMMON_INITED__ = true;
@@ -103,17 +103,29 @@
     var sentinel = d.getElementById('infiniteLoader');
     if (!sentinel) return;
 
-    io = new IntersectionObserver(function(entries){
-      if (entries.some(function(e){ return e.isIntersecting; })){
-        loadNext();
-      }
-    }, {
-      root: null,
-      threshold: 0,
-      rootMargin: '0px 0px 400px 0px' // ← 모든 값에 px 단위
-    });
+    if (w.IntersectionObserver) {
+      io = new IntersectionObserver(function(entries){
+        if ($.map(entries, function(e){ return e.isIntersecting; }).indexOf(true) >= 0){
+          loadNext();
+        }
+      }, {
+        root: null,
+        threshold: 0,
+        rootMargin: '0px 0px 400px 0px'
+      });
 
-    io.observe(sentinel);
+      io.observe(sentinel);
+    } else {
+      // fallback: scroll 이벤트
+      $(w).on('scroll', function(){
+        if (!state.loading && !state.done){
+          var scrollPos = $(w).scrollTop() + $(w).height();
+          if (scrollPos + 400 >= $(d).height()){
+            loadNext();
+          }
+        }
+      });
+    }
 
     // 첫 페이지 강제 로드
     loadNext();

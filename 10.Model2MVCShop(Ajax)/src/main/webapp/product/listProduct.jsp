@@ -9,12 +9,11 @@
   <title>상품 검색</title>
   <!-- 공통 CSS -->
   <link rel="stylesheet" href="${ctx}/css/naver-common.css" type="text/css">
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <!-- 공통 JS -->
-  <script src="${ctx}/javascript/app-core.js"></script>
-  <script src="${ctx}/javascript/listProduct.js"></script>
-  <script src="${ctx}/javascript/listCommon.js"></script>
+  <!-- jQuery는 반드시 가장 먼저 로드 -->
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+ <script src="${ctx}/javascript/app-core.js"></script>
+<script src="${ctx}/javascript/listProduct.js"></script>
+<script src="${ctx}/javascript/listCommon.js"></script>
 </head>
 <body data-ctx="${ctx}" data-role="${sessionScope.user.role}">
 <div class="container">

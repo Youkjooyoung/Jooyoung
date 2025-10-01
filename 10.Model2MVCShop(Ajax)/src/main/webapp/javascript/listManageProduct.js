@@ -1,117 +1,124 @@
-(function (w, $, d) {
-  'use strict';
-  if (!w.jQuery) return;
+(function(w, d, $) {
+	'use strict';
+	if (!$) return;
 
-  var CTX = $('body').data('ctx') || '';
-  var $doc = $(d);
+	var ctx = $('body').data('ctx') || '';
 
-  // ===== 유틸 =====
-  var esc = function(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, function(m){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];}); };
-  var fmtPrice = function(n){ return (n==null)?'-':String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); };
-  var fmtDate = function(s){ if(!s) return ''; s=String(s).replace(/[^0-9]/g,''); return (s.length===8)? (s.substr(0,4)+'-'+s.substr(4,2)+'-'+s.substr(6,2)) : s; };
-  w.latestInfoOf = function(map, no){ if(!map) return {}; var k=no, k2=String(no); return map[k]||map[k2]||{}; };
+	// ===== 검색 =====
+	$('#btnSearch').on('click', function() {
+		var cond = $('#searchCondition').val() || '0';
+		var kw = $('#searchKeyword').val() || '';
+		location.href =
+			ctx + '/product/listProduct?menu=manage' +
+			'&searchCondition=' + encodeURIComponent(cond) +
+			'&searchKeyword=' + encodeURIComponent(kw);
+	});
 
-  // ===== 상태 라벨 =====
-  var statusLabel = {
-    '':     '판매중',
-    '001':  '재고없음',
-    '002':  '재고없음',
-    '003':  '배송완료',
-    '004':  '<span class="text-red">취소요청</span>',
-    '005':  '취소확인'
-  };
+	// 엔터로 검색
+	$('#searchKeyword').on('keyup', function(e) {
+		if (e.keyCode === 13) {
+			$('#btnSearch').click();
+			return;
+		}
+		// ===== 자동완성 =====
+		var cond = $('#searchCondition').val();
+		var kw = $(this).val();
+		var $list = $('#acList');
 
-  // ===== 버튼들 =====
-  function orderBtns(prodNo){
-    return '<div class="btn-group"><button type="button" class="btn-gray btn-order-history" data-prodno="'+prodNo+'">주문내역</button></div>';
-  }
-  function cancelBtns(info, prodNo){
-    var reason = esc(info.cancelReason||'');
-    return '<div class="btn-group">'
-         + '<button type="button" class="btn-green btn-reason" data-reason="'+reason+'">사유보기</button>'
-         + '<button type="button" class="btn-green btn-ack-cancel" data-prodno="'+prodNo+'">취소확인</button>'
-         + '<button type="button" class="btn-gray btn-order-history" data-prodno="'+prodNo+'">주문내역</button>'
-         + '</div>';
-  }
-  function shipCellBy(code, prodNo){
-    if (code==='001') return '<button type="button" class="btn-green btn-ship" data-prodno="'+prodNo+'" data-trancode="002">배송하기</button>';
-    if (code==='002') return '배송중';
-    if (code==='003') return '배송완료';
-    return '-';
-  }
+		if (kw.length < 2) {
+			$list.empty().hide();
+			return;
+		}
 
-  // ===== 행 렌더러 (공용으로 export) =====
-  w.renderRow = function(p, info){
-    var code = info.tranCode || p.tranStatusCode || '';
-    var buyerId = (code==='004'||code==='005') ? '-' : (info.buyerId || p.buyerId || '-');
-    var buyDate = (code==='004'||code==='005') ? '-' : (info.orderDate || p.buyDate || '-');
-    var statusCell = (code==='004') ? (statusLabel[code] + ' ' + cancelBtns(info, p.prodNo))
-                                    : (statusLabel[code] || statusLabel['']) + ' ' + orderBtns(p.prodNo);
-    return '<tr data-prodno="'+p.prodNo+'">'
-         +   '<td>'+p.prodNo+'</td>'
-         +   '<td><span class="prod-link" data-prodno="'+p.prodNo+'" data-filename="'+esc(p.fileName||'')+'">'+esc(p.prodName)+'</span></td>'
-         +   '<td>'+fmtPrice(p.price)+' 원</td>'
-         +   '<td>'+fmtDate(p.manuDate || p.formattedManuDate || '')+'</td>'
-         +   '<td>'+esc(buyerId)+'</td>'
-         +   '<td>'+fmtDate(buyDate)+'</td>'
-         +   '<td>'+statusCell+'</td>'
-         +   '<td>'+shipCellBy(code, p.prodNo)+'</td>'
-         + '</tr>';
-  };
+		$.getJSON(ctx + '/api/products/suggest', { type: cond, keyword: kw })
+			.done(function(res) {
+				$list.empty();
+				if (res && res.items && res.items.length) {
+					$.each(res.items, function(i, txt) {
+						$('<div/>').addClass('ac-item').text(txt).appendTo($list);
+					});
+					$list.show();
+				} else {
+					$list.hide();
+				}
+			});
+	});
 
-  // ===== 모달 =====
-  function ensureReasonModal(){
-    var $dlg = $('#reasonViewDlg');
-    if ($dlg.length) return $dlg;
-    return $('<div id="reasonViewDlg" class="dlg-mask" role="dialog" aria-modal="true" aria-label="취소 사유">'
-      +  '<div class="dlg">'
-      +    '<div class="dlg-hd">취소 사유</div>'
-      +    '<div class="dlg-bd"><div class="reason-ct" style="white-space:pre-wrap;min-height:80px;"></div></div>'
-      +    '<div class="dlg-ft"><button type="button" class="ct_btn01 dlg-close">닫기</button></div>'
-      +  '</div>'
-      +'</div>').appendTo('body');
-  }
-  function ensureHistoryModal(){ return $('#historyModal'); }
+	// 자동완성 선택 → 입력 + 검색
+	$('#acList').on('click', '.ac-item', function() {
+		$('#searchKeyword').val($(this).text());
+		$('#acList').empty().hide();
+		$('#btnSearch').click();
+	});
 
-  // ===== 이벤트 바인딩 =====
-  $doc.on('click','.prod-link', function(e){
-    e.preventDefault();
-    var no=$(this).data('prodno');
-    if(no){ App.go('/product/getProduct', { prodNo:no }); }
-  });
+	// ===== 정렬 =====
+	$('.sort-btn').on('click', function() {
+		var sort = $(this).data('sort') || '';
+		var cond = $('#searchCondition').val() || '0';
+		var kw = $('#searchKeyword').val() || '';
+		location.href =
+			ctx + '/product/listProduct?menu=manage' +
+			'&searchCondition=' + encodeURIComponent(cond) +
+			'&searchKeyword=' + encodeURIComponent(kw) +
+			'&sort=' + encodeURIComponent(sort);
+	});
 
-  $doc.on('click','.btn-ship', function(e){
-    e.preventDefault();
-    var no=$(this).data('prodno'), code=$(this).data('trancode'); if(!no||!code) return;
-    $.post(CTX+'/purchase/product/'+no+'/status', { tranCode:code })
-      .done(function(){ location.reload(); })
-      .fail(function(x){ alert('상태 변경 실패: '+x.status); });
-  });
+	// ===== 상세보기 =====
+	$(d).on('click', '.btn-detail', function() {
+		var no = $(this).data('prodno');
+		if (no) {
+			location.href = ctx + '/product/getProduct?prodNo=' + encodeURIComponent(no);
+		}
+	});
 
-  $doc.on('click','.btn-ack-cancel', function(e){
-    e.preventDefault();
-    var no=$(this).data('prodno'); if(!no) return;
-    if(!confirm('이 주문의 취소를 확인 처리하시겠습니까?')) return;
-    $.post(CTX+'/purchase/product/'+no+'/status', { tranCode:'005' })
-      .done(function(){ location.reload(); })
-      .fail(function(x){ alert('취소확인 실패: '+x.status); });
-  });
+	// ===== 배송 상태 변경 =====
+	$(d).on('click', '.btn-ship', function() {
+		var no = $(this).data('prodno');
+		var code = $(this).data('trancode');
+		$.post(ctx + '/purchase/product/' + encodeURIComponent(no) + '/status', { tranCode: code })
+			.done(function() { location.reload(); })
+			.fail(function(x) { alert('상태 변경 실패 : ' + x.status); });
+	});
 
-  $doc.on('click','.btn-order-history', function(e){
-    e.preventDefault();
-    var no=$(this).data('prodno'); if(!no) return;
-    var $dlg=ensureHistoryModal(), $frame=$dlg.find('iframe');
-    $frame.off('load').on('load', function(){ try{ $(this.contentDocument||this.contentWindow.document).find('.btn-close').hide(); }catch(_){ } });
-    $frame.attr('src', CTX + '/purchase/product/' + encodeURIComponent(no) + '/history');
-    $dlg.show();
-  });
+	// ===== 주문내역 모달 =====
+	$(d).on('click', '.btn-order-history', function() {
+		var no = $(this).data('prodno');
+		$('#historyModal iframe').attr('src', ctx + '/purchase/product/' + encodeURIComponent(no) + '/history');
+		$('#historyModal').show();
+	});
+	$('.dlg-close').on('click', function() {
+		$('#historyModal').hide().find('iframe').attr('src', 'about:blank');
+	});
 
-  $doc.on('click','.btn-reason', function(e){
-    e.preventDefault();
-    var txt = String($(this).data('reason')||'').trim() || '(저장된 사유가 없습니다)';
-    var $dlg = ensureReasonModal(); $dlg.find('.reason-ct').text(txt); $dlg.show();
-  });
+	// ===== 취소사유(버튼의 data-reason 표시, API 호출 X) =====
+	$(d).on('click', '.btn-cancel-reason', function() {
+		var reason = $(this).data('reason');
+		alert('취소 사유: ' + (reason && String(reason).trim() ? reason : '사유 없음'));
+	});
 
-  $doc.on('click','.dlg-close', function(){ $(this).closest('.dlg-mask').hide().find('iframe').attr('src','about:blank'); });
+	// ===== 취소확인 버튼 =====
+	$(document).on('click', '.btn-ack-cancel', function() {
+		var no = $(this).data('prodno');
+		if (no && confirm('해당 주문을 취소확인 처리하시겠습니까?')) {
+			$.post(ctx + '/purchase/product/' + encodeURIComponent(no) + '/ack-cancel')
+				.done(function() { location.reload(); })
+				.fail(function(x) { alert('취소확인 처리 실패 : ' + x.status); });
+		}
+	});
 
-})(window, window.jQuery, document);
+	// ===== 페이지 이동(네비게이터에서 호출) =====
+	w.fncGetUserList = function(pageNo) {
+		var cond = $('#searchCondition').val() || '0';
+		var kw = $('#searchKeyword').val() || '';
+		var sort = (new URL(location.href)).searchParams.get('sort') || '';
+		location.href =
+			ctx + '/product/listProduct?menu=manage' +
+			'&currentPage=' + encodeURIComponent(pageNo) +
+			'&searchCondition=' + encodeURIComponent(cond) +
+			'&searchKeyword=' + encodeURIComponent(kw) +
+			'&sort=' + encodeURIComponent(sort);
+	};
+
+
+
+})(window, document, window.jQuery);
