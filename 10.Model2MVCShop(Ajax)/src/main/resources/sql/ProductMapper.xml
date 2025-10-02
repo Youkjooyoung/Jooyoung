@@ -57,6 +57,30 @@
 			</if>
 		</where>
 	</sql>
+	
+	<sql id="Search_Conds">
+	<if test="searchKeyword != null and searchKeyword != ''">
+		<choose>
+			<when test="searchCondition == 'prodName'">
+				PROD_NAME LIKE '%' || #{searchKeyword} || '%'
+			</when>
+			<when test="searchCondition == 'prodDetail'">
+				PROD_DETAIL LIKE '%' || #{searchKeyword} || '%'
+			</when>
+			<otherwise>
+				(PROD_NAME LIKE '%' || #{searchKeyword} || '%'
+				OR PROD_DETAIL LIKE '%' || #{searchKeyword} || '%')
+			</otherwise>
+		</choose>
+	</if>
+
+	<if test="minPrice != null and minPrice > 0">
+		AND PRICE &gt;= #{minPrice}
+	</if>
+	<if test="maxPrice != null and maxPrice > 0">
+		AND PRICE &lt;= #{maxPrice}
+	</if>
+</sql>
 
 	<!-- 단건 조회 -->
 	<select id="getProduct" parameterType="int" resultMap="product">
@@ -129,36 +153,26 @@
 	SELECT ROWNUM rnum, A.*
 	FROM (
 	SELECT
-	p.PROD_NO,
-	p.PROD_NAME,
-	p.PROD_DETAIL,
-	p.MANUFACTURE_DAY,
-	p.PRICE,
-	p.IMAGE_FILE,
-	p.REG_DATE,
-	p.VIEW_COUNT,
+	p.PROD_NO, p.PROD_NAME, p.PROD_DETAIL, p.MANUFACTURE_DAY,
+	p.PRICE, p.IMAGE_FILE, p.REG_DATE, p.VIEW_COUNT,
 	CASE WHEN t.TRAN_STATUS_CODE IN ('004','005') THEN NULL ELSE t.BUYER_ID END
 	AS BUYER_ID,
-	CASE WHEN t.TRAN_STATUS_CODE IN ('004','005') THEN NULL
-	ELSE TO_CHAR(t.ORDER_DATE,'YYYY-MM-DD') END AS BUY_DATE,
+	CASE WHEN t.TRAN_STATUS_CODE IN ('004','005') THEN NULL ELSE
+	TO_CHAR(t.ORDER_DATE,'YYYY-MM-DD') END AS BUY_DATE,
 	t.TRAN_STATUS_CODE
 	FROM PRODUCT p
 	LEFT JOIN (
 	SELECT tr.PROD_NO, tr.BUYER_ID, tr.ORDER_DATE, tr.TRAN_STATUS_CODE,
-	ROW_NUMBER() OVER (PARTITION BY tr.PROD_NO ORDER BY tr.TRAN_NO DESC) AS
-	rn
+	ROW_NUMBER() OVER (PARTITION BY tr.PROD_NO ORDER BY tr.TRAN_NO DESC) rn
 	FROM TRANSACTION tr
-	) t
-	ON p.PROD_NO = t.PROD_NO AND t.rn = 1
-	<include refid="Search_Where" />
-	<if test="minPrice != null and minPrice > 0">
-		AND p.PRICE &gt;= #{minPrice}
-	</if>
-	<if test="maxPrice != null and maxPrice > 0">
-		AND p.PRICE &lt;= #{maxPrice}
-	</if>
+	) t ON p.PROD_NO = t.PROD_NO AND t.rn = 1
+
+	<where>
+		<include refid="Search_Conds" />
+	</where>
+
 	<choose>
-		<when test="sort == 'priceAsc'"> ORDER BY p.PRICE ASC </when>
+		<when test="sort == 'priceAsc'"> ORDER BY p.PRICE ASC  </when>
 		<when test="sort == 'priceDesc'"> ORDER BY p.PRICE DESC </when>
 		<otherwise> ORDER BY p.PROD_NO DESC </otherwise>
 	</choose>
@@ -185,11 +199,14 @@
 	</select>
 
 	<!-- 총건수 -->
-	<select id="getTotalCount"
-		parameterType="com.model2.mvc.common.Search" resultType="int">
-		SELECT COUNT(*) FROM PRODUCT
-		<include refid="Search_Where" />
-	</select>
+<select id="getTotalCount"
+	parameterType="com.model2.mvc.common.Search" resultType="int">
+	SELECT COUNT(*)
+	FROM PRODUCT
+	<where>
+		<include refid="Search_Conds" />
+	</where>
+</select>
 
 	<!-- 조건검색(제조일자도 yyyyMMdd 문자열로 비교) -->
 	<select id="getProductListByCond" parameterType="product"

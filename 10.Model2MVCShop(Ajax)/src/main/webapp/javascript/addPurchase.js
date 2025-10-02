@@ -1,6 +1,6 @@
-/* addPurchase.js – 구매 등록 + 모달 확인 + 실시간 validation (보강) */
+/* addPurchase.js – 구매 등록 + 모달 확인 + 실시간 validation + 주소검색 */
 (function($, w, d) {
-  'use strict'; 
+  'use strict';
   if (!$) return;
 
   $(function() {
@@ -23,112 +23,132 @@
       }
     })();
 
-    // ===== 에러 메시지 헬퍼 =====
-    function showError($input, msg) {
+    // ===== 메시지 헬퍼 =====
+    function ensureErrorSpan($input){
       var $err = $input.siblings('.error-msg');
       if (!$err.length) {
-        $err = $('<span class="error-msg"></span>');
+        $err = $('<span class="error-msg" role="alert" aria-live="polite"></span>');
         $input.after($err);
       }
-      $err.text(msg).show();
+      return $err;
     }
-    function clearError($input) {
-      $input.siblings('.error-msg').hide();
+    function showError($input, msg){
+      ensureErrorSpan($input).text(msg).show();
+      $input.addClass('is-invalid').removeClass('is-valid');
+    }
+    function clearError($input){
+      ensureErrorSpan($input).text('').hide();
+      $input.removeClass('is-invalid').addClass('is-valid');
     }
 
-    // ===== validation =====
-    function validateForm() {
-      var valid = true, firstInvalid = null;
+    // ===== 단일 필드 검증 =====
+    function validateField($input){
+      var name = $input.attr('name');
+      var v = ($input.val() || '').trim();
 
-      var $payment = $form.find('[name=paymentOption]');
-      if (!$payment.val()) {
-        showError($payment, '결제수단을 선택해주세요.');
-        valid = false; if (!firstInvalid) firstInvalid = $payment;
-      } else clearError($payment);
-
-      var $receiver = $form.find('[name=receiverName]');
-      if (!$receiver.val().trim()) {
-        showError($receiver, '수령인을 입력해주세요.');
-        valid = false; if (!firstInvalid) firstInvalid = $receiver;
-      } else clearError($receiver);
-
-      var $phone = $form.find('[name=receiverPhone]');
-      var phone = ($phone.val() || '').trim();
-      if (!phone) {
-        showError($phone, '연락처를 입력해주세요.');
-        valid = false; if (!firstInvalid) firstInvalid = $phone;
-      } else if (!/^(01[016789])[0-9]{3,4}[0-9]{4}$/.test(phone)) {
-        showError($phone, '연락처 형식이 올바르지 않습니다. 예: 01012345678');
-        valid = false; if (!firstInvalid) firstInvalid = $phone;
-      } else clearError($phone);
-
-      var $date = $form.find('[name=divyDate]');
-      var date = $date.val();
-      if (!date) {
-        showError($date, '희망배송일을 선택해주세요.');
-        valid = false; if (!firstInvalid) firstInvalid = $date;
-      } else {
-        var today = new Date(); today.setHours(0,0,0,0);
-        var selected = new Date(date);
-        if (selected < today) {
-          showError($date, '희망배송일은 오늘 이후 날짜여야 합니다.');
-          valid = false; if (!firstInvalid) firstInvalid = $date;
-        } else clearError($date);
+      if (name === 'paymentOption'){
+        if (!v){ showError($input, '결제수단을 선택해주세요.'); return false; }
+        clearError($input); return true;
       }
 
-      var $addr = $form.find('[name=divyAddr]');
-      var addr = ($addr.val() || '').trim();
-      if (!addr) {
-        showError($addr, '배송주소를 입력해주세요.');
-        valid = false; if (!firstInvalid) firstInvalid = $addr;
-      } else if (addr.length < 5) {
-        showError($addr, '배송주소가 너무 짧습니다.');
-        valid = false; if (!firstInvalid) firstInvalid = $addr;
-      } else clearError($addr);
+      if (name === 'receiverName'){
+        if (!v){ showError($input, '수령인을 입력해주세요.'); return false; }
+        if (v.length < 2){ showError($input, '수령인은 2자 이상이어야 합니다.'); return false; }
+        clearError($input); return true;
+      }
+
+      if (name === 'receiverPhone'){
+        var digits = App.digits(v);
+        var formatted = digits;
+        if (digits.length >= 11) {
+          formatted = digits.replace(/^(\d{3})(\d{4})(\d{4})$/, '$1-$2-$3');
+        } else if (digits.length === 10) {
+          formatted = digits.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3');
+        } else if (digits.length > 3 && digits.length <= 7) {
+          formatted = digits.replace(/^(\d{3})(\d{1,4})$/, '$1-$2');
+        }
+        $input.val(formatted);
+        v = digits;
+
+        if (!v){ showError($input, '연락처를 입력해주세요.'); return false; }
+        var ok = /^01[016789]\d{3,4}\d{4}$/.test(v);
+        if (!ok){
+          showError($input, '연락처 형식이 올바르지 않습니다. 예: 01012345678');
+          return false;
+        }
+        clearError($input); return true;
+      }
+
+      if (name === 'divyDate'){
+        if (!v){ showError($input, '희망배송일을 선택해주세요.'); return false; }
+        var today = new Date(); today.setHours(0,0,0,0);
+        var selected = new Date(v);
+        if (selected < today){ showError($input, '희망배송일은 오늘 이후 날짜여야 합니다.'); return false; }
+        clearError($input); return true;
+      }
+
+      if (name === 'divyAddr'){
+        if (!v){ showError($input, '기본 주소를 검색 후 선택해주세요.'); return false; }
+        clearError($input); return true;
+      }
+
+      if (name === 'addrDetail'){
+        if (!v){ showError($input, '상세주소를 입력해주세요.'); return false; }
+        if (v.length < 2){ showError($input, '상세주소가 너무 짧습니다.'); return false; }
+        clearError($input); return true;
+      }
+
+      if (name === 'zipcode'){
+        if (!v){ showError($input, '우편번호를 선택해주세요.'); return false; }
+        clearError($input); return true;
+      }
+
+      return true;
+    }
+
+    // ===== 전체 검증 =====
+    function validateForm(){
+      var valid = true, firstInvalid = null;
+
+      $form.find('[name=paymentOption],[name=receiverName],[name=receiverPhone],[name=divyDate],[name=zipcode],[name=divyAddr],[name=addrDetail]').each(function(){
+        var ok = validateField($(this));
+        if (!ok && !firstInvalid){ firstInvalid = $(this); valid = false; }
+      });
+
+      $btnSubmit.prop('disabled', !valid);
+      $btnConfirm.prop('disabled', !valid);
 
       return { valid: valid, firstInvalid: firstInvalid };
     }
 
-    // ===== 실시간 검증 + 숫자필터(연락처) =====
-    $form.find('input, select, textarea').on('blur input change', function() {
+    // ===== 실시간 검증 바인딩 =====
+    $form.on('input blur change', 'input, select, textarea', function(){
+      validateField($(this));
       validateForm();
     });
-    $form.find('[name=receiverPhone]').on('input', function(){
-      this.value = App.digits(this.value);
-    });
 
-    // ===== 폼 밖 클릭 시 전체 검증 =====
-    $(d).on('click', function(e) {
-      if (!$(e.target).closest('form[name=purchaseForm]').length) {
-        validateForm();
-      }
-    });
-
-    // ===== 주문 등록 버튼 → 검증 후 모달 열기 =====
-    $btnSubmit.on('click', function(e) {
+    // ===== 주문 등록 버튼 → 모달 열기 =====
+    $btnSubmit.on('click', function(e){
       e.preventDefault();
       var result = validateForm();
-      if (result.valid) {
+      if (result.valid){
         $modal.fadeIn(120);
-      } else if (result.firstInvalid && result.firstInvalid.length) {
+      } else if (result.firstInvalid){
         result.firstInvalid.focus();
         result.firstInvalid[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
 
-    // ===== 모달: 확인 → 재검증 + 중복제출 방지 + submit =====
-    $btnConfirm.on('click', function(e) {
+    // ===== 모달: 확인 → submit =====
+    $btnConfirm.on('click', function(e){
       e.preventDefault();
-      App.lock($btnConfirm, function() {
+      App.lock($btnConfirm, function(){
         var result = validateForm();
-        if (!result.valid) {
-          alert('입력값을 다시 확인해주세요.');
-          if (result.firstInvalid && result.firstInvalid.length) {
-            result.firstInvalid.focus();
-            result.firstInvalid[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-          return;
-        }
+        if (!result.valid) return;
+
+        var $phone = $form.find('[name=receiverPhone]');
+        $phone.val(App.digits($phone.val())); // DB에는 하이픈 제거
+
         var form = d.purchaseForm;
         form.action = ctx + '/purchase/add';
         form.method = 'post';
@@ -136,22 +156,52 @@
       });
     });
 
-    // ===== 모달: 취소/백드롭 닫기 =====
-    $btnClose.on('click', function(e) {
-      e.preventDefault();
-      $modal.fadeOut(120);
-    });
-    // 모달 바깥(백드롭) 클릭 시 닫힘
-    $modal.on('click', function(e){
-      if (e.target === this) { $modal.fadeOut(120); }
-    });
-    // 모달 콘텐츠 클릭 시 버블링 차단(옵션)
-    $modal.find('.modal-content').on('click', function(e){ e.stopPropagation(); });
+    // ===== 모달 닫기 =====
+    $btnClose.on('click', function(e){ e.preventDefault(); $modal.fadeOut(120); });
+    $modal.on('click', function(e){ if (e.target === this){ $modal.fadeOut(120); } });
 
-    // ===== 화면의 취소 버튼 → 목록 이동 =====
-    $('#btnCancel').on('click', function(e) {
+    // ===== 취소 → 목록 이동 =====
+    $('#btnCancel').on('click', function(e){
       e.preventDefault();
       App.go('/product/listProduct');
     });
+
+    // ===== 주소검색 팝업 연동 =====
+	$('#btnAddr').on('click', function(){
+	  new daum.Postcode({
+	    oncomplete: function(data) {
+	      var addr = '';
+
+	      // 기본 주소: 도로명 → 지번 순으로 보장
+	      if (data.roadAddress) {
+	        addr = data.roadAddress;
+	      } else if (data.jibunAddress) {
+	        addr = data.jibunAddress;
+	      }
+
+	      // 참고항목(법정동/건물명 등)
+	      var extra = '';
+	      if (data.bname && /[동|로|가]$/g.test(data.bname)) {
+	        extra += data.bname;
+	      }
+	      if (data.buildingName && data.apartment === 'Y') {
+	        extra += (extra ? ', ' + data.buildingName : data.buildingName);
+	      }
+	      if (extra) {
+	        addr += ' ('+extra+')';
+	      }
+
+	      // 필드에 채워넣기
+	      $('#zipcode').val(data.zonecode);
+	      $('#addr').val(addr);        // 기본주소
+	      $('#divyAddr').val(addr);    // 서버전송용 (폼 name=divyAddr)
+	      $('#addrDetail').val('').focus(); // 상세주소 초기화 후 포커스
+	      validateForm();
+	    }
+	  }).open();
+	});
+
+    // 초기 상태 검사
+    validateForm();
   });
 })(jQuery, window, document);

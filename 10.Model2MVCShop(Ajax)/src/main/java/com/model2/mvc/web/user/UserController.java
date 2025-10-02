@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.User;
+import com.model2.mvc.service.kakao.KakaoService;
 import com.model2.mvc.service.user.UserService;
-
 
 //==> 회원관리 Controller
 @Controller
@@ -30,6 +31,9 @@ public class UserController {
 	@Autowired
 	@Qualifier("userServiceImpl")
 	private UserService userService;
+	@Autowired
+	@Qualifier("kakaoService")
+	private KakaoService kakaoService;
 	//setter Method 구현 않음
 		
 	public UserController(){
@@ -172,5 +176,24 @@ public class UserController {
 		model.addAttribute("search", search);
 		
 		return "forward:/user/listUser.jsp";
+	}
+	
+	@GetMapping("/kakao/callback")
+	public String kakaoCallback(@RequestParam("code") String code, HttpSession session) throws Exception {
+	    String accessToken = kakaoService.getAccessToken(code);
+	    User kakaoUser = kakaoService.getUserInfo(accessToken);
+
+	    kakaoUser.setUserId("kakao_" + kakaoUser.getKakaoId());
+	    kakaoUser.setPassword("kakao_login");
+
+	    User dbUser = userService.getUserByKakaoId(kakaoUser.getKakaoId());
+	    if (dbUser == null) {
+	        userService.addUser(kakaoUser);
+	        dbUser = kakaoUser;
+	    }
+
+	    session.setAttribute("user", dbUser);
+	    session.setAttribute("loginType", "kakao");
+	    return "redirect:/index.jsp";
 	}
 }

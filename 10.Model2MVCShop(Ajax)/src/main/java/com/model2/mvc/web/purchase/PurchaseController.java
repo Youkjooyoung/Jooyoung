@@ -1,5 +1,6 @@
 package com.model2.mvc.web.purchase;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.Product;
+import com.model2.mvc.service.domain.ProductImage;
 import com.model2.mvc.service.domain.Purchase;
 import com.model2.mvc.service.domain.User;
 import com.model2.mvc.service.product.ProductService;
@@ -47,7 +49,11 @@ public class PurchaseController {
 	public ModelAndView showAddPurchaseForm(@RequestParam int prodNo) throws Exception {
 		Product product = productService.getProduct(prodNo);
 		ModelAndView mv = new ModelAndView("forward:/purchase/addPurchase.jsp");
+		
+		List<ProductImage> productImages = productService.getProductImages(prodNo);
 		mv.addObject("p", product);
+		mv.addObject("productImages", productImages);
+		
 		return mv;
 	}
 
@@ -68,7 +74,17 @@ public class PurchaseController {
 	// 구매 상세
 	@GetMapping("{tranNo}")
 	public ModelAndView getPurchase(@PathVariable int tranNo) throws Exception {
-		return new ModelAndView("forward:/purchase/getPurchase.jsp", "purchase", purchaseService.getPurchase(tranNo));
+		Purchase purchase = purchaseService.getPurchase(tranNo);
+
+		// 구매 상품 번호
+		int prodNo = purchase.getPurchaseProd().getProdNo();
+		List<ProductImage> productImages = productService.getProductImages(prodNo);
+
+		ModelAndView mv = new ModelAndView("forward:/purchase/getPurchase.jsp");
+		mv.addObject("purchase", purchase);
+		mv.addObject("productImages", productImages);
+
+		return mv;
 	}
 
 	// 구매 수정 화면

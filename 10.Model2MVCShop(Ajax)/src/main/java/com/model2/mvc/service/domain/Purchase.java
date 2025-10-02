@@ -18,7 +18,9 @@ public class Purchase {
 	private Date cancelDate;
 	private String cancelUser;
 	private String cancelReason;
-
+	private String zipcode;
+	private String addrDetail;
+	
 	String ORDERED = "001"; // 주문완료
 	String SHIPPING = "002"; // 배송중
 	String DELIVERED = "003"; // 배송완료
@@ -152,6 +154,22 @@ public class Purchase {
 
 	public void setCancelReason(String cancelReason) {
 		this.cancelReason = cancelReason;
+	}
+
+	public String getZipcode() {
+		return zipcode;
+	}
+
+	public void setZipcode(String zipcode) {
+		this.zipcode = zipcode;
+	}
+
+	public String getAddrDetail() {
+		return addrDetail;
+	}
+
+	public void setAddrDetail(String addrDetail) {
+		this.addrDetail = addrDetail;
 	}
 
 	@Override

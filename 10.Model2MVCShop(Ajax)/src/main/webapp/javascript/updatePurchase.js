@@ -2,7 +2,6 @@
 (function (w, d, $) {
   'use strict'; if (!$) return;
 
-  // === 값 추출 ===
   function val(sel){ return $.trim($(sel).val() || ''); }
 
   // === 에러 메시지 표시 ===
@@ -13,9 +12,11 @@
       $input.after($err);
     }
     $err.text(msg).show();
+    $input.addClass("is-invalid").removeClass("is-valid");
   }
   function clearError($input) {
     $input.siblings('.error-msg').hide();
+    $input.removeClass("is-invalid").addClass("is-valid");
   }
 
   // === 전화번호 정규화 ===
@@ -44,13 +45,17 @@
 
     var $name  = $('[name=receiverName]');
     var $phone = $('[name=receiverPhone]');
+    var $zip   = $('[name=zipcode]');
     var $addr  = $('[name=divyAddr]');
+    var $detail= $('[name=addrDetail]');
     var $divy  = $('[name=divyDate]');
     var $req   = $('[name=divyRequest]');
 
     var name  = val('[name=receiverName]');
     var phone = normalizePhone(val('[name=receiverPhone]'));
+    var zip   = val('[name=zipcode]');
     var addr  = val('[name=divyAddr]');
+    var detail= val('[name=addrDetail]');
     var divy  = val('[name=divyDate]');
     var req   = val('[name=divyRequest]');
 
@@ -65,12 +70,20 @@
       valid = false;
     } else {
       clearError($phone);
-      $phone.val(phone); // 정상값 반영
+      $phone.val(phone);
     }
 
-    // === 주소 ===
-    if (!addr) { showError($addr, '배송주소를 입력하세요.'); valid = false; }
+    // === 우편번호 ===
+    if (!zip) { showError($zip, '우편번호를 선택하세요.'); valid = false; }
+    else clearError($zip);
+
+    // === 기본 주소 ===
+    if (!addr) { showError($addr, '기본 주소를 선택하세요.'); valid = false; }
     else clearError($addr);
+
+    // === 상세 주소 ===
+    if (!detail) { showError($detail, '상세주소를 입력하세요.'); valid = false; }
+    else clearError($detail);
 
     // === 요청사항 ===
     if (req.length > 200) { showError($req, '요청사항은 200자 이내로 입력하세요.'); valid = false; }
@@ -98,6 +111,10 @@
       e.preventDefault();
       if (!validateForm()) return;
 
+      // 전화번호 하이픈 제거 후 DB저장
+      var $phone = $('[name=receiverPhone]');
+      $phone.val($phone.val().replace(/-/g,''));
+
       var form = $('form[name=purchaseForm]')[0];
       form.action = ctx + '/purchase/update';
       form.method = 'post';
@@ -120,6 +137,28 @@
     $(d).on('input', '[name=receiverPhone]', function(){
       var norm = normalizePhone($(this).val());
       $(this).val(norm);
+    });
+
+    // === 주소검색 버튼 ===
+    $(d).on('click', '#btnAddr', function(){
+      new daum.Postcode({
+        oncomplete: function(data) {
+          var addr = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+          var extra = '';
+          if(data.bname && /[동|로|가]$/g.test(data.bname)){
+            extra += data.bname;
+          }
+          if(data.buildingName && data.apartment === 'Y'){
+            extra += (extra ? ', ' + data.buildingName : data.buildingName);
+          }
+          if(extra) addr += ' ('+extra+')';
+
+          $('#zipcode').val(data.zonecode);
+          $('#divyAddr').val(addr);
+          $('#addrDetail').val('').focus();
+          validateForm();
+        }
+      }).open();
     });
   });
 })(window, document, window.jQuery);

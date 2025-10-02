@@ -78,6 +78,8 @@ public class ProductServiceImpl implements ProductService {
 		param.put("startRowNum", search.getStartRowNum());
 		param.put("endRowNum", search.getEndRowNum());
 		param.put("sort", sort);
+		param.put("minPrice",       search.getMinPrice());
+		param.put("maxPrice",       search.getMaxPrice());
 
 		List<Product> list = productDao.getProductList(param);
 		int totalCount = productDao.getTotalCount(search);

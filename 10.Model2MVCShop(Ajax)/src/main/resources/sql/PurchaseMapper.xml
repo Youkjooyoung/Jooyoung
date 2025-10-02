@@ -13,14 +13,15 @@
 		<id property="tranNo" column="TRAN_NO" />
 		<result property="tranCode" column="TRAN_CODE" />
 		<result property="orderDate" column="ORDER_DATE" />
+		<result property="zipcode" column="ZIPCODE" />
 		<result property="divyAddr" column="DIVY_ADDR" />
+		<result property="addrDetail" column="ADDR_DETAIL" />
 		<result property="divyDate" column="DIVY_DATE" />
 		<result property="divyRequest" column="DLVY_REQUEST" />
 		<result property="paymentOption" column="PAYMENT_OPTION" />
 		<result property="receiverName" column="RECEIVER_NAME" />
 		<result property="receiverPhone" column="RECEIVER_PHONE" />
-		<result property="cancelDate" column="CANCEL_DATE"
-		jdbcType="DATE" />
+		<result property="cancelDate" column="CANCEL_DATE" jdbcType="DATE" />
 		<result property="cancelReason" column="CANCEL_REASON"/>
 
 		<association property="buyer"
@@ -57,38 +58,37 @@
 
 	<!-- ========================================================= 공통 SQL 조각	========================================================== -->
 	<sql id="purchaseSelectColumns">
-	T.TRAN_NO,
-	T.TRAN_STATUS_CODE AS TRAN_CODE,
-	T.ORDER_DATE AS ORDER_DATE,
-	T.DEMAILADDR AS DIVY_ADDR,
-	TO_CHAR(T.DLVY_DATE,'YYYY-MM-DD') AS DIVY_DATE,
-	T.DLVY_REQUEST,
-	T.PAYMENT_OPTION,
-	T.RECEIVER_NAME,
-	T.RECEIVER_PHONE,
-	T.CANCEL_REASON AS CANCEL_REASON,
-	T.CANCEL_DATE AS CANCEL_DATE,
-	U.USER_ID AS
-	BUYER_ID,
-	U.USER_NAME AS BUYER_NAME,
-	U.CELL_PHONE AS BUYER_CELL_PHONE,
-	U.ADDR AS BUYER_ADDR,
-	U.EMAIL AS BUYER_EMAIL,
-	U.REG_DATE AS
-	BUYER_REG_DATE,
-	P.PROD_NO,
-	P.PROD_NAME,
-	P.PROD_DETAIL,
-	P.MANUFACTURE_DAY,
-	P.PRICE,
-	P.IMAGE_FILE,
-	P.REG_DATE
+		T.TRAN_NO,
+		T.TRAN_STATUS_CODE AS TRAN_CODE,
+		T.ORDER_DATE AS ORDER_DATE,
+		T.ZIPCODE,
+		T.DIVY_ADDR,
+		T.ADDR_DETAIL,
+		TO_CHAR(T.DLVY_DATE,'YYYY-MM-DD') AS DIVY_DATE,
+		T.DLVY_REQUEST,
+		T.PAYMENT_OPTION,
+		T.RECEIVER_NAME,
+		T.RECEIVER_PHONE,
+		T.CANCEL_REASON AS CANCEL_REASON,
+		T.CANCEL_DATE AS CANCEL_DATE,
+		U.USER_ID AS BUYER_ID,
+		U.USER_NAME AS BUYER_NAME,
+		U.CELL_PHONE AS BUYER_CELL_PHONE,
+		U.ADDR AS BUYER_ADDR,
+		U.EMAIL AS BUYER_EMAIL,
+		U.REG_DATE AS BUYER_REG_DATE,
+		P.PROD_NO,
+		P.PROD_NAME,
+		P.PROD_DETAIL,
+		P.MANUFACTURE_DAY,
+		P.PRICE,
+		P.IMAGE_FILE,
+		P.REG_DATE
 	</sql>
 
 	<sql id="purchaseJoins">
 		FROM TRANSACTION T
-		LEFT JOIN USERS U ON U.USER_ID =
-		T.BUYER_ID
+		LEFT JOIN USERS U ON U.USER_ID = T.BUYER_ID
 		LEFT JOIN PRODUCT P ON P.PROD_NO = T.PROD_NO
 	</sql>
 
@@ -121,26 +121,26 @@
 
 	<!-- ========================================================= INSERT ========================================================== -->
 	<insert id="addPurchase"
-		parameterType="com.model2.mvc.service.domain.Purchase">
-		<selectKey keyProperty="tranNo" resultType="int"
-			order="BEFORE">
-			SELECT seq_transaction_tran_no.NEXTVAL FROM dual
-		</selectKey>
-		INSERT INTO TRANSACTION (
-		TRAN_NO, PROD_NO, BUYER_ID, PAYMENT_OPTION,
-		RECEIVER_NAME, RECEIVER_PHONE, DEMAILADDR, DLVY_REQUEST,
-		TRAN_STATUS_CODE, ORDER_DATE, DLVY_DATE
-		) VALUES (
-		#{tranNo},
-		#{purchaseProd.prodNo}, #{buyer.userId}, #{paymentOption},
-		#{receiverName}, #{receiverPhone}, #{divyAddr}, #{divyRequest},
-		#{tranCode}, SYSDATE,
-		<choose>
-			<when test="divyDate != null and divyDate != ''">TO_DATE(#{divyDate}, 'YYYY-MM-DD')</when>
-			<otherwise>NULL</otherwise>
-		</choose>
-		)
-	</insert>
+	parameterType="com.model2.mvc.service.domain.Purchase">
+	<selectKey keyProperty="tranNo" resultType="int"
+		order="BEFORE">
+		SELECT seq_transaction_tran_no.NEXTVAL FROM dual
+	</selectKey>
+	INSERT INTO TRANSACTION (
+	TRAN_NO, PROD_NO, BUYER_ID, PAYMENT_OPTION,
+	RECEIVER_NAME, RECEIVER_PHONE, ZIPCODE, DIVY_ADDR, ADDR_DETAIL,
+	DLVY_REQUEST, TRAN_STATUS_CODE, ORDER_DATE, DLVY_DATE
+	) VALUES (
+	#{tranNo},
+	#{purchaseProd.prodNo}, #{buyer.userId}, #{paymentOption},
+	#{receiverName}, #{receiverPhone}, #{zipcode}, #{divyAddr}, #{addrDetail},
+	#{divyRequest}, #{tranCode}, SYSDATE,
+	<choose>
+		<when test="divyDate != null and divyDate != ''">TO_DATE(#{divyDate}, 'YYYY-MM-DD')</when>
+		<otherwise>NULL</otherwise>
+	</choose>
+	)
+</insert>
 
 	<!-- ========================================================= SELECT ONE ========================================================== -->
 	<select id="getPurchase" parameterType="int"
@@ -209,11 +209,11 @@
 		parameterType="com.model2.mvc.service.domain.Purchase">
 		UPDATE TRANSACTION
 		SET PAYMENT_OPTION = #{paymentOption},
-		RECEIVER_NAME
-		= #{receiverName},
+		RECEIVER_NAME = #{receiverName},
 		RECEIVER_PHONE = #{receiverPhone},
-		DEMAILADDR =
-		#{divyAddr},
+		ZIPCODE = #{zipcode},
+		DIVY_ADDR = #{divyAddr},
+		ADDR_DETAIL = #{addrDetail},
 		DLVY_REQUEST = #{divyRequest},
 		DLVY_DATE =
 		<choose>

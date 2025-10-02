@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.User;
-import com.model2.mvc.service.user.UserService;
-import com.model2.mvc.service.user.UserDao;;
+import com.model2.mvc.service.user.UserDao;
+import com.model2.mvc.service.user.UserService;;
 
 
 //==> 회원관리 서비스 구현
@@ -63,4 +63,8 @@ public class UserServiceImpl implements UserService{
 		}
 		return result;
 	}
+	
+	public User getUserByKakaoId(String kakaoId) throws Exception {
+        return userDao.getUserByKakaoId(kakaoId);
+    }
 }

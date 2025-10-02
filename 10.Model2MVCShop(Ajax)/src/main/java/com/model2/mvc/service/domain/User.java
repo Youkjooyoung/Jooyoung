@@ -24,7 +24,8 @@ public class User {
 	// JSON ==> Domain Object  Binding을 위해 추가된 부분
 	private String regDateString;
 
-	
+	private String kakaoId;
+	private String profileImg;
 	
 	///Constructor
 	public User(){
@@ -142,4 +143,10 @@ public class User {
 	public void setRegDateString(String regDateString) {
 		this.regDateString = regDateString;
 	}
+	
+	public String getKakaoId() { return kakaoId; }
+	public void setKakaoId(String kakaoId) { this.kakaoId = kakaoId; }
+
+	public String getProfileImg() { return profileImg; }
+	public void setProfileImg(String profileImg) { this.profileImg = profileImg; }
 }
