@@ -28,7 +28,7 @@
 			javaType="com.model2.mvc.service.domain.User">
 			<id property="userId" column="BUYER_ID" />
 			<result property="userName" column="BUYER_NAME" />
-			<result property="cellPhone" column="BUYER_CELL_PHONE" />
+			<result property="phone"     column="BUYER_CELL_PHONE" />
 			<result property="addr" column="BUYER_ADDR" />
 			<result property="email" column="BUYER_EMAIL" />
 			<result property="regDate" column="BUYER_REG_DATE" />

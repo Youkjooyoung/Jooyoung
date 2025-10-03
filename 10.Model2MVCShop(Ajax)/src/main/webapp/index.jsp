@@ -1,30 +1,27 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page pageEncoding="UTF-8" %>
-
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-
 <head>
-	<meta charset="UTF-8">
-	
-	<title>Model2 MVC Shop</title>
-	
+<meta charset="UTF-8">
+<title>Model2 MVC Shop</title>
 </head>
 
-<frameset rows="80,*" cols="*" frameborder="NO" border="0" framespacing="0">
-  
-  <frame src="/layout/top.jsp" name="topFrame" scrolling="NO" noresize >
-  
-  <frameset rows="*" cols="160,*" framespacing="0" frameborder="NO" border="0">
-    <frame src="/layout/left.jsp" name="leftFrame" scrolling="NO" noresize>
-    <frame src="" name="rightFrame"  scrolling="auto">
-  </frameset>
-
+<frameset rows="80,*" cols="*" frameborder="0" border="0"
+	framespacing="0">
+	<frame src="/layout/top.jsp" name="topFrame" scrolling="NO" noresize
+		frameborder="0">
+	<frameset rows="*" cols="160,*" frameborder="0" border="0"
+		framespacing="0">
+		<frame src="/layout/left.jsp" name="leftFrame" scrolling="NO" noresize
+			frameborder="0">
+		<frame src="" name="rightFrame" scrolling="auto" frameborder="0">
+	</frameset>
 </frameset>
 
 <noframes>
-<body>
-</body>
+	<body>
+	</body>
 </noframes>
 
 </html>

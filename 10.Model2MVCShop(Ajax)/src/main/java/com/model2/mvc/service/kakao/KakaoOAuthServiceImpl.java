@@ -2,6 +2,7 @@ package com.model2.mvc.service.kakao;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,49 +14,48 @@ import org.springframework.web.client.RestTemplate;
 
 import com.model2.mvc.service.domain.User;
 
-@Service("kakaoService")
-public class KakaoService {
+@Service("kakaoOAuthService")
+public class KakaoOAuthServiceImpl implements KakaoOAuthService {
 
-	// ✅ Access Token 발급
+	@Value("#{commonProperties['kakao.clientId']}")
+	private String clientId;
+
+	@Value("#{commonProperties['kakao.redirectUri']}")
+	private String redirectUri;
+
+	@Override
 	public String getAccessToken(String code) throws Exception {
-		RestTemplate restTemplate = new RestTemplate();
+		RestTemplate rt = new RestTemplate();
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "authorization_code");
-		params.add("client_id", "c800109ff8046d4900c86659d4e9f89d"); // REST API 키
-		params.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
+		params.add("client_id", clientId);
+		params.add("redirect_uri", redirectUri);
 		params.add("code", code);
 
-		ResponseEntity<Map> response = restTemplate.postForEntity("https://kauth.kakao.com/oauth/token", params,
-				Map.class);
+		ResponseEntity<Map> res = rt.postForEntity("https://kauth.kakao.com/oauth/token", params, Map.class);
 
-		return (String) response.getBody().get("access_token");
+		return (String) res.getBody().get("access_token");
 	}
 
-	// ✅ 사용자 정보 가져오기
-	public User getUserInfo(String accessToken) {
+	@Override
+	public User getUserInfo(String accessToken) throws Exception {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "Bearer " + accessToken);
 
 		HttpEntity<String> entity = new HttpEntity<>(headers);
-		RestTemplate restTemplate = new RestTemplate();
+		RestTemplate rt = new RestTemplate();
 
-		ResponseEntity<Map> response = restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.GET,
-				entity, Map.class);
+		ResponseEntity<Map> res = rt.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.GET, entity, Map.class);
 
-		Map<String, Object> body = response.getBody();
+		Map<String, Object> body = res.getBody();
 
 		User user = new User();
 		String kakaoId = body.get("id").toString();
 
-		// ✅ UserId 생성 규칙 고정
 		user.setUserId("kakao_" + kakaoId);
 		user.setKakaoId(kakaoId);
-
-		// ✅ 소셜 로그인 계정은 password placeholder 고정
 		user.setPassword("kakao_login");
-
-		// ✅ 기본 role 세팅
 		user.setRole("user");
 
 		Map<String, Object> account = (Map<String, Object>) body.get("kakao_account");
@@ -67,14 +67,10 @@ public class KakaoService {
 				user.setProfileImg((String) profile.get("profile_image_url"));
 			}
 		}
-
-		// ✅ NULL 방지 기본값 처리
-		if (user.getUserName() == null) {
+		if (user.getUserName() == null)
 			user.setUserName("kakao_user");
-		}
-		if (user.getEmail() == null) {
+		if (user.getEmail() == null)
 			user.setEmail("kakao_" + kakaoId + "@kakao.com");
-		}
 
 		return user;
 	}

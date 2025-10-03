@@ -1,3 +1,4 @@
+
 ------------------------------------------------------------
 -- 1) DROP (자식 → 부모 → 시퀀스)
 ------------------------------------------------------------
@@ -184,3 +185,7 @@ ALTER TABLE USERS ADD KAKAO_ID VARCHAR2(50);
 ALTER TABLE USERS ADD PROFILE_IMG VARCHAR2(200);
 
 ALTER TABLE USERS MODIFY PASSWORD VARCHAR2(100 CHAR);
+
+ALTER TABLE USERS 
+ADD ( ZIPCODE     VARCHAR2(10 CHAR),
+      ADDR_DETAIL VARCHAR2(200 CHAR) );

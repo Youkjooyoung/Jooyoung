@@ -1,154 +1,56 @@
-<%@ page contentType="text/html; charset=UTF-8"%>
-<%@ page pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>Model2 MVC Shop</title>
-
-<link href="/css/left.css" rel="stylesheet" type="text/css">
-
-<!-- jQuery CDN -->
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script type="text/javascript">
-	function openHistory() {
-		window
-				.open("/layout/recentProduct.jsp", "recentProduct",
-						"left=300, top=200, width=500, height=400, scrollbars=yes, resizable=no");
-	}
-
-	$(function() {
-		// 개인정보조회
-		$(".Depth03:contains('개인정보조회')")
-				.on(
-						"click",
-						function() {
-							$(
-									window.parent.frames["rightFrame"].document.location)
-									.attr("href",
-											"/user/getUser?userId=${user.userId}");
-						});
-
-		// 회원정보조회
-		$(".Depth03:contains('회원정보조회')").on(
-				"click",
-				function() {
-					$(window.parent.frames["rightFrame"].document.location)
-							.attr("href", "/user/listUser");
-				});
-
-		// 판매상품등록
-		$(".Depth03:contains('판매상품등록')").on(
-				"click",
-				function() {
-					$(window.parent.frames["rightFrame"].document.location)
-							.attr("href", "/product/addProductView.jsp");
-				});
-
-		// 판매상품관리
-		$(".Depth03:contains('판매상품관리')").on(
-				"click",
-				function() {
-					$(window.parent.frames["rightFrame"].document.location)
-							.attr("href", "/product/listProduct?menu=manage");
-				});
-
-		// 상품검색
-		$(".Depth03:contains('상 품 검 색')").on(
-				"click",
-				function() {
-					$(window.parent.frames["rightFrame"].document.location)
-							.attr("href", "/product/listProduct?menu=search");
-				});
-
-		// 구매이력조회
-		$(".Depth03:contains('구매이력조회')").on(
-				"click",
-				function() {
-					$(window.parent.frames["rightFrame"].document.location)
-							.attr("href", "/purchase/list");
-				});
-
-		// 최근 본 상품
-		$(".Depth03:contains('최근 본 상품')").on("click", function() {
-			openHistory();
-		});
-	});
-</script>
+  <meta charset="UTF-8" />
+  <title>Model2 MVC Shop</title>
+  <link rel="stylesheet" href="${ctx}/css/naver-common.css" />
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+  <script src="${ctx}/javascript/left.js"></script>
 </head>
 
-<body background="/images/left/imgLeftBg.gif" leftmargin="0"
-	topmargin="0" marginwidth="0" marginheight="0">
-	<table width="159" border="0" cellspacing="0" cellpadding="0">
+<body class="nv-left" data-ctx="${ctx}">
+  <div class="left-menu">
 
-		<!-- menu 01 -->
-		<tr>
-			<td valign="top">
-				<table border="0" cellspacing="0" cellpadding="0" width="159">
-					<c:if test="${!empty user}">
-						<tr>
-							<td class="Depth03">개인정보조회</td>
-						</tr>
-					</c:if>
+    <!-- 앱 설정 그룹 -->
+    <div class="menu-group">
+      <div class="menu-title">내 정보</div>
+      <ul class="menu">
+        <c:if test="${!empty sessionScope.user}">
+          <li class="Depth03" data-nav="myInfo">개인정보조회</li>
+        </c:if>
+        <c:if test="${not empty sessionScope.user && sessionScope.user.role == 'admin'}">
+          <li class="Depth03" data-nav="userList">회원정보조회</li>
+        </c:if>
+      </ul>
+    </div>
 
-					<c:if test="${user.role == 'admin'}">
-						<tr>
-							<td class="Depth03">회원정보조회</td>
-						</tr>
-					</c:if>
+    <!-- 상품 설정 그룹 -->
+    <div class="menu-group">
+      <div class="menu-title">상품</div>
+      <ul class="menu">
+        <c:if test="${not empty sessionScope.user && sessionScope.user.role == 'admin'}">
+          <li class="Depth03" data-nav="addProduct">판매상품등록</li>
+          <li class="Depth03" data-nav="manageProduct">판매상품관리</li>
+        </c:if>
+        <li class="Depth03" data-nav="searchProduct">상품 검색</li>
+      </ul>
+    </div>
 
-					<tr>
-						<td class="DepthEnd">&nbsp;</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
+    <!-- 구매/최근 그룹 -->
+    <div class="menu-group">
+      <div class="menu-title">사용자</div>
+      <ul class="menu">
+        <c:if test="${not empty sessionScope.user && sessionScope.user.role == 'user'}">
+          <li class="Depth03" data-nav="myPurchase">구매이력조회</li>
+        </c:if>
+        <li class="Depth03" data-nav="recent">최근 본 상품</li>
+      </ul>
+    </div>
 
-		<!-- menu 02 -->
-		<c:if test="${user.role == 'admin'}">
-			<tr>
-				<td valign="top">
-					<table border="0" cellspacing="0" cellpadding="0" width="159">
-						<tr>
-							<td class="Depth03">판매상품등록</td>
-						</tr>
-						<tr>
-							<td class="Depth03">판매상품관리</td>
-						</tr>
-						<tr>
-							<td class="DepthEnd">&nbsp;</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</c:if>
-
-		<!-- menu 03 -->
-		<tr>
-			<td valign="top">
-				<table border="0" cellspacing="0" cellpadding="0" width="159">
-					<tr>
-						<td class="Depth03">상 품 검 색</td>
-					</tr>
-
-					<c:if test="${!empty user && user.role == 'user'}">
-						<tr>
-							<td class="Depth03">구매이력조회</td>
-						</tr>
-					</c:if>
-
-					<tr>
-						<td class="DepthEnd">&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="Depth03">최근 본 상품</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-
-	</table>
+  </div>
 </body>
 </html>

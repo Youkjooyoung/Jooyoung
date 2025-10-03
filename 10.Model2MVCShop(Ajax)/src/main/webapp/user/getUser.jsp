@@ -63,11 +63,23 @@
 	</tr>
 	
 	<tr>
-		<td width="104" class="ct_write">
-			아이디 <img src="/images/ct_icon_red.gif" width="3" height="3" align="absmiddle"/>
-		</td>
-		<td bgcolor="D6D6D6" width="1"></td>
-		<td class="ct_write01">${user.userId}</td>
+		  <td width="104" class="ct_write">
+		    아이디 <img src="/images/ct_icon_red.gif" width="3" height="3" align="absmiddle"/>
+		  </td>
+		  <td bgcolor="D6D6D6" width="1"></td>
+		  <td class="ct_write01">
+		    <c:choose>
+		      <c:when test="${not empty user.email}">
+		        ${user.email}
+		      </c:when>
+		      <c:when test="${not empty user.userName}">
+		        ${user.userName}
+		      </c:when>
+		      <c:otherwise>
+		        ${user.kakaoId}
+		      </c:otherwise>
+		    </c:choose>
+		  </td>
 	</tr>
 
 	<tr>

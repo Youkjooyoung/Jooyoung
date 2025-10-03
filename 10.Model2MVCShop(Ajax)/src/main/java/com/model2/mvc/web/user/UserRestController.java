@@ -1,16 +1,22 @@
 package com.model2.mvc.web.user;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.User;
 import com.model2.mvc.service.user.UserService;
-import com.model2.mvc.common.Search;
 
 /**
  * UserRestController.java
@@ -48,19 +54,30 @@ public class UserRestController {
      * @param session 로그인 성공 시 세션에 저장
      * @return DB에 저장된 사용자 정보 반환
      */
-    @PostMapping("json/login")
-    public User login(@RequestBody User user, HttpSession session) throws Exception {
-        System.out.println("/user/json/login : POST 호출됨");
+	@PostMapping("json/login")
+	public Map<String, Object> login(@RequestBody User user, HttpSession session) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		User dbUser = userService.getUser(user.getUserId());
 
-        // 사용자 조회
-        User dbUser = userService.getUser(user.getUserId());
+		if (dbUser != null && user.getPassword().equals(dbUser.getPassword())) {
+			session.setAttribute("user", dbUser);
+			result.put("success", true);
+			result.put("user", dbUser);
+		} else {
+			result.put("success", false);
+			result.put("message", "아이디 또는 비밀번호가 올바르지 않습니다.");
+		}
 
-        // 패스워드 일치 시 세션 저장
-        if (dbUser != null && user.getPassword().equals(dbUser.getPassword())) {
-            session.setAttribute("user", dbUser);
-        }
-
-        return dbUser;
+		return result;
+	}
+    
+    /** 로그아웃 (세션 무효화) */
+    @PostMapping("json/logout")
+    public Map<String, Object> logout(HttpSession session) {
+        session.invalidate();
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        return result;
     }
 
     /**
@@ -107,4 +124,25 @@ public class UserRestController {
         System.out.println("/user/json/checkDuplication : GET 호출됨");
         return userService.checkDuplication(userId);
     }
+
+	@GetMapping("json/me")
+	public Map<String, Object> me(HttpSession session) {
+		Map<String, Object> res = new HashMap<>();
+		User loginUser = (User) session.getAttribute("user");
+
+		if (loginUser != null) {
+			res.put("loggedIn", true);
+			res.put("userId", loginUser.getUserId());
+			res.put("userName", loginUser.getUserName());
+			res.put("role", loginUser.getRole());
+			res.put("phone", loginUser.getPhone());
+	        res.put("addr", loginUser.getAddr());
+	        res.put("email", loginUser.getEmail());
+	        res.put("zipcode", loginUser.getZipcode());
+	        res.put("addrDetail", loginUser.getAddrDetail());
+		} else {
+			res.put("loggedIn", false);
+		}
+		return res;
+	}
 }

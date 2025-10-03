@@ -1,5 +1,6 @@
 package com.model2.mvc.web.user;
 
+import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,13 +13,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.User;
+import com.model2.mvc.service.kakao.KakaoOAuthService;
 import com.model2.mvc.service.kakao.KakaoService;
 import com.model2.mvc.service.user.UserService;
 
@@ -31,20 +35,31 @@ public class UserController {
 	@Autowired
 	@Qualifier("userServiceImpl")
 	private UserService userService;
+
 	@Autowired
 	@Qualifier("kakaoService")
 	private KakaoService kakaoService;
-	//setter Method 구현 않음
-		
+
+	@Autowired
+	@Qualifier("kakaoOAuthService")
+	private KakaoOAuthService kakaoOAuthService;
+
+	// Kakao OAuth 설정값
+	@Value("#{commonProperties['kakao.clientId']}")
+	private String kakaoClientId;
+
+	@Value("#{commonProperties['kakao.logoutRedirectUri']}")
+	private String kakaoLogoutRedirectUri;
+
+	@Value("#{commonProperties['pageUnit']}")
+	private int pageUnit;
+
+	@Value("#{commonProperties['pageSize']}")
+	private int pageSize;
+
 	public UserController(){
 		System.out.println(this.getClass());
 	}
-	
-	@Value("#{commonProperties['pageUnit']}")
-	int pageUnit;
-	@Value("#{commonProperties['pageSize']}")
-	int pageSize;
-	
 	
 	@RequestMapping( value="addUser", method=RequestMethod.GET )
 	public String addUser() throws Exception{
@@ -128,16 +143,24 @@ public class UserController {
 		return "redirect:/index.jsp";
 	}
 		
-	
-	@RequestMapping( value="logout", method=RequestMethod.GET )
-	public String logout(HttpSession session ) throws Exception{
-		
-		System.out.println("/user/logout : POST");
-		
-		session.invalidate();
-		
-		return "redirect:/index.jsp";
+	//카카오 API 로그아웃 호출
+	@RequestMapping(value="logout", method={RequestMethod.GET, RequestMethod.POST})
+	public String logout(HttpSession session) throws Exception {
+	    System.out.println("/user/logout : LOGOUT");
+
+	    String loginType = (String) session.getAttribute("loginType");
+	    session.invalidate();
+
+	    if ("kakao".equals(loginType)) {
+	        String kakaoLogoutUrl = "https://kauth.kakao.com/oauth/logout"
+	                + "?client_id=" + kakaoClientId
+	                + "&logout_redirect_uri=" + URLEncoder.encode(kakaoLogoutRedirectUri, "UTF-8");
+	        return "redirect:" + kakaoLogoutUrl;
+	    }
+
+	    return "redirect:http://localhost:8080";
 	}
+
 	
 	
 	@RequestMapping( value="checkDuplication", method=RequestMethod.POST )
@@ -180,20 +203,64 @@ public class UserController {
 	
 	@GetMapping("/kakao/callback")
 	public String kakaoCallback(@RequestParam("code") String code, HttpSession session) throws Exception {
-	    String accessToken = kakaoService.getAccessToken(code);
-	    User kakaoUser = kakaoService.getUserInfo(accessToken);
+		String accessToken = kakaoOAuthService.getAccessToken(code);
+		User kakaoUser = kakaoOAuthService.getUserInfo(accessToken);
 
-	    kakaoUser.setUserId("kakao_" + kakaoUser.getKakaoId());
-	    kakaoUser.setPassword("kakao_login");
+		User dbUser = userService.getUserByKakaoId(kakaoUser.getKakaoId());
+		if (dbUser == null) {
+			userService.addUser(kakaoUser);
+			dbUser = kakaoUser;
+		} else {
+			boolean patch = false;
+			if ((dbUser.getEmail() == null || dbUser.getEmail().isEmpty()) && kakaoUser.getEmail() != null) {
+				dbUser.setEmail(kakaoUser.getEmail());
+				patch = true;
+			}
+			if ((dbUser.getUserName() == null || dbUser.getUserName().isEmpty()) && kakaoUser.getUserName() != null) {
+				dbUser.setUserName(kakaoUser.getUserName());
+				patch = true;
+			}
+			if ((dbUser.getProfileImg() == null || dbUser.getProfileImg().isEmpty())
+					&& kakaoUser.getProfileImg() != null) {
+				dbUser.setProfileImg(kakaoUser.getProfileImg());
+				patch = true;
+			}
+			if (patch)
+				userService.updateUser(dbUser);
+		}
 
-	    User dbUser = userService.getUserByKakaoId(kakaoUser.getKakaoId());
-	    if (dbUser == null) {
-	        userService.addUser(kakaoUser);
-	        dbUser = kakaoUser;
-	    }
+		// 표시용 아이디(세션): 이메일 > 닉네임 > kakaoId
+		String displayId = (dbUser.getEmail() != null && !dbUser.getEmail().isEmpty()) ? dbUser.getEmail()
+				: (dbUser.getUserName() != null && !dbUser.getUserName().isEmpty()) ? dbUser.getUserName()
+						: dbUser.getKakaoId();
 
-	    session.setAttribute("user", dbUser);
-	    session.setAttribute("loginType", "kakao");
-	    return "redirect:/index.jsp";
+		session.setAttribute("user", dbUser);
+		session.setAttribute("loginType", "kakao");
+		session.setAttribute("kakaoAccessToken", accessToken);
+		session.setAttribute("displayId", displayId);
+
+		if (!userService.isProfileComplete(dbUser)) {
+			return "redirect:/user/onboardView.jsp";
+		}
+		return "redirect:/index.jsp";
+	}
+	
+	/** 온보딩 완료(JSON) - JSP와 100% 디커플링 */
+	@RequestMapping(value = "/json/completeProfile", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	public @ResponseBody Map<String, Object> completeProfileJson(@RequestBody User req, HttpSession session)
+			throws Exception {
+		User loginUser = (User) session.getAttribute("user");
+		// 보안: 세션 사용자 기준으로만 업데이트
+		req.setUserId(loginUser.getUserId());
+
+		userService.completeProfile(req);
+		// 최신 정보로 세션 갱신
+		User refreshed = userService.getUser(req.getUserId());
+		session.setAttribute("user", refreshed);
+
+		Map<String, Object> result = new java.util.HashMap<>();
+		result.put("success", true);
+		result.put("redirect", "/index.jsp");
+		return result;
 	}
 }

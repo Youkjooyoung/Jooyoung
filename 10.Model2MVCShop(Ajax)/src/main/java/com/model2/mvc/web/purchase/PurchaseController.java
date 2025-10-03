@@ -27,7 +27,7 @@ import com.model2.mvc.service.product.ProductService;
 import com.model2.mvc.service.purchase.PurchaseService;
 
 @Controller
-@RequestMapping("/purchase/*")
+@RequestMapping("/purchase/**")
 public class PurchaseController {
 	@Autowired
 	private final PurchaseService purchaseService;
@@ -60,12 +60,15 @@ public class PurchaseController {
 	// 구매 등록 처리
 	@PostMapping("add")
 	public ModelAndView addPurchase(@ModelAttribute Purchase purchase,
-			@SessionAttribute(name = "user", required = false) User sessionUser) throws Exception {
-		if (sessionUser != null)
-			purchase.setBuyer(sessionUser);
-		if (purchase.getTranCode() == null)
-			purchase.setTranCode("001"); // 주문완료
-		purchaseService.addPurchase(purchase);
+	                                @RequestParam(required=false) Integer prodNo,
+	                                @SessionAttribute(name="user", required=false) User sessionUser) throws Exception {
+	    if (sessionUser != null) purchase.setBuyer(sessionUser);
+	    if (purchase.getPurchaseProd()==null && prodNo!=null) {
+	        Product p = new Product(); p.setProdNo(prodNo);
+	        purchase.setPurchaseProd(p);
+	    }
+	    if (purchase.getTranCode()==null) purchase.setTranCode("001");
+	    purchaseService.addPurchase(purchase);
 
 		Purchase saved = purchaseService.getPurchase(purchase.getTranNo());
 		return new ModelAndView("forward:/purchase/getPurchase.jsp", "purchase", saved);

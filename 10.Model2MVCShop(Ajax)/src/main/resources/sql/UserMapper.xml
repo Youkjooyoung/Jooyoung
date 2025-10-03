@@ -1,107 +1,127 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <!DOCTYPE mapper
-		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="UserMapper">
- 	
- 	
-	<resultMap id="userSelectMap" type="user">
-		<result property="userId" 			column="user_id" 			jdbcType="VARCHAR"/>
-		<result property="userName"	column="user_name" 		jdbcType="VARCHAR" />
-		<result property="password" 	column="password" 		jdbcType="VARCHAR" />
-		<result property="role" 				column="role" 					jdbcType="VARCHAR" />
-		<result property="ssn" 				column="ssn" 					jdbcType="VARCHAR" />
-		<result property="phone" 			column="cell_phone" 		jdbcType="VARCHAR" />
-		<result property="addr" 				column="addr" 					jdbcType="VARCHAR" />
-		<result property="email" 			column="email" 				jdbcType="NUMERIC"  />
-		<result property="regDate" 		column="reg_date" 			jdbcType="DATE" />
-		<result property="kakaoId" column="kakao_id"/>
-    	<result property="profileImg" column="profile_img"/>
-	</resultMap>
-	
-	<!-- SQL : INSERT -->
-	<insert id="addUser" parameterType="user">
-	INSERT INTO users(user_id,
-	user_name, password, role, kakao_id, profile_img,
-	reg_date)
-	VALUES
-	(#{userId}, #{userName}, #{password}, 'user', #{kakaoId},
-	#{profileImg}, SYSDATE)
-</insert>
-	 
-	 <!-- SQL : SELECT ONE -->
-	 <select 	id="getUser"	parameterType="string"	resultMap="userSelectMap">
-		SELECT
-		user_id , user_name , password , role ,  cell_phone ,  addr , email , reg_date 		
-		FROM users 
-		WHERE user_id = #{value}
-	 </select>
 
+  <resultMap id="userSelectMap" type="user">
+    <result property="userId"     column="user_id"     jdbcType="VARCHAR"/>
+    <result property="userName"   column="user_name"   jdbcType="VARCHAR"/>
+    <result property="password"   column="password"    jdbcType="VARCHAR"/>
+    <result property="role"       column="role"        jdbcType="VARCHAR"/>
+    <result property="ssn"        column="ssn"         jdbcType="VARCHAR"/>
+    <result property="phone"      column="cell_phone"  jdbcType="VARCHAR"/>
+    <result property="addr"       column="addr"        jdbcType="VARCHAR"/>
+    <result property="email"      column="email"       jdbcType="VARCHAR"/>
+    <result property="regDate"    column="reg_date"    jdbcType="DATE"/>
+    <result property="kakaoId"    column="kakao_id"    jdbcType="VARCHAR"/>
+    <result property="profileImg" column="profile_img" jdbcType="VARCHAR"/>
+    <!-- ✅ 새로 추가 -->
+    <result property="zipcode"    column="zipcode"     jdbcType="VARCHAR"/>
+    <result property="addrDetail" column="addr_detail" jdbcType="VARCHAR"/>
+  </resultMap>
+
+	<!-- INSERT : 일반 + 카카오 통합 -->
+	<insert id="addUser" parameterType="user">
+		INSERT INTO USERS (
+		user_id, user_name, password, role, ssn,
+		cell_phone, addr, email, kakao_id, profile_img, reg_date,
+		zipcode, addr_detail
+		) VALUES (
+		#{userId}, #{userName}, #{password}, #{role}, #{ssn},
+		#{phone}, #{addr}, #{email}, #{kakaoId}, #{profileImg}, SYSDATE,
+		#{zipcode}, #{addrDetail}
+		)
+	</insert>
+
+	<!-- ✅ 회원 단건 조회 (ID) -->
+	<select id="getUser" parameterType="string"
+		resultMap="userSelectMap">
+		SELECT user_id, user_name, password, role, ssn,
+		cell_phone, addr, email, reg_date, kakao_id, profile_img,
+		zipcode, addr_detail
+		FROM users
+		WHERE user_id = #{value}
+	</select>
+
+	<!-- ✅ 카카오 ID로 조회 -->
 	<select id="getUserByKakaoId" parameterType="string"
 		resultMap="userSelectMap">
-		SELECT * FROM users WHERE kakao_id = #{kakaoId}
+		SELECT user_id, user_name, password, role, ssn,
+		cell_phone, addr, email, reg_date, kakao_id, profile_img,
+		zipcode, addr_detail
+		FROM users
+		WHERE kakao_id = #{value}
 	</select>
-	 
-	 <!-- SQL : UPDATE -->
-	 <update	id="updateUser"	parameterType="user" >
-	   	UPDATE users
-	   	<set>
-	   		user_name 	= #{userName} ,
-			cell_phone	= #{phone},
-			addr 				= #{addr} ,
-			email				=	#{email}
-	   	</set>
-	   	WHERE user_id = #{userId}
-	 </update>
-		 
-	<!-- SQL : SELECT LIST -->
-	<select  id="getUserList"  parameterType="search"	resultMap="userSelectMap">
-	  	SELECT *
-	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
-	  					FROM		(	SELECT user_id , user_name , email
-											FROM users
-											<if test="searchCondition != null">
-												<where>
-													<if test="searchCondition == 0 and searchKeyword !='' ">
-										 				user_id = #{searchKeyword}
-													</if>
-													<if test="searchCondition == 1 and searchKeyword !='' ">
-										 				user_name = #{searchKeyword}
-													</if>
-												</where>
-											</if>
-											ORDER BY user_id ) inner_table
-						WHERE ROWNUM &lt;= #{endRowNum} )
-		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
-	 </select>
-	 	<!--  위 두번째 subQuery 의  
-	 			WHERE ROWNUM &lt;= #{endRowNum} ) 는
-	 			WHERE ROWNUM <= #{endRowNum} ) 의미이며..
-	 			< 는 keyword 로 &lt; 를	사용.
-	 			
-	 			<![CDATA[  ~~~  ]]> 를 이용하여 아래와 같이 사용  할 수 있다.
-	 			CDATA ==> Character Data 의 의미 Java 에서 \n 같은 특수문자 처리  
 
-				WHERE ROWNUM <![CDATA[ <=]]> #{endRowNum} )
-		-->
-	
-	<!-- SQL : SELECT ROW Count -->	 
-	 <select  id="getTotalCount"  parameterType="search"	 resultType="int">
-	  	SELECT COUNT(*)
-	  	FROM(	SELECT user_id , user_name , email
-						FROM users
-						<if test="searchCondition != null">
-							<where>
-								<if test="searchCondition == 0 and searchKeyword !='' ">
-						 			user_id = #{searchKeyword}
-								</if>
-								<if test="searchCondition == 1 and searchKeyword !='' ">
-						 		user_name = #{searchKeyword}
-								</if>
-							</where>
-						</if> ) countTable						
-	 </select>
-	 
+	<!-- ✅ 회원정보 수정 -->
+	<update id="updateUser" parameterType="user">
+		UPDATE users
+		<set>
+			<if test="userName   != null">user_name = #{userName},</if>
+			<if test="phone      != null">cell_phone = #{phone},</if>
+			<if test="addr       != null">addr = #{addr},</if>
+			<if test="email      != null">email = #{email},</if>
+			<if test="password   != null">password = #{password},</if>
+			<if test="role       != null">role = #{role},</if>
+			<if test="profileImg != null">profile_img = #{profileImg},</if>
+			<if test="kakaoId    != null">kakao_id = #{kakaoId},</if>
+			<if test="zipcode    != null">zipcode = #{zipcode},</if>
+			<if test="addrDetail != null">addr_detail = #{addrDetail},</if>
+		</set>
+		WHERE user_id = #{userId}
+	</update>
+
+	<!-- 아이디 중복 체크 -->
+	<select id="countByUserId" parameterType="string"
+		resultType="int">
+		SELECT COUNT(*) FROM users WHERE user_id = #{value}
+	</select>
+
+	<!-- 회원 목록 -->
+	<select id="getUserList" parameterType="search"
+		resultMap="userSelectMap">
+		SELECT *
+		FROM (
+		SELECT inner_table.*, ROWNUM AS row_seq
+		FROM (
+		SELECT user_id, user_name, email
+		FROM users
+		<if test="searchCondition != null">
+			<where>
+				<if test="searchCondition == 0 and searchKeyword != '' ">
+					user_id = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1 and searchKeyword != '' ">
+					user_name = #{searchKeyword}
+				</if>
+			</where>
+		</if>
+		ORDER BY user_id
+		) inner_table
+		WHERE ROWNUM &lt;= #{endRowNum}
+		)
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
+	</select>
+
+	<!-- 총 회원 수 -->
+	<select id="getTotalCount" parameterType="search"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM (
+		SELECT user_id, user_name, email
+		FROM users
+		<if test="searchCondition != null">
+			<where>
+				<if test="searchCondition == 0 and searchKeyword != '' ">
+					user_id = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1 and searchKeyword != '' ">
+					user_name = #{searchKeyword}
+				</if>
+			</where>
+		</if>
+		) countTable
+	</select>
 </mapper>
