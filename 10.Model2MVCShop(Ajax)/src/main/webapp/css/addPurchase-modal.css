@@ -1,0 +1,65 @@
+@charset "UTF-8";
+
+/* 모달 오버레이 */
+#confirmModal {
+  display: none; /* JS에서 fadeIn/fadeOut */
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+}
+
+/* 모달 박스 */
+#confirmModal .modal-content {
+  background: #fff;
+  width: 420px;
+  max-width: 90%;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  text-align: center;
+  animation: modalPop 0.18s ease-out;
+}
+
+#confirmModal .modal-content p {
+  margin: 0 0 16px;
+  font-size: 15px;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* 버튼 영역 */
+#confirmModal .btn-area {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* 프로젝트 공통 버튼 스타일과 잘 어울리도록 최소 정의만 */
+#confirmModal .btn-green {
+  background-color: #03c75a;
+  color: #fff;
+  border: 0;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#confirmModal .btn-green:hover { background-color: #02b150; }
+
+#confirmModal .btn-gray {
+  background-color: #f1f3f5;
+  color: #333;
+  border: 0;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#confirmModal .btn-gray:hover { background-color: #e5e8eb; }
+
+@keyframes modalPop {
+  from { transform: translateY(10px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}

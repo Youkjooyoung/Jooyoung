@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans 
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context 
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/util 
+            http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- 공통 프로퍼티 -->
+    <util:properties id="commonProperties" location="classpath:config/common.properties"/>
+
+    <!-- Service/Repository 빈 스캔 -->
+    <context:component-scan base-package="com.model2.mvc.service">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
+
+    <!-- Google/Kakao 연동용 Bean -->
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+	  <constructor-arg>
+	    <list>
+	      <!-- x-www-form-urlencoded 지원 -->
+	      <bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+	      
+	      <!-- 문자열 변환 -->
+	      <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+	        <constructor-arg value="UTF-8"/>
+	      </bean>
+	
+	      <!-- JSON 변환 -->
+	      <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+	    </list>
+	  </constructor-arg>
+	</bean>
+
+    <!-- ❗ ObjectMapper 등록 -->
+    <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+</beans>

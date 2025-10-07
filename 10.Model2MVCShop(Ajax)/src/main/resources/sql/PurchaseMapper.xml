@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PurchaseMapper">
+
+	<!-- ========================================================= 공통 ResultMap 	========================================================== -->
+
+	<!-- Purchase + (buyer:User) + (purchaseProd:Product) -->
+	<resultMap id="purchaseResultMap"
+		type="com.model2.mvc.service.domain.Purchase">
+		<id property="tranNo" column="TRAN_NO" />
+		<result property="tranCode" column="TRAN_CODE" />
+		<result property="orderDate" column="ORDER_DATE" />
+		<result property="zipcode" column="ZIPCODE" />
+		<result property="divyAddr" column="DIVY_ADDR" />
+		<result property="addrDetail" column="ADDR_DETAIL" />
+		<result property="divyDate" column="DIVY_DATE" />
+		<result property="divyRequest" column="DLVY_REQUEST" />
+		<result property="paymentOption" column="PAYMENT_OPTION" />
+		<result property="receiverName" column="RECEIVER_NAME" />
+		<result property="receiverPhone" column="RECEIVER_PHONE" />
+		<result property="cancelDate" column="CANCEL_DATE" jdbcType="DATE" />
+		<result property="cancelReason" column="CANCEL_REASON"/>
+
+		<association property="buyer"
+			javaType="com.model2.mvc.service.domain.User">
+			<id property="userId" column="BUYER_ID" />
+			<result property="userName" column="BUYER_NAME" />
+			<result property="phone"     column="BUYER_CELL_PHONE" />
+			<result property="addr" column="BUYER_ADDR" />
+			<result property="email" column="BUYER_EMAIL" />
+			<result property="regDate" column="BUYER_REG_DATE" />
+		</association>
+
+		<association property="purchaseProd"
+			javaType="com.model2.mvc.service.domain.Product">
+			<id property="prodNo" column="PROD_NO" />
+			<result property="prodName" column="PROD_NAME" />
+			<result property="prodDetail" column="PROD_DETAIL" />
+			<result property="manuDate" column="MANUFACTURE_DAY" />
+			<result property="price" column="PRICE" />
+			<result property="fileName" column="IMAGE_FILE" />
+			<result property="regDate" column="REG_DATE" />
+		</association>
+	</resultMap>
+
+	<!-- 관리자 목록에서 “구매자ID/구매일자/상태” 출력용 -->
+	<resultMap id="latestPurchaseInfoMap" type="java.util.HashMap">
+		<result property="prodNo" column="PROD_NO" />
+		<result property="buyerId" column="BUYER_ID" />
+		<result property="orderDate" column="ORDER_DATE" />
+		<result property="cancelDate" column="CANCEL_DATE" />
+		<result property="tranCode" column="TRAN_STATUS_CODE" />
+		<result property="cancelReason" column="CANCEL_REASON" />
+	</resultMap>
+
+	<!-- ========================================================= 공통 SQL 조각	========================================================== -->
+	<sql id="purchaseSelectColumns">
+		T.TRAN_NO,
+		T.TRAN_STATUS_CODE AS TRAN_CODE,
+		T.ORDER_DATE AS ORDER_DATE,
+		T.ZIPCODE,
+		T.DIVY_ADDR,
+		T.ADDR_DETAIL,
+		TO_CHAR(T.DLVY_DATE,'YYYY-MM-DD') AS DIVY_DATE,
+		T.DLVY_REQUEST,
+		T.PAYMENT_OPTION,
+		T.RECEIVER_NAME,
+		T.RECEIVER_PHONE,
+		T.CANCEL_REASON AS CANCEL_REASON,
+		T.CANCEL_DATE AS CANCEL_DATE,
+		U.USER_ID AS BUYER_ID,
+		U.USER_NAME AS BUYER_NAME,
+		U.CELL_PHONE AS BUYER_CELL_PHONE,
+		U.ADDR AS BUYER_ADDR,
+		U.EMAIL AS BUYER_EMAIL,
+		U.REG_DATE AS BUYER_REG_DATE,
+		P.PROD_NO,
+		P.PROD_NAME,
+		P.PROD_DETAIL,
+		P.MANUFACTURE_DAY,
+		P.PRICE,
+		P.IMAGE_FILE,
+		P.REG_DATE
+	</sql>
+
+	<sql id="purchaseJoins">
+		FROM TRANSACTION T
+		LEFT JOIN USERS U ON U.USER_ID = T.BUYER_ID
+		LEFT JOIN PRODUCT P ON P.PROD_NO = T.PROD_NO
+	</sql>
+
+	<sql id="searchWhere">
+		<if
+			test="search != null and search.searchCondition != null and search.searchKeyword != null and search.searchKeyword != ''">
+			<choose>
+				<when test="search.searchCondition == 'buyer'">
+					AND LOWER(T.BUYER_ID) LIKE '%' ||
+					LOWER(#{search.searchKeyword}) ||
+					'%'
+				</when>
+				<when
+					test="search.searchCondition == 'prodName' or search.searchCondition == 'name'">
+					AND LOWER(P.PROD_NAME) LIKE '%' ||
+					LOWER(#{search.searchKeyword}) ||
+					'%'
+				</when>
+				<when test="search.searchCondition == 'prodNo'">
+					AND INSTR(TO_CHAR(T.PROD_NO),
+					#{search.searchKeyword}) &gt; 0
+				</when>
+				<when
+					test="search.searchCondition == 'tranCode' or search.searchCondition == 'status'">
+					AND T.TRAN_STATUS_CODE = #{search.searchKeyword}
+				</when>
+			</choose>
+		</if>
+	</sql>
+
+	<!-- ========================================================= INSERT ========================================================== -->
+	<insert id="addPurchase"
+	parameterType="com.model2.mvc.service.domain.Purchase">
+	<selectKey keyProperty="tranNo" resultType="int"
+		order="BEFORE">
+		SELECT seq_transaction_tran_no.NEXTVAL FROM dual
+	</selectKey>
+	INSERT INTO TRANSACTION (
+	TRAN_NO, PROD_NO, BUYER_ID, PAYMENT_OPTION,
+	RECEIVER_NAME, RECEIVER_PHONE, ZIPCODE, DIVY_ADDR, ADDR_DETAIL,
+	DLVY_REQUEST, TRAN_STATUS_CODE, ORDER_DATE, DLVY_DATE
+	) VALUES (
+	#{tranNo},
+	#{purchaseProd.prodNo}, #{buyer.userId}, #{paymentOption},
+	#{receiverName}, #{receiverPhone}, #{zipcode}, #{divyAddr}, #{addrDetail},
+	#{divyRequest}, #{tranCode}, SYSDATE,
+	<choose>
+		<when test="divyDate != null and divyDate != ''">TO_DATE(#{divyDate}, 'YYYY-MM-DD')</when>
+		<otherwise>NULL</otherwise>
+	</choose>
+	)
+</insert>
+
+	<!-- ========================================================= SELECT ONE ========================================================== -->
+	<select id="getPurchase" parameterType="int"
+		resultMap="purchaseResultMap">
+		SELECT
+		<include refid="purchaseSelectColumns" />
+		<include refid="purchaseJoins" />
+		WHERE T.TRAN_NO = #{tranNo}
+	</select>
+
+	<!-- 구매자 목록 -->
+	<select id="getPurchaseList" parameterType="map"
+		resultMap="purchaseResultMap">
+		SELECT * FROM (
+		SELECT inner_table.*, ROWNUM AS row_seq FROM (
+		SELECT
+		<include refid="purchaseSelectColumns" />
+		<include refid="purchaseJoins" />
+		WHERE 1=1
+		<if test="buyerId != null and buyerId != ''">AND T.BUYER_ID = #{buyerId}</if>
+		<include refid="searchWhere" />
+		ORDER BY T.TRAN_NO DESC
+		) inner_table
+		WHERE ROWNUM &lt;=
+		#{search.endRowNum}
+		)
+		WHERE row_seq &gt;= #{search.startRowNum}
+	</select>
+
+	<select id="getTotalCountPurchase" parameterType="map"
+		resultType="int">
+		SELECT COUNT(1)
+		<include refid="purchaseJoins" />
+		WHERE T.BUYER_ID = #{buyerId}
+		<include refid="searchWhere" />
+	</select>
+
+	<!-- 판매관리 목록(관리자) -->
+	<select id="getSaleList"
+		parameterType="com.model2.mvc.common.Search"
+		resultMap="purchaseResultMap">
+		SELECT * FROM (
+		SELECT inner_table.*, ROWNUM AS row_seq FROM (
+		SELECT
+		<include refid="purchaseSelectColumns" />
+		<include refid="purchaseJoins" />
+		WHERE 1=1
+		<include refid="searchWhere" />
+		ORDER BY T.TRAN_NO DESC
+		) inner_table
+		WHERE ROWNUM &lt;= #{endRow}
+		)
+		WHERE row_seq &gt;= #{startRow}
+	</select>
+
+	<select id="getTotalCountSale"
+		parameterType="com.model2.mvc.common.Search" resultType="int">
+		SELECT COUNT(1)
+		<include refid="purchaseJoins" />
+		WHERE 1=1
+		<include refid="searchWhere" />
+	</select>
+
+	<!-- ========================================================= UPDATE ========================================================== -->
+	<update id="updatePurchase"
+		parameterType="com.model2.mvc.service.domain.Purchase">
+		UPDATE TRANSACTION
+		SET PAYMENT_OPTION = #{paymentOption},
+		RECEIVER_NAME = #{receiverName},
+		RECEIVER_PHONE = #{receiverPhone},
+		ZIPCODE = #{zipcode},
+		DIVY_ADDR = #{divyAddr},
+		ADDR_DETAIL = #{addrDetail},
+		DLVY_REQUEST = #{divyRequest},
+		DLVY_DATE =
+		<choose>
+			<when test="divyDate != null and divyDate != ''">TO_DATE(#{divyDate}, 'YYYY-MM-DD')</when>
+			<otherwise>NULL</otherwise>
+		</choose>
+		WHERE TRAN_NO = #{tranNo}
+	</update>
+
+	<update id="updateTranCode" parameterType="map">
+		UPDATE TRANSACTION
+		SET TRAN_STATUS_CODE = #{tranCode}
+		<if test="tranCode == '004'">, CANCEL_DATE = SYSDATE</if>
+		WHERE TRAN_NO = #{tranNo}
+	</update>
+
+	<update id="updateTranCodeByProd" parameterType="map">
+		UPDATE
+		TRANSACTION t
+		SET t.TRAN_STATUS_CODE = #{tranCode}
+		WHERE t.PROD_NO =
+		#{prodNo}
+		AND t.TRAN_NO = (SELECT MAX(t2.TRAN_NO) FROM TRANSACTION t2
+		WHERE
+		t2.PROD_NO = #{prodNo})
+		AND (
+		(#{tranCode} = '002' AND
+		t.TRAN_STATUS_CODE = '001') OR
+		(#{tranCode} = '003' AND
+		t.TRAN_STATUS_CODE = '002') OR
+		(#{tranCode} = '005' AND
+		t.TRAN_STATUS_CODE = '004')
+		)
+	</update>
+
+
+	<!-- ========================================================= 최신 상태/구매정보 조회 ========================================================== -->
+	<select id="getLatestTranCodeByProd" parameterType="int"
+		resultType="string">
+		SELECT tranCode
+		FROM (
+		SELECT t.TRAN_STATUS_CODE AS tranCode,
+		ROW_NUMBER() OVER (ORDER BY t.TRAN_NO DESC) AS rn
+		FROM TRANSACTION t
+		WHERE t.PROD_NO = #{prodNo}
+		AND t.TRAN_STATUS_CODE &lt;&gt; '004'
+		)
+		WHERE rn = 1
+	</select>
+
+	<select id="getLatestTranCodeByProdNos" parameterType="list"
+		resultType="map">
+		SELECT prodNo, tranCode
+		FROM (
+		SELECT t.PROD_NO AS prodNo,
+		t.TRAN_STATUS_CODE AS tranCode,
+		ROW_NUMBER() OVER (PARTITION BY
+		t.PROD_NO ORDER BY t.TRAN_NO DESC) AS rn
+		FROM TRANSACTION t
+		<where>
+			<if test="list != null and list.size > 0">
+				t.PROD_NO IN
+				<foreach collection="list" item="value" open="("
+					separator="," close=")">
+					#{value}
+				</foreach>
+			</if>
+			AND t.TRAN_STATUS_CODE != '004'
+		</where>
+		)
+		WHERE rn = 1
+	</select>
+
+	<!-- 관리자 그리드용: prodNo → 구매자ID/주문일/상태 묶음 조회 -->
+	<select id="getLatestPurchaseInfoByProdNos" parameterType="list"
+	resultMap="latestPurchaseInfoMap">
+	SELECT
+	t.PROD_NO,
+	t.BUYER_ID,
+	TO_CHAR(t.ORDER_DATE , 'YYYY-MM-DD') AS ORDER_DATE,
+	TO_CHAR(t.CANCEL_DATE, 'YYYY-MM-DD') AS CANCEL_DATE,
+	t.TRAN_STATUS_CODE,
+	t.CANCEL_REASON
+	FROM (
+	SELECT t.*,
+	ROW_NUMBER() OVER (PARTITION BY t.PROD_NO ORDER BY t.TRAN_NO DESC) AS rn
+	FROM TRANSACTION t
+	WHERE t.PROD_NO IN
+	<foreach collection="list" item="value" open="(" separator=","
+		close=")">
+		#{value}
+	</foreach>
+	) t
+	WHERE t.rn = 1
+</select>
+
+	<!-- 상품별 전체 거래 히스토리(최신순) -->
+	<select id="getPurchaseHistoryByProduct" parameterType="int"
+		resultMap="purchaseResultMap">
+		SELECT
+		<include refid="purchaseSelectColumns" />
+		,
+		T.CANCEL_DATE AS CANCEL_DATE,
+		T.CANCEL_REASON AS CANCEL_REASON
+		<include refid="purchaseJoins" />
+		WHERE T.PROD_NO = #{prodNo}
+		ORDER BY T.TRAN_NO DESC
+	</select>
+
+	<select id="getLatestActiveTranCodeByProdNos"
+	parameterType="list" resultType="map">
+	SELECT prodNo, tranCode
+	FROM (
+	SELECT t.PROD_NO AS prodNo,
+	t.TRAN_STATUS_CODE AS tranCode,
+	ROW_NUMBER() OVER (PARTITION BY t.PROD_NO ORDER BY t.TRAN_NO DESC) AS rn
+	FROM TRANSACTION t
+	<where>
+		<if test="list != null and list.size > 0">
+			t.PROD_NO IN
+			<foreach collection="list" item="value" open="("
+				separator="," close=")">
+				#{value}
+			</foreach>
+		</if>
+		AND t.TRAN_STATUS_CODE NOT IN ('004','005')
+	</where>
+	)
+	WHERE rn = 1
+</select>
+
+<update id="updateCancelInfo" parameterType="map">
+	UPDATE TRANSACTION
+	SET CANCEL_REASON = #{reason},
+	CANCEL_DATE = NVL(CANCEL_DATE, SYSDATE)
+	WHERE TRAN_NO = #{tranNo}
+</update>
+
+</mapper>
