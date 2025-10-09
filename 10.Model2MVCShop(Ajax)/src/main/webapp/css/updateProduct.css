@@ -1,0 +1,29 @@
+@charset "UTF-8";
+
+.img-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(110px,1fr));
+  gap:12px;
+}
+.img-grid .img-box{
+  position:relative;
+  padding-top:100%;            /* 정사각형 박스 */
+  border-radius:12px;
+  overflow:hidden;
+  background:#f8f9fa;
+  box-shadow:0 1px 2px rgba(0,0,0,.06);
+}
+.img-grid .img-box > img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;            /* 이미지 꽉 차게 */
+  display:block;
+}
+.img-grid .thumb-del{
+  position:absolute; top:6px; right:6px;
+  width:24px; height:24px; line-height:22px;
+  border-radius:50%;
+  background:#000; color:#fff;
+  opacity:.7; border:0; cursor:pointer;
+}
+.img-grid .img-box.removing{ filter:grayscale(1); opacity:.5; }

@@ -1,0 +1,102 @@
+@charset "UTF-8";
+
+/* ===== 상품 상세: Slider ===== */
+.nv-rotor-slider {
+  position: relative;
+  width: 600px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+.nv-rotor-slider ul { list-style: none; }
+.nv-rotor-slider ul>li {
+  position: absolute;
+  overflow: hidden;
+  width: 180px;
+  border: 1px solid #e5e8eb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+/* 기본 좌표/높이/z-index (중앙 item3이 최상단) */
+.nv-rotor-slider .item1 { top:150px; height:110px; left: 20px;  z-index:1; }
+.nv-rotor-slider .item2 { top:120px; height:160px; left:120px; z-index:2; }
+.nv-rotor-slider .item3 { top: 90px; height:220px; left:220px; z-index:3; }
+.nv-rotor-slider .item4 { top:120px; height:160px; left:320px; z-index:2; }
+.nv-rotor-slider .item5 { top:150px; height:110px; left:420px; z-index:1; }
+
+.nv-rotor-slider .thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 하단 텍스트 바 */
+.nv-rotor-slider .txt {
+  display: none;
+  position: absolute;
+  left: 0; bottom: -40px;
+  width: 100%; height: 40px;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  text-align: center;
+  font-size: 13px;
+  line-height: 40px;
+}
+
+/* 버튼 */
+/* .nv-rotor-slider .p,
+.nv-rotor-slider .n {
+  z-index: 1000;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 9999px;
+  padding: 8px 14px;
+  background: #f1f3f5;
+  color: #333;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  pointer-events: auto;
+} */
+
+.nv-rotor-slider .p:hover,
+.nv-rotor-slider .n:hover { background: #e5e8eb; }
+/* .nv-rotor-slider .p { left: -36px; }
+.nv-rotor-slider .n { right: -36px; }
+ */
+.nv-rotor-slider { overflow: visible; }
+/* 반응형 스케일 */
+@media (max-width: 720px){
+  .nv-rotor-slider { transform: scale(.9); transform-origin: top left; }
+}
+@media (max-width: 620px){
+  .nv-rotor-slider { transform: scale(.8); }
+}
+
+/* 카드/정보 영역은 기존 naver-common.css 사용 */
+.product-detail-wrap { max-width: 1000px; margin: 40px auto; }
+.product-detail-card { display: flex; gap: 32px; background:#fff; padding:24px; }
+.product-image-area { display:flex; align-items:center; justify-content:center; height:495px; background:#fff; box-sizing:border-box;overflow: visible; }
+
+.nv-rotor-ctrl{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin-top:16px;          /* 이미지와 버튼 사이 간격 */
+}
+
+.btn-rotor{
+  border:0;
+  border-radius:9999px;
+  padding:8px 14px;
+  background:#f1f3f5;
+  color:#333;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+.btn-rotor:hover{ background:#e5e8eb; }
