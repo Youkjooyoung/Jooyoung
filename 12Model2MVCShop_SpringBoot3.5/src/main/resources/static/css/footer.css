@@ -1,0 +1,112 @@
+@charset "UTF-8";
+/* ===============================
+   Footer & Left 영역 UI 정리
+   =============================== */
+
+/* --- 전체 레이아웃 기본 --- */
+html, body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+/* nv-body는 남은 공간을 채움 */
+.nv-body {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: stretch;
+}
+
+/* left 영역 - 항상 세로 전체 고정 */
+.nv-aside, #leftArea {
+  width: 220px;
+  background: #f9fafb;
+  border-right: 1px solid #e5e8eb;
+  height: 100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* main 영역 */
+#appMain, #mainArea {
+  flex: 1;
+  min-height: 100%;
+  background: #fff;
+  padding: 20px 30px;
+  box-sizing: border-box;
+}
+
+/* ===============================
+   Footer 디자인
+   =============================== */
+.nv-footer {
+  flex-shrink: 0;
+  background: #f8f9fa;
+  border-top: 1px solid #e5e8eb;
+  color: #4a4a4a;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 30px 0;
+}
+
+.nv-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+/* --- Footer 컬럼 --- */
+.nv-footer .footer-col {
+  flex: 1 1 240px;
+  min-width: 200px;
+}
+
+.nv-footer .footer-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #191919;
+  margin-bottom: 8px;
+}
+
+.nv-footer .footer-text {
+  font-size: 13px;
+  color: #5f6368;
+  margin-bottom: 4px;
+}
+
+.nv-footer .footer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nv-footer .footer-list li {
+  margin: 2px 0;
+}
+
+.nv-footer .link-like {
+  cursor: pointer;
+  color: #03c75a;
+  transition: color 0.2s ease;
+}
+
+.nv-footer .link-like:hover {
+  color: #00a34f;
+  text-decoration: underline;
+}
+
+/* --- 중앙 하단 카피라이트 영역 --- */
+.footer-bottom {
+  text-align: center;
+  border-top: 1px solid #e5e8eb;
+  margin-top: 24px;
+  padding-top: 20px;
+  font-size: 13px;
+  color: #8b95a1;
+}

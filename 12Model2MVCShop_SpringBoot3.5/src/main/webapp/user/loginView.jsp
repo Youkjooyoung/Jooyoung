@@ -1,0 +1,270 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <!-- IFrame에 포함되어 열리더라도 링크는 항상 top으로 이동 -->
+  <base target="_top" />
+  <c:if test="${not empty _csrf}">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+  </c:if>
+  <!-- Google OAuth client id (리디렉션 방식에서도 참조) -->
+  <meta name="google-signin-client_id"
+        content="<spring:eval expression='@commonProperties[\"google.clientId\"]'/>"/>
+  <link rel="stylesheet" href="${ctx}/css/naver-common.css"/>
+<!-- …head 안의 기존 링크/스크립트는 유지 … -->
+<style>
+:root {
+	--authBtnW: 280px;
+	--authBtnH: 44px;
+}
+
+/* 배경 + 워터마크 */
+body.auth-page {
+	background: #f8f9fa;
+	min-height: 100vh;
+	margin: 0;
+}
+
+body.auth-page::before {
+	content: "";
+	position: fixed;
+	right: 6vw;
+	bottom: 8vh;
+	width: 420px;
+	height: 420px;
+	opacity: .08;
+	pointer-events: none;
+	background: url('${ctx}/images/uploadFiles/naver.png') no-repeat center/contain;
+}
+
+/* 카드 */
+.auth-wrap {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+}
+
+.auth-card {
+	width: 100%;
+	max-width: 420px;
+	background: #fff;
+	border: 1px solid #e5e8eb;
+	border-radius: 16px;
+	box-shadow: 0 12px 28px rgba(0, 0, 0, .08);
+	padding: 28px 24px 24px;
+	animation: pop .25s ease;
+}
+
+@
+keyframes pop {from { transform:scale(.98);
+	opacity: .7
+}
+
+to {
+	transform: scale(1);
+	opacity: 1
+}
+
+}
+.auth-logo {
+	text-align: center;
+	margin-bottom: 14px;
+}
+
+.auth-logo img {
+	width: 160px;
+	height: auto;
+	object-fit: contain;
+}
+
+/* 폼 */
+.auth-form .form-row {
+	display: inline-grid;
+	grid-template-columns: 92px 1fr;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.auth-form label {
+	font-size: 13px;
+	font-weight: 700;
+	color: #495057;
+}
+
+.auth-form .input-text {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid #cfcfcf;
+	border-radius: 8px;
+	font-size: 14px;
+	transition: border-color .15s, box-shadow .15s;
+}
+
+.auth-form .input-text:focus {
+	border-color: #03c75a;
+	outline: 0;
+	box-shadow: 0 0 0 3px rgba(3, 199, 90, .08);
+}
+
+.auth-actions {
+	text-align: center;
+	display: flex;
+	gap: 10px;
+	margin: 8px 0 12px;
+}
+
+.btn-green, .btn-gray {
+	flex: 1;
+	padding: 10px 0;
+	border: 0;
+	border-radius: 9999px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.btn-green {
+	background: #03c75a;
+	color: #fff;
+}
+
+.btn-green:hover {
+	background: #02b150;
+}
+
+.btn-gray {
+	background: #f1f3f5;
+	color: #333;
+}
+
+.btn-gray:hover {
+	background: #e9ecef;
+}
+
+/* 소셜 버튼 공통 */
+.social-login-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+}
+
+.kakao-btn, .google-btn {
+	width: var(--authBtnW);
+	height: var(--authBtnH);
+	border-radius: calc(var(--authBtnH)/2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	cursor: pointer;
+	transition: transform .15s, box-shadow .15s;
+	user-select: none;
+}
+
+.kakao-btn {
+	background: #FEE500 url('${ctx}/images/uploadFiles/kakao_login.png')
+		no-repeat center/contain;
+	border: 0;
+	text-indent: -9999px;
+	overflow: hidden;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+}
+
+.kakao-btn:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
+}
+
+.google-btn {
+	background: #fff;
+	color: #3c4043;
+	border: 1px solid #dadce0;
+	font-weight: 700;
+	box-shadow: 0 1px 3px rgba(60, 64, 67, .15);
+}
+
+.google-btn:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 6px 16px rgba(60, 64, 67, .2);
+}
+
+.google-btn .gicon {
+	width: 18px;
+	height: 18px;
+	background:
+		url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Cpath%20fill%3D%22%23EA4335%22%20d%3D%22M24%209.5c3.54%200%206.71%201.22%209.21%203.6l6.85-6.85C35.9%202.38%2030.47%200%2024%200%2014.62%200%206.51%205.38%202.56%2013.22l7.98%206.19C12.43%2013.72%2017.74%209.5%2024%209.5z%22%2F%3E%3Cpath%20fill%3D%22%234285F4%22%20d%3D%22M46.98%2024.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58%202.96-2.26%205.48-4.78%207.18l7.73%206c4.51-4.18%207.09-10.36%207.09-17.65z%22%2F%3E%3Cpath%20fill%3D%22%23FBBC05%22%20d%3D%22M10.53%2028.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92%2016.46%200%2020.12%200%2024c0%203.88.92%207.54%202.56%2010.78l7.97-6.19z%22%2F%3E%3Cpath%20fill%3D%22%2334A853%22%20d%3D%22M24%2048c6.48%200%2011.93-2.13%2015.89-5.81l-7.73-6c-2.15%201.45-4.92%202.3-8.16%202.3-6.26%200-11.57-4.22-13.47-9.91l-7.98%206.19C6.51%2042.62%2014.62%2048%2024%2048z%22%2F%3E%3C%2Fsvg%3E')
+		no-repeat center/contain;
+}
+
+}
+
+/* 모바일 */
+@media ( max-width :480px) {
+	:root {
+		--authBtnW: 240px;
+		--authBtnH: 40px;
+	}
+	.auth-form .form-row {
+		grid-template-columns: 1fr;
+	}
+	.auth-form label {
+		margin-bottom: 4px;
+	}
+}
+</style>
+  
+</head>
+
+<body class="auth-page"
+      data-ctx="${ctx}"
+      data-kakao-jskey="<spring:eval expression='@commonProperties[\"kakao.jsKey\"]'/>"
+      data-kakao-client="<spring:eval expression='@commonProperties[\"kakao.clientId\"]'/>"
+      data-google-client="<spring:eval expression='@commonProperties[\"google.clientId\"]'/>">
+
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <img src="${ctx}/images/uploadFiles/naver.png" alt="Logo" />
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <div class="form-row">
+          <label for="userId">ID</label>
+          <input type="text" id="userId" name="userId" class="input-text w-100" maxlength="50" />
+        </div>
+
+        <div class="form-row">
+          <label for="password">PASSWORD</label>
+          <input type="password" id="password" name="password" class="input-text w-100" maxlength="50" />
+        </div>
+
+        <div class="auth-actions">
+          <span id="btnLoginSubmit" class="btn-green btn-lg btn-pill">로그인</span>
+          <span id="btnGoJoin" class="btn-gray btn-lg btn-pill">회원가입</span>
+        </div>
+
+        <div class="social-login-wrap">
+		  <button type="button" id="btnKakaoLogin" class="kakao-btn">카카오로 로그인</button>
+		  <button type="button" id="btnGoogleLogin" class="google-btn">
+		    <span class="gicon" aria-hidden="true"></span>
+		    <span>Google 계정으로 로그인</span>
+		  </button>
+		</div>
+      </form>
+    </div>
+  </div>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+<script src="${ctx}/javascript/common-toast.js"></script>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" crossorigin="anonymous"></script>
+<script src="${ctx}/javascript/login.js" defer></script>
+</body>
+</html>

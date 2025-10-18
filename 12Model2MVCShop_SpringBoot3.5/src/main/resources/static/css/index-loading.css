@@ -1,0 +1,163 @@
+@charset "UTF-8";
+/* ============================
+   index 로딩 인트로 애니메이션 (집모양 + 브랜드명)
+   ============================ */
+
+#loadingLogo {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0b0f0e;
+  z-index: 9999;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.8s ease;
+}
+
+/* --- 로고 그룹 --- */
+#loadingLogo .logo-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin-bottom: 36px;
+}
+
+/* --- 집 모양 로고 --- */
+#loadingLogo img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+  opacity: 0;
+  transform: translateY(-300px) scale(1.1);
+  filter: drop-shadow(0 0 0 rgba(3,199,90,0));
+  animation: dropBounce 2.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* --- 그림자 --- */
+#loadingLogo::after {
+  content: "";
+  position: absolute;
+  bottom: calc(50% - 20px);
+  width: 90px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.25);
+  transform: scale(0.2);
+  opacity: 0.2;
+  animation: shadowBounce 2.4s ease-in-out forwards;
+}
+
+/* --- 브랜드 이름 --- */
+#loadingLogo .brand-name {
+  color: #03c75a;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  animation: brandFade 3s ease-in-out 1.2s forwards;
+}
+#loadingLogo .brand-name small {
+  display: block;
+  font-size: 15px;
+  font-weight: 400;
+  color: #a6f0cb;
+  letter-spacing: 0.3px;
+  margin-top: 6px;
+  opacity: 0;
+  animation: subTextFade 3s ease-in-out 1.4s forwards;
+}
+
+/* ===============================
+   로고 튕김(dropBounce)
+   =============================== */
+@keyframes dropBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(-300px) scale(1.2);
+    filter: drop-shadow(0 0 0 rgba(3,199,90,0));
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: drop-shadow(0 0 25px rgba(3,199,90,0.9));
+  }
+  55% {
+    transform: translateY(30px) scaleY(0.8);
+    filter: drop-shadow(0 0 45px rgba(3,199,90,1));
+  }
+  65% {
+    transform: translateY(-25px) scale(1.05);
+    filter: drop-shadow(0 0 55px rgba(3,199,90,1));
+  }
+  80% {
+    transform: translateY(0);
+    filter: drop-shadow(0 0 25px rgba(3,199,90,0.6));
+  }
+  100% {
+    transform: translateY(0);
+    filter: drop-shadow(0 0 12px rgba(3,199,90,0.3));
+  }
+}
+
+/* ===============================
+   그림자 반응(shadowBounce)
+   =============================== */
+@keyframes shadowBounce {
+  0% {
+    transform: scale(0.2);
+    opacity: 0.1;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  55% {
+    transform: scale(1.4, 0.5);
+    opacity: 0.35;
+  }
+  65% {
+    transform: scale(1, 0.7);
+    opacity: 0.25;
+  }
+  80% {
+    transform: scale(0.9);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(0.2);
+    opacity: 0.15;
+  }
+}
+
+/* ===============================
+   브랜드명 페이드 인/아웃
+   =============================== */
+@keyframes brandFade {
+  0% { opacity: 0; transform: translateY(15px); }
+  40% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+@keyframes subTextFade {
+  0% { opacity: 0; transform: translateY(8px); }
+  40% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 1; }
+}
+
+/* ===============================
+   전체 페이드아웃 (2.4초 후)
+   =============================== */
+.fade-out {
+  animation: fadeOutScreen 1s ease forwards;
+}
+@keyframes fadeOutScreen {
+  from { opacity: 1; }
+  to { opacity: 0; visibility: hidden; }
+}
