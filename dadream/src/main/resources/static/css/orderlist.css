@@ -1,0 +1,67 @@
+*{	
+				font-family: 'Merriweather Sans', sans-serif !important;	
+				}
+#myod{
+	padding: 7px;
+    line-height: 18px;
+}
+
+#review,#refind{
+			cursor:pointer;
+			width:100px;
+			height:30px;
+			box-shadow: 3px 4px 0px 0px #dcecfb;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+}
+
+#review:hover,#refind:hover{
+	background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+			background-color:#80b5ea;
+}
+
+#review:active,#refind:active{
+	position:relative;
+			top:1px;
+}
+
+#flex h2{
+	font-weight: 900; 
+	font-size: 2em; 
+	margin-top: 80px; 
+	margin-bottom: 40px;
+}
+
+.buyList{
+	display: flex; 
+	margin-right: 20px;
+}
+.buyImg{
+	width: 200px; 
+	height: 200px;
+}
+
+ .refundList{
+	display: flex; 
+	margin-right: 20px;
+}
+.refundImg{
+	width: 200px; 
+	height: 200px;
+}
+
+#flexs{
+	min-height: 443px;
+	
+}

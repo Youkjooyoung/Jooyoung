@@ -1,0 +1,78 @@
+@charset "UTF-8";
+
+/* ===== 레이아웃(2칸) ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 420px 1fr; /* 좌: 상품요약/이미지, 우: 폼 */
+  gap: 32px;
+}
+
+/* 오른쪽 폼과 적당한 간격 */
+.col-right { padding-left: 8px; }
+
+/* 좌측 컬럼 스크롤 가능(폼이 아래로 밀리지 않도록 좌측만 스크롤) */
+.col-left {
+  max-height: calc(100vh - 180px);
+  overflow: auto;
+  padding-right: 6px;           /* 스크롤바 여백 */
+}
+
+/* ===== 이미지 그리드 ===== */
+.img-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  /* 초기에는 적당히 보이도록 높이 제한 + 내부 스크롤 */
+  max-height: 520px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* “더보기” 전 하단 그라데이션 (컨텐츠 끝 암시) */
+.img-grid::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0; height: 56px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), #fff);
+  pointer-events: none;
+}
+
+/* 더보기 상태 */
+.img-grid.is-expanded {
+  max-height: none;
+}
+.img-grid.is-expanded::after { display: none; }
+
+/* 균일 썸네일 카드 */
+.img-box {
+  border: 1px solid #e5e8eb;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  overflow: hidden;
+  background: #f8f9fa;
+  cursor: pointer;
+  /* 크기 균일화 */
+  aspect-ratio: 4 / 3;        /* 최신 브라우저 */
+  /* fallback: 고정 높이 필요하면 주석 해제
+     height: 150px; 
+  */
+}
+.img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;           /* 비율 유지 + 잘라내기 */
+  display: block;
+  transition: transform .2s ease;
+}
+.img-box:hover img { transform: scale(1.02); }
+
+/* 더보기 버튼 영역 */
+.img-more-wrap {
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* ===== 폼 가독성 보조 ===== */
+.form-table th { width: 140px; }
+.form-table td .input-text { width: 100%; }
+.btn-area { position: sticky; bottom: 0; background:#fff; padding-top:8px; }

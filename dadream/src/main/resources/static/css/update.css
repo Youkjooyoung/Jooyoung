@@ -1,0 +1,35 @@
+		#updatecontent > div{
+			margin-bottom: 20px;
+			font-weight:lighter;
+			font-family: 'Jua', sans-serif;
+			/*display:table-caption;*/
+		}
+		#writer1{
+		display: table-caption;
+		}
+		#update_title_form{
+			display:table-caption;
+		}
+		#updatecontent > div{
+			margin:3px;
+		}
+		#update_content{
+			display:grid;
+		}
+		#file_add{
+			display: table-caption;
+		}
+		#file_add2{
+			display: grid;
+		}
+		#update_btn{
+			display:revert;
+		}
+		#submit_btn,#cancel_btn{
+			cursor: pointer;
+		}
+		
+		input[type=text],input[type=password],input[type=email],textarea{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+			}

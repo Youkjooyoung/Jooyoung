@@ -1,0 +1,76 @@
+			.proImage {
+                width: 222px;
+                height: 222px;
+            }
+
+            #proform {
+                /* display: flex; */
+                
+            }
+            #proform>*{
+                margin: 10px;
+            }
+            #proManager{
+				min-height: 555px;
+			}
+
+            .sun {
+                display: flex;
+                border-bottom: 1px solid #000;
+                margin: 10px;
+                padding: 10px;
+            }
+            #myproduct{
+                width: 700px;
+            }
+            .modelete{
+                display: flex;
+
+            }
+            .modelete > form{
+                margin-right: 10px;
+            }
+            .modman{
+                font-weight: bold;
+                font-size: 30px;
+            }
+            #myproduct{
+                border: 1px solid #000;
+                margin-top: 10px;
+            }
+            input[type=text],input[type=password],input[type=email],textarea{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+			}
+			#proMod,#proDelete{
+				cursor:pointer;
+				width:100px;
+				height:30px;
+				box-shadow: 3px 4px 0px 0px #dcecfb;
+				background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+				background-color:#bddbfa;
+				border-radius:15px;
+				border:1px solid #84bbf3;
+				display:inline-block;
+				cursor:pointer;
+				color:#471f54;
+				font-family:Arial;
+				font-size:17px;
+				font-weight:bold;
+				padding:2px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+			}
+			#proMod:hover,#proDelete:hover{
+				background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+				background-color:#80b5ea;
+			}
+			#proMod:active,#proDelete:active{
+				position:relative;
+				top:1px;
+			}
+			
+			.ProName{
+				color:red;
+			}
+			

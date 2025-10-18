@@ -1,0 +1,54 @@
+		* {
+            margin: 0;
+            padding: 0;
+            font-family: 'Merriweather Sans', sans-serif !important;
+        }
+
+        #rp_Title {
+            display: flex;
+            margin-left: 10px;
+        }
+        #dl_Num{
+            margin-left: 10px;
+        }
+
+        #rp_Title input {
+            width: 400px;
+        }
+
+        #rp_Content {
+            display: flex;
+         
+        }
+
+        #rp_Content  {
+            margin-top: 5px;
+            resize: none;
+        }
+
+        #rpBtn {
+            text-align: right;
+            margin-top: 40px;
+            margin-right: 20px;
+        }
+        #title{
+            display: inline-flex;
+        }
+        #No{
+            display: inline-flex;
+            margin: 10px 0;
+        }
+        #reform{
+            margin-left: 10px;
+        }
+        .report_h1{
+			margin: 20px 0 20px 10px;
+		}
+		h1{
+			margin: 20px 0 20px 10px;
+		}
+		
+		input[type=text],input[type=password],input[type=email],textarea{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+			}

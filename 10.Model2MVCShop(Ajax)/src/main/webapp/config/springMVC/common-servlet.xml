@@ -1,0 +1,73 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans 
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context 
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+            
+	<context:property-placeholder properties-ref="commonProperties" />
+    <!-- @Controller + @Component(Interceptor) 스캔 -->
+    <context:component-scan base-package="com.model2.mvc.web, com.model2.mvc.common.web">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Component"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+    </context:component-scan>
+	
+	
+	    <!-- @RequestMapping, @ResponseBody 등 활성화 -->
+	    <mvc:annotation-driven />
+
+	    <!-- ■ Interceptor 등록 -->
+	    <mvc:interceptors>
+	        <!-- 로그인 체크 -->
+	        <mvc:interceptor>
+			    <mvc:mapping path="/user/*"/>
+			    <ref bean="logonCheckInterceptor"/>
+			</mvc:interceptor>
+	
+	        <!-- 프로필 완료 체크 -->
+	        <mvc:interceptor>
+	            <mvc:mapping path="/purchase/**"/>
+	            <!-- @Component 로 등록된 빈을 참조 -->
+	            <ref bean="profileCompletionInterceptor"/>
+	        </mvc:interceptor>
+	    </mvc:interceptors>
+
+	    <!-- 파일 업로드 -->
+	    <bean id="multipartResolver"
+	          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	        <property name="maxUploadSize" value="10485760"/> <!-- 10MB -->
+	        <property name="defaultEncoding" value="UTF-8"/>
+	    </bean>
+
+	    <!-- 뷰 리졸버 -->
+	    <bean id="viewResolver"
+	          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	        <property name="prefix" value="/"/>
+	        <property name="suffix" value=".jsp"/>
+	    </bean>
+
+    	<!-- 정적 리소스 매핑 -->
+		<mvc:resources mapping="/css/**" location="/css/"/>
+		<mvc:resources mapping="/images/**" location="/images/"/>
+		<mvc:resources mapping="/javascript/**" location="/javascript/"/>
+		<mvc:resources mapping="/upload/**" location="/images/uploadFiles/"/>
+		
+	    <!-- 예외 처리 -->
+	    <bean id="exceptionResolver"
+	          class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+	        <property name="exceptionMappings">
+	            <props>
+	                <prop key="java.lang.NullPointerException">/common/nullError</prop>
+	                <prop key="java.lang.NumberFormatException">/common/numberFormatError</prop>
+	            </props>
+	        </property>
+	        <property name="defaultErrorView" value="/common/error"/>
+    	</bean>
+</beans>

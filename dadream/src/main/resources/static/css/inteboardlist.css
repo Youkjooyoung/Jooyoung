@@ -1,0 +1,97 @@
+	*{
+		font-family: 'Merriweather Sans', sans-serif !important;
+		margin: 0 auto;
+		font-weight:lighter;
+	}
+	
+	th{
+		font-weight: bolder;
+		font-size: large;
+		padding: 8px 0 9px;
+     	border-bottom: solid 1px #d2d2d2;
+     	text-align: center;
+      	line-height: 18px;
+		
+
+	}
+	td {
+		text-align: center;
+		border-bottom: 1px solid rgb(187, 187, 171);
+		
+	}
+	
+   	.write-btn{
+		cursor:pointer;
+		width:100px;
+		height:30px;
+		box-shadow: 3px 4px 0px 0px #dcecfb;
+		background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+		background-color:#bddbfa;
+		border-radius:15px;
+		border:1px solid #84bbf3;
+		display:inline-block;
+		cursor:pointer;
+		color:#471f54;
+		font-family:Arial;
+		font-size:17px;
+		font-weight:bold;
+		padding:2px;
+		text-decoration:none;
+		text-shadow:0px 1px 0px #528ecc;
+	
+	}
+	
+	.write-btn:hover{
+		background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+		background-color:#80b5ea;
+	}
+	.write-btn:active{
+		position:relative;
+		top:1px;
+	}
+	#table_id{
+		text-align: center;
+		border:"0";
+		width:1130px;
+		
+	}
+	#table_id thead tr {
+		background-color: hotpink;
+		text-align: center;
+		height:20px;
+	}
+	#table_id thead th{
+		border:1px solid gray;
+	}
+    
+	#table_id tbody tr:hover{
+		background-color: gainsboro;
+
+	}
+	#listForm{
+		width: 1130px;
+		height: auto;
+		
+	}
+	#table_id_wrapper{
+		min-height: 520px;
+		width:1130px;
+		
+	}
+	
+	#table_id td > a{
+		text-decoration: none;
+	}
+	#table_id_filter{
+		width:240px;
+	}
+	#table_id_length{
+		width:160px;
+	}
+	#table_id_paginate{
+		width:440px;
+		margin-right: 240px;
+		display: flex;
+		text-decoration: underline;
+	}
+	

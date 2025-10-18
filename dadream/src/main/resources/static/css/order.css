@@ -1,0 +1,190 @@
+* {
+            box-sizing: border-box;
+        }
+        .order {
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;   
+        }
+        h3 {
+            font-weight: bold;
+            font-size: 40px;
+        }
+        .ordercontent {
+            line-height: 24px;
+            margin-top: 30px;
+        }
+        .ordercontent div{
+            margin: 20px 0;
+        }
+        h6{
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .orderpayul {
+            display: flex;
+            justify-content: space-around;
+        }
+        .orderconfirm{
+            margin-top: 100px;
+            width: 200px;
+            height: 50px;
+        }
+        .hide{
+            display: none;
+        }
+         .content_main{
+		    min-height: 60px;
+		    /* padding-right: 350px; */
+		    width:1130px;
+		    position: relative;
+		 }
+		table{border-collapse:collapse;}
+        .memberInfo_table{
+        width: 100%;
+	    border-spacing: 0;
+	    border-top: 2px solid #363636;
+	    border-bottom: 1px solid #b6b6b6; 
+        }
+        .memberInfo_table td{
+        padding: 12px;
+        text-align:left;
+        }
+        .addressInfo_div{
+        margin-top:30px;
+        }
+         .addressInfo_input_div_wrap{
+	 	border-bottom: 1px solid #f3f3f3;
+	 	height: 400px;
+ 		}
+        .address_btn {
+	    background-color: #555;
+	    color: white;
+	    float: left;
+	    border: none;
+	    outline: none;
+	    cursor: pointer;
+	    padding: 14px 16px;
+	    font-size: 17px;
+	    width: 50%;
+		}
+		.address_btn:hover{
+		background-color: #777;
+		}
+		.addressInfo_button_div::after{
+			content:'';
+			display:block;
+			clear:both;
+		}
+		.addressInfo_input_div{
+			padding:12px;
+			text-align: left;
+			display: none;
+			line-height: 40px;
+		}
+		.addressInfo_input_div th{
+			border-color: transparent;
+		    background-color: transparent;		
+		}
+		.addressInfo_input_div th{
+			padding : 12px 5px 12px 20px;
+			vertical-align: top;
+		}
+		.addressInfo_input_div td{
+			padding : 8px 12px;
+		}		
+		.addressInfo_input_div input{
+			padding: 6px 5px;
+			margin: 5px 40px;
+		}
+		.address_search_btn{
+		    vertical-align: middle;
+		    display: inline-block;
+		    border: 1px solid #aaa;
+		    width: 90px;
+		    text-align: center;
+		    height: 30px;
+		    line-height: 30px;
+		    color: #555;
+		    cursor: pointer;
+		}
+		.productlists{
+		width: 1130px;
+		border-bottom:2px solid gray;
+		}
+		
+		#just{
+		display: flex;
+		justify-content: right;
+		}
+		
+		.prostyle{
+		background-color: #777;
+		}
+		
+        .productlists td {
+            width: 109px;
+            height: 50px;
+            padding: 20px;
+        }
+		.productcss{
+		display:inline-grid;
+		}
+		.productcss2{
+	 	border-bottom: 1px solid #f3f3f3;
+	 	display:flex;
+		}
+		.productcss3{
+		display:grid;
+		}
+		.display_div{
+		display:flex;
+		}
+		.display_div2{
+		display:grid;
+		}
+		.margin_div p{
+		margin: 0 1px;
+		}
+		.h6{
+		border-bottom: 1px solid #b6b6b6; 
+		margin-bottom: 10px;
+		}
+		
+		/*수정*/
+		
+        #order{
+        overflow-x: auto;
+        height: 200px;
+		display: flex;
+            }
+            
+        #payment-button{
+		cursor:pointer;
+		width:100px;
+		height:30px;
+		box-shadow: 3px 4px 0px 0px #dcecfb;
+		background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+		background-color:#bddbfa;
+		border-radius:15px;
+		border:1px solid #84bbf3;
+		display:inline-block;
+		cursor:pointer;
+		color:#471f54;
+		font-family:Arial;
+		font-size:17px;
+		font-weight:bold;
+		padding:2px;
+		text-decoration:none;
+		text-shadow:0px 1px 0px #528ecc;
+		}
+		#payment-button:hover{
+			background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+			background-color:#80b5ea;
+		}
+		#payment-button:active{
+			position:relative;
+			top:1px;
+		}

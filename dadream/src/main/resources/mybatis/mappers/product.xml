@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dd.product.dao.ProductDAO">
+
+	<resultMap id="proResult" type="productVO">
+		<result property="product_Num" column="product_Num" />
+		<result property="product_Name" column="product_Name" />
+		<result property="product_Price" column="product_Price" />
+		<result property="product_TotalCount"
+			column="product_TotalCount" />
+		<result property="product_Date" column="product_Date" />
+		<result property="product_Content" column="product_Content" />
+		<result property="product_Image" column="product_Image" />
+		<result property="user_Id" column="user_Id" />
+		<result property="product_Views" column="product_Views" />
+		<result property="product_Option1" column="product_Option1" />
+		<result property="product_Option2" column="product_Option2" />
+   		<collection property="order" resultMap="orderFResult"></collection>
+	</resultMap>
+
+	<resultMap id="orderResult" type="orderVO">
+   		<result property="order_Num" column="order_Num" />
+   		<result property="order_Date" column="order_Date" />
+   		<result property="user_Id" column="user_Id" />
+   		<result property="product_Count" column="product_Count" />
+   		<result property="product_Num" column="product_Num" />
+   		<result property="product_Name" column="product_Name" />
+   		<result property="product_Price" column="product_Price" />
+   		<result property="product_Option1" column="product_Option1" />
+   		<result property="product_Option2" column="product_Option2" />
+   		<result property="product_TotalPrice" column="product_TotalPrice" />
+   		<!-- 상품과 연결 해서 씁니다 . ordervo 도 설정해줘야합니다 -->
+   		<collection property="product" resultMap="proResult"></collection>
+   		<collection property="member" resultMap="memResult"></collection>
+   		<collection property="cart" resultMap="cartResult"></collection>
+   </resultMap>
+  
+   	<resultMap id="orderFResult" type="orderfinishVO">
+		<result property="order_Num" column="order_Num" />
+		<result property="order_GetName" column="order_GetName" />
+		<result property="user_Id" column="user_Id" />
+		<result property="order_Address1" column="order_Address1" />
+		<result property="order_Address2" column="order_Address2" />
+		<result property="order_Address3" column="order_Address3" />
+		<result property="order_Phone" column="order_Phone" />
+		<result property="order_Rqd" column="order_Rqd" />
+		<result property="order_State" column="order_State" />
+		<result property="product_Name" column="product_Name" />
+		<result property="product_TotalPrice" column="product_TotalPrice" />
+		<result property="product_Count" column="product_Count" />
+		<result property="product_Price" column="product_Price" />
+		<result property="product_Num" column="product_Num" />
+   		<!-- 상품과 연결 해서 씁니다 . orderfinishvo 도 설정해줘야합니다 -->
+   		<collection property="product" resultMap="proResult"></collection>
+   		<collection property="order" resultMap="orderFResult"></collection>
+		<collection property="member" resultMap="memResult"></collection>
+	</resultMap>
+
+	<resultMap id="cartResult" type="cartVO">
+		<result property="cart_Num" column="cart_Num" />
+		<result property="cart_BuytCount" column="cart_BuytCount" />
+		<result property="order_Num" column="order_Num" />
+		<result property="product_Num" column="product_Num" />
+		<result property="user_Id" column="user_Id" />
+		<result property="product_Option1" column="product_Option1" />
+		<result property="product_Option2" column="product_Option2" />
+		<result property="product_Name" column="product_Name" />
+		<result property="product_Price" column="product_Price" />
+		<!-- 상품과 연결 해서 씁니다 . cartvo 도 설정해줘야합니다 -->
+		<collection property="product" resultMap="proResult">
+		</collection>
+	</resultMap>
+	
+	<resultMap id="memResult" type="memberVO">
+		<result property="user_Id" column="user_Id" />
+        <result property="user_Pwd" column="user_Pwd" />
+        <result property="user_Name" column="user_Name" />
+        <result property="user_Phone" column="user_Phone" />
+        <result property="user_Email" column="user_Email" />
+        <result property="user_Level" column="user_Level" />
+        <result property="user_Sign" column="user_Sign" />
+        <result property="user_Address1" column="user_Address1" />
+        <result property="user_Address2" column="user_Address2" />
+        <result property="user_Address3" column="user_Address3" />
+        <result property="user_Business" column="user_Business" />
+	</resultMap>
+	
+	<select id="productView" resultMap="proResult">
+		<![CDATA[
+			select * from product_t  
+			order by product_Views  DESC
+			limit 4
+		]]>
+	</select>
+	<delete id ="proDelete" parameterType="int">
+		<![CDATA[
+			delete from product_t
+			where product_Num = #{pro}
+		]]>
+	</delete>
+	<!-- 상품관리 리스트 -->
+	<select id="proMyList" resultMap="proResult" parameterType="String">
+	<![CDATA[
+		select * from product_t where user_Id =#{user_Id}
+	]]>
+	</select>
+	
+		<!-- 상품수정 -->
+	<select id="proMod" resultType="productVO" parameterType="productVO">
+	<![CDATA[
+		select * from product_t where user_Id =#{user_Id} and product_Num=#{product_Num}
+	]]>
+	</select>
+	
+	<!-- 상품 패치 -->
+	<update id="proPatch" parameterType="java.util.Map">
+		<![CDATA[
+			update product_t 
+			set product_Name =#{product_Name},
+				product_Price = #{product_Price},
+				product_TotalCount =#{product_TotalCount},
+				product_Option1 =#{product_Option1},
+				product_Option2 =#{product_Option2} 
+				
+		]]>
+		<if test="product_Image != null and product_Image !=''">
+		,product_Image =#{product_Image}
+		</if>
+		<if test="product_Content != null and product_Content !=''">
+		,product_Content =#{product_Content}
+		</if>
+		where product_Num = #{product_Num}
+	</update>
+
+
+	<select id="selectAllProductsList" resultType="productVO"
+		parameterType="String">
+	<![CDATA[
+		select * from product_t where product_Name  like concat('%', #{product_Name},'%' )order by product_Date desc
+	]]>
+	</select>
+	
+	
+	<select id="productinfo" resultType="productVO" parameterType="int">
+	<![CDATA[
+		select * from product_t where product_Num = #{product_Nums}
+	]]>
+	</select>
+	
+	<update id="viewCount" parameterType="int">
+		update product_t
+		set
+		product_Views = product_Views+1
+		where product_Num = #{product_Nums}
+	</update>
+
+	<insert id="insertProduct" parameterType="java.util.Map">
+		<![CDATA[
+		 insert into product_t(product_Num ,product_Name,product_Price, product_TotalCount,product_Date,product_Content,product_Image,user_Id,product_Views,product_Option1,product_Option2)
+		 values(#{product_Num}, #{product_Name}, #{product_Price}, #{product_TotalCount},
+		 #{product_Date},#{product_Content},#{product_Image},#{user_Id},
+		 #{product_Views},#{product_Option1},#{product_Option2})
+		]]>
+	</insert>
+
+	<select id="productnum" resultType="int" parameterType="String">
+		select *
+		from product_t where product_Num =#{productNum}
+	</select>
+	<!--장바구니 담기-->
+	<insert id="cart" parameterType="java.util.Map">
+		INSERT INTO cart_t(cart_Num,cart_BuytCount,product_Num,user_Id,product_Option1,product_Option2,product_Name,product_Price,order_Num)
+		SELECT #{cart_Num} , #{cart_BuytCount} ,#{product_Num},#{user_Id},#{product_Option1},#{product_Option2},#{product_Name},#{product_Price},#{order_Num} FROM DUAL
+		WHERE NOT EXISTS(SELECT product_Num FROM cart_t WHERE product_Num =#{product_Num} AND
+		user_Id =#{user_Id} )
+	</insert>
+
+	<!-- 장바구니 리스트 -->
+	<select id="cartlist" resultMap="cartResult"
+		parameterType="String">
+		select a.cart_Num , a.cart_buytCount, a.product_Num, a.order_Num,a.product_Name, a.product_Price, a.product_Option1, a.product_Option2, b.product_Image, b.user_Id from
+		cart_t a join product_t b on a.product_Num = b.product_Num where
+		a.user_Id = #{user_Id}
+	</select>
+
+	<!-- 장바구니 삭제 -->
+	<delete id="cartdelete" parameterType="int">
+			<![CDATA[
+				delete from cart_t where cart_Num = #{body}
+			]]>
+	</delete>
+
+   <!-- 단품상품창 -->
+   <insert id="order" parameterType="java.util.Map">
+   		<![CDATA[
+   		insert into user_order_t(order_Num,product_Num,user_Id,product_Name,product_Price,product_TotalPrice,product_Count,product_Option1,product_Option2)
+   		value(#{order_Num},#{product_Num},#{user_Id},#{product_Name},#{product_Price},#{product_TotalPrice},#{product_Count},#{product_Option1},#{product_Option2})
+   		]]>
+   </insert>
+
+	<!-- 단품 결제 리스트 -->
+   <select id="orderlist" resultMap="orderResult" parameterType="String">
+		SELECT a.order_Num,a.product_Name,a.product_Count, a.product_Num, a.product_TotalPrice, a.product_Price,a.product_Option1,a.product_Option2,c.user_Name, c.user_Phone, c.user_Address1, c.user_Address2, c.user_Address3,b.product_Image, b.user_Id
+		FROM user_order_t a JOIN user_t c ON a.user_Id = c.user_Id JOIN product_t b ON a.product_Num = b.product_Num WHERE a.user_Id = #{user_Id}
+   </select>
+   
+   	<!-- 단품 결제목록추가 -->
+	<insert id="orders" parameterType="java.util.Map">
+		<![CDATA[
+		insert into orderfinish_t(user_Id,order_Num,order_GetName,order_Address1,order_Address2,order_Address3,order_Phone,order_State,order_Rqd,product_Name,product_Count,product_Price,product_TotalPrice,product_Num)
+		VALUE(#{user_Id},#{order_Num},#{order_GetName},#{order_Address1},#{order_Address2},#{order_Address3},#{order_Phone},'배송준비',#{order_Rqd},#{product_Name},#{product_Count},#{product_Price},#{product_TotalPrice},#{product_Num})
+		]]>
+	</insert>
+	
+	  <!-- 토스창 불러오기 -->
+   	<select id="orderfinishs" resultMap="orderFResult" parameterType="String">
+		SELECT a.product_Name, a.product_TotalPrice, a.order_Num,b.user_Name FROM orderfinish_t a JOIN user_t b ON a.order_Address1 = b.user_Address1 WHERE a.user_Id = #{user_Id}
+	</select>
+	
+	<!-- 주문완료 old -->
+	<delete id="oft" parameterType="java.util.Map">
+		delete from orderfinish_t where user_Id = #{user_Id}
+	</delete>
+	
+	<!-- 판매내역 -->
+	<select id="prolist" resultMap="proResult" parameterType="String">
+		SELECT a.product_TotalCount,a.product_Name,b.product_Count ,b.order_GetName, b.order_Num ,b.order_State, b.product_Num FROM product_t a JOIN oft_t b WHERE a.product_Num = b.product_Num AND a.user_Id = #{user_Id}
+	</select>
+
+	<!-- 배송 수정 -->
+	<update id="stateupdate" parameterType="java.util.Map">
+		UPDATE oft_t
+		SET order_State = #{order_State}
+		WHERE order_Num = #{order_Num}
+	</update>
+	
+	<!-- 환불 -->
+	<delete id="statedelete" parameterType="java.util.Map">
+		<![CDATA[
+		delete from oft_t where order_Num = #{order_Num}
+		]]>
+	</delete>
+	
+	<!-- 환불시 총개수 + -->
+	<update id="deletecount" parameterType="java.util.Map">
+		update product_t a INNER JOIN oft_t b
+		set a.product_TotalCount = a.product_TotalCount + b.product_Count
+		WHERE a.product_Num = #{product_Num};
+	</update>
+	
+	<!-- 주문목록 -->
+	<select id="myofv" resultMap="orderFResult" parameterType="String">
+		<![CDATA[
+		SELECT a.order_Num, a.order_GetName, a.order_Address1, a.order_Address2, a.order_Address3, a.order_Phone, a.order_Rqd, a.order_State, a.product_Count, a.product_TotalPrice, a.product_Name, a.product_Num, b.product_Image, b.user_Id FROM oft_t a join product_t b on a.product_Num = b.product_Num
+		where a.user_ID = #{user_Id}
+		]]>
+	</select>
+	
+	<!-- 환불내역 -->
+	<select id="refund" resultMap="orderFResult" parameterType="String">
+		<![CDATA[
+		SELECT a.order_Num, a.order_GetName, a.order_Address1, a.order_Address2, a.order_Address3, a.order_Phone, a.order_Rqd, a.order_State, a.product_Count, a.product_TotalPrice, a.product_Name, a.product_Num, b.product_Image, b.user_Id FROM remove_refund_t a join product_t b on a.product_Num = b.product_Num
+		where a.user_ID = #{user_Id}
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dd.admin.dao.AdminDAO">
+
+	<resultMap id="dlOrderResult" type="dlorderVO">
+		<result property="dl_Num" column="dl_Num" />
+		<result property="user_Id" column="user_Id" />
+		<result property="order_Num" column="order_Num" />
+		<result property="do_Date" column="do_Date" />
+	</resultMap>
+	
+	<select id="dlList" resultMap="dlOrderResult">
+		<![CDATA[
+			SELECT *
+			FROM dlorder_t
+		]]>
+	</select>
+
+
+</mapper>

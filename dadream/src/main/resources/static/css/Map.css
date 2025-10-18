@@ -1,0 +1,133 @@
+		* {
+            font-family: 'Merriweather Sans', sans-serif !important;
+        }
+		#map{
+			width:1519px; 
+			height:688px; 
+			right: 10px; 
+			top:3px; 
+			border: 1px solid #ccc;
+		}
+		
+		
+		#range1::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .dealingcontent>* {
+            margin-bottom: 5px;
+        }
+
+        #dlli {
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+        #selectbox{
+			display: flex; 
+			height: 30px;
+			margin: -15px 0 20px 31%;
+		}
+        
+        .dl_Form1,.dl_Form2,.dl_Room,.dl_Opt{
+			width: 100px; 
+			height: 25px; 
+			text-align: center; 
+			margin-right: 8px;
+			}
+			
+		.Price_place{
+			margin-left:30%; 
+			margin-bottom:15px;
+			height: 29px;
+		}
+		.PriceInput{
+			text-align:center;
+			margin-right:3px;
+			height: 27px; 
+			line-height: 27px;
+			border:none;
+			border-bottom: 1px solid black;
+			outline:none;
+		}
+		
+		.dealingsearch{
+			height: 27px;
+			line-height:27px;
+			margin-right:5px;
+			border:none;
+			border-bottom: 1px solid black;
+			outline:none;
+		}
+		.DealingSearch_Btn{
+			height:27px;
+		}
+		
+		.prs-position{
+			display:flex; 
+			width: 700px;
+		}
+		
+		.MapForm{
+			display: flex;
+		}
+
+/*------------------------------resultList---------------------------------*/
+		
+		#res1{
+			width:319px; 
+			height:320px; 
+			background-color:white; 
+			border:outset;
+		}
+		
+		#res2{
+			display: flex; 
+			border-bottom: 1px solid #ccc; 
+			margin-bottom: 20px; 
+			margin-left: 30px;
+		}
+		
+		.res3{
+			width:200px; 
+			height:190px;
+		}
+		
+		.viewgo_btn{
+			margin:3px; 
+			cursor:pointer; 
+			border:none; 
+			background-color:white;
+		}
+		.ListviewImg{
+			width:310px;
+			height:180px;
+		}
+		#infocontext1{
+			font-size:18px; 
+			font-weight:bold; 
+			margin:10px 0 5px 0;
+		}
+		#infocontext2{
+			font-weight:bold;
+		}
+		#infocontext3{
+			margin-right:5px; 
+			font-weight:bold;
+		}
+		#infocontext4{
+			font-weight:bold;
+		}
+		#infocontext5{
+			font-weight:bold;
+		}
+		
+/*------------------------------resultList2 END---------------------------*/
+
+		#ListScroll{
+			width: 360px; 
+			height:688px;
+			overflow-y: auto;
+		}
+		
+		

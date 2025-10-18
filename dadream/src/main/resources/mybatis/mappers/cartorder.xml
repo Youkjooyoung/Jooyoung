@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dd.product.dao.ProductDAO">
+
+	<resultMap id="cResult" type="cartListVO">
+		<collection property="cartListVO" resultMap="cartResult"></collection>
+	</resultMap>
+	
+	<resultMap id="cOResult" type="cartorderlistVO">
+		<collection property="cartorderlistVO" resultMap="coResult"></collection>
+	</resultMap>
+	<resultMap id="oResult" type="orderVO">
+   		<result property="order_Num" column="order_Num" />
+   		<result property="order_Date" column="order_Date" />
+   		<result property="user_Id" column="user_Id" />
+   		<result property="product_Count" column="product_Count" />
+   		<result property="product_Num" column="product_Num" />
+   		<result property="product_Name" column="product_Name" />
+   		<result property="product_Price" column="product_Price" />
+   		<result property="product_Option1" column="product_Option1" />
+   		<result property="product_Option2" column="product_Option2" />
+   		<result property="product_TotalPrice" column="product_TotalPrice" />
+   		<result property="product_Image" column="product_Image" />
+   		<!-- 상품과 연결 해서 씁니다 . ordervo 도 설정해줘야합니다 -->
+   		<collection property="product" resultMap="proResult"></collection>
+   		<collection property="member" resultMap="memResult"></collection>
+   </resultMap>
+   
+   	<resultMap id="mResult" type="memberVO">
+		<result property="user_Id" column="user_Id" />
+        <result property="user_Pwd" column="user_Pwd" />
+        <result property="user_Name" column="user_Name" />
+        <result property="user_Phone" column="user_Phone" />
+        <result property="user_Email" column="user_Email" />
+        <result property="user_Level" column="user_Level" />
+        <result property="user_Sign" column="user_Sign" />
+        <result property="user_Address1" column="user_Address1" />
+        <result property="user_Address2" column="user_Address2" />
+        <result property="user_Address3" column="user_Address3" />
+        <result property="user_Business" column="user_Business" />
+	</resultMap>
+	
+	<resultMap id="oFResult" type="orderfinishVO">
+		<result property="order_Num" column="order_Num" />
+		<result property="order_GetName" column="order_GetName" />
+		<result property="user_Id" column="user_Id" />
+		<result property="order_Address1" column="order_Address1" />
+		<result property="order_Address2" column="order_Address2" />
+		<result property="order_Address3" column="order_Address3" />
+		<result property="order_Phone" column="order_Phone" />
+		<result property="order_Rqd" column="order_Rqd" />
+		<result property="order_State" column="order_State" />
+		<result property="order_Dc" column="order_Dc" />
+		<result property="product_Sale" column="product_Sale" />
+		<result property="product_Image" column="product_Image" />
+		<result property="product_Name" column="product_Name" />
+		<result property="product_TotalPrice" column="product_TotalPrice" />
+		<result property="product_Count" column="product_Count" />
+		<result property="product_Price" column="product_Price" />
+		<result property="product_Num" column="product_Num" />
+   		<!-- 상품과 연결 해서 씁니다 . orderfinishvo 도 설정해줘야합니다 -->
+   		<collection property="order" resultMap="orderFResult"></collection>
+		<collection property="member" resultMap="memResult"></collection>
+	</resultMap>
+	
+	<resultMap id="pResult" type="productVO">
+		<result property="product_Num" column="product_Num" />
+		<result property="product_Name" column="product_Name" />
+		<result property="product_Price" column="product_Price" />
+		<result property="product_TotalCount"
+			column="product_TotalCount" />
+		<result property="product_Date" column="product_Date" />
+		<result property="product_Content" column="product_Content" />
+		<result property="product_Image" column="product_Image" />
+		<result property="user_Id" column="user_Id" />
+		<result property="product_Views" column="product_Views" />
+		<result property="product_Option1" column="product_Option1" />
+		<result property="product_Option2" column="product_Option2" />
+		<!-- 결제 내역하고 연결해서 씁니다 orderfinishVO도 설정 해줘야 합니다 -->
+		<!-- 지금 연결 안됨 -->
+		<collection property="order" resultMap="orderFResult"></collection>
+	</resultMap>
+	
+	<!-- 결제 전 데이터 삭제 -->
+		<delete id="deletecartorder" parameterType="string">
+			<![CDATA[
+				delete from user_order_t where user_Id = #{user_Id}
+			]]>
+	</delete>
+	
+	<!-- 장바구니결제 -->
+	<insert id="insertCartOrder" parameterType="java.util.Map">
+		INSERT INTO user_order_t(cart_Num,order_Num,product_Name,product_Price,product_Count,user_Id,product_Num,product_Option1,product_Option2)
+		VALUES
+		<foreach collection="cartListVO" item="item" index="index" separator=", ">
+			(#{item.cart_Num},#{item.order_Num},#{item.product_Name},#{item.product_Price},#{item.product_Count},#{item.user_Id},#{item.product_Num},#{item.product_Option1},#{item.product_Option2})
+		</foreach>   
+	</insert>
+	
+	<!-- 장바구니 결제 정보 -->
+	<select id="ordercartlist" resultMap="orderResult" parameterType="String">
+		select a.order_Num, a.product_Num, a.product_Name, a.product_Price, a.product_Option1, a.product_Option2,a.product_Count,
+		c.user_Name, c.user_Phone, c.user_Address1, c.user_Address2, c.user_Address3, a.cart_Num, b.user_Id, b.product_Image
+		from user_order_t a join product_t b on a.product_Num = b.product_Num JOIN user_t c ON a.user_Id = c.user_Id
+		JOIN cart_t d ON b.product_Num = d.product_Num where a.user_Id = #{user_Id}
+	</select>
+	
+	<!-- 주문목록 db에 insert -->
+	<insert id="carteach" parameterType="java.util.Map">
+		INSERT INTO orderfinish_t(order_Num,order_GetName,product_Num,user_Id,order_Address1,order_Address2,order_Address3,order_Phone,order_Rqd,order_State,product_Name,product_TotalPrice,product_Count,product_Price)
+		VALUES
+		<foreach collection="cartorderlistVO" item="item" index="index" separator=", ">
+			(#{item.order_Num},#{item.order_GetName},#{item.product_Num},#{item.user_Id},#{item.order_Address1},#{item.order_Address2},#{item.order_Address3},#{item.order_Phone},#{item.order_Rqd},'배송준비',#{item.product_Name},#{item.product_TotalPrice},#{item.product_Count},#{item.product_Price})
+		</foreach>   
+	</insert>
+	
+</mapper>

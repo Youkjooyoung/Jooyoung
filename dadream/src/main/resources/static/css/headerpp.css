@@ -1,0 +1,206 @@
+		* {
+            box-sizing: border-box;
+            user-select: none;
+            
+        }
+
+        /* maintab */
+        .maintab {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            background: rgb(238, 232, 232);
+            
+        }
+
+          .maintab a{
+            width: 100%;
+            text-decoration: none;
+            color: black;
+		}
+
+        .maintab a li {
+            padding: 20px 20px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+        }
+		.maintab a:first-child{
+			border-right: solid 0.5px;
+			
+		}
+
+
+        .maintab .a:hover {
+            background-color: rgb(146, 142, 142);
+        }
+
+        .maintab .b:hover {
+            background-color: rgb(161, 117, 20);
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .red {
+            background-color: rgb(146, 142, 142);
+        }
+
+        .blue {
+            background-color: rgb(161, 117, 20);
+        }
+
+
+/*--------------------------------- header----------------------------------- */
+        .header {
+            margin: 20px 0 0 145px;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            height:52.5px;
+            font-weight:lighter;
+			
+
+        }
+
+        header .Main_Logo {
+            width: 220px;
+            height: 50px;
+        }
+
+        .headerleft {
+            display: flex;
+        }
+        .ppcursor {
+			cursor: pointer;
+	
+		}
+    	.ppcursor li h6 {
+			text-decoration: underline;
+		 	text-underline-position : under;
+		  	text-decoration-thickness: 2px;
+		}
+		.ppcursor li h6:hover{
+			color:gray;
+		}
+		
+        .search form {
+            display: flex;
+            margin-top: 2.5%;
+            /*margin-left: 130px;*/
+        }
+
+        .search form input {
+            width: 350px;
+            height: 40px;
+        }
+
+        .headerul ul {
+            margin-top: 2%;
+            font-size: 18px;
+            height: 22.5px;
+            display: flex;
+   			width: 739px;
+        }
+        .headerul ul h6{
+		margin-top: 4px;
+		}
+		
+
+        .headerul ul li {
+            display: inline-flex;
+            font-weight: bold;
+            margin-right: 30px;
+        }
+
+        .headerul ul a {
+            text-decoration: none;
+            color: black;
+            margin-top: 3px;
+        }
+        .pro_search{
+				cursor:pointer;
+				width:100px;
+				height:40px;
+				background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+				background-color:#bddbfa;
+				
+				border:1px solid #84bbf3;
+				display:inline-block;
+				cursor:pointer;
+				color:#471f54;
+				font-family:Arial;
+				font-size:17px;
+				font-weight:bold;
+				padding:2px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+		}
+		.pro_search:hover{
+				cursor:pointer;
+				background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+				background-color:#80b5ea;
+		}
+		.pro_search:active{
+				position:relative;
+				top:1px;
+		}
+		#path{
+			height:26px;
+			border:none;
+			outline:none;
+			font-weight: bold;
+			font-size:18px;
+		}
+		
+		.pr_search{
+				cursor:pointer;
+				width:100px;
+				height:40px;
+				background:linear-gradient(to bottom, rgb(64,64,64) 5%, rgb(125,80,8) 100%);
+				background-color:#bddbfa;
+				border:1px solid black;
+				border-radius: 5px;
+				display:inline-block;
+				cursor:pointer;
+				color:white;
+				font-family:Arial;
+				font-size:13px;
+				/*font-weight:bold;*/
+				padding:2px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+		}
+		input[type=search]{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+		}
+
+/* --------------------------------------top버튼------------------------------------ */
+        .top {
+            text-decoration: none;
+            color: black;
+            position: fixed;
+           	bottom: 100px;
+            right: 40px;
+        }
+        
+        .headerpp > a{
+			display:block;	
+		}
+	
+		.headerpp> * {
+			margin-top: 5px;
+			
+		}
+		
+       .hidee{
+			display:none;
+		}
+	
+		
+		
+       

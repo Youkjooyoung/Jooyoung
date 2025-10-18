@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+   <mapper namespace="com.dd.dealing.dao.DealingDAO">
+   
+	<resultMap id="noticeResult" type="noticeVO">
+		<result property="notice_Num" column="notice_Num" />
+		<result property="notice_Title" column="notice_Title" />
+		<result property="notice_Text" column="notice_Text" />
+		<result property="notice_Date" column="notice_Date" />
+		<result property="notice_Category" column="notice_Category" />
+		<result property="user_Id" column="user_Id" />
+		<result property="viewCnt" column="viewCnt" />
+		
+	
+	</resultMap> 
+	
+		<!--공지사항 등록 -->
+	  <insert id="insertnotice"  parameterType="noticeVO">
+		<![CDATA[
+		 insert into notice_t(notice_Num,notice_Title,notice_Text,notice_Date,notice_Category,user_Id,viewCnt)
+		 values(#{notice_Num},#{notice_Title},#{notice_Text},#{notice_Date},#{notice_Category},#{user_Id},#{viewCnt})
+		]]>
+		  
+	</insert>
+	<!-- 공지사항 리스트 조회 -->
+	<select id="selectAllNoticlesList" resultMap="noticeResult">
+		
+	<![CDATA[
+		SELECT * FROM notice_t
+		]]> 
+	</select>
+	
+	<select id="getNoticeContents" parameterType="noticeVO" resultType="noticeVO">
+		select * from notice_t
+		where notice_Num = #{notice_Num}
+	</select>
+	
+	<update id="updateNotice" parameterType="noticeVO">
+		UPDATE notice_t SET
+		notice_Title = #{notice_Title},
+		notice_Text = #{notice_Text},
+		user_Id = #{user_Id}
+		WHERE notice_Num = #{notice_Num}
+	</update>
+	
+	<!-- 조회수 증가 -->
+	<update id="updateViewCnt" parameterType="int">
+		UPDATE notice_t 
+		SET
+		viewCnt = viewCnt + 1
+		WHERE 
+		notice_Num = #{notice_Num}
+	</update>
+	
+	<delete id="deleteNoticle"  parameterType="noticeVO" >
+		<![CDATA[
+			delete
+			from
+			notice_t
+			WHERE
+			notice_Num = #{notice_Num}
+			]]>
+	</delete>
+	 
+	
+	
+	</mapper>

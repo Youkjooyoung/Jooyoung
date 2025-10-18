@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dd.product.dao.ProductDAO">
+
+	<resultMap id="dealResult" type="dealingVO">
+		<result property="dl_Num" column="dl_Num" />
+		<result property="dl_Title" column="dl_Title" />
+		<result property="dl_Views" column="dl_Views" />
+		<result property="user_Id" column="user_Id" />
+		<result property="dl_City" column="dl_City" />
+		<result property="dl_Address" column="dl_Address" />
+		<result property="dl_Option" column="dl_Option" />
+		<result property="dl_Form" column="dl_Form" />
+		<result property="dl_Form2" column="dl_Form2" />
+		<result property="dl_Room" column="dl_Room" />
+		<result property="dl_Size" column="dl_Size" />
+		<result property="dl_Content" column="dl_Content" />
+		<result property="dl_Price" column="dl_Price" />
+		<result property="dl_Image" column="dl_Image" />
+		<result property="dl_Lat" column="dl_Lat" />
+		<result property="dl_Lng" column="dl_Lng" />
+
+	</resultMap>
+	<resultMap id="jjimResult3" type="jjimVO">
+		<result property="dl_Num" column="dl_Num" />
+		<result property="user_Id" column="user_Id" />
+		<collection property="dealing" resultMap="dealResult">
+		</collection>
+	</resultMap>
+
+
+<!-- 가구페이지 찜 매물 -->
+<select id="proDl" resultMap="jjimResult3" parameterType="String">
+		<![CDATA[
+			SELECT a.dl_Num, a.dl_Title, a.dl_Image, a.dl_Price, a.dl_Address, a.dl_Content, 
+			a.dl_Views, a.dl_Date, a.user_Id, a.dl_City, a.dl_Form, a.dl_Form2, a.dl_Room, 
+			a.dl_Size, a.dl_Option, a.dl_Lat, a.dl_Lng, a.dl_Image 
+			FROM dealing_t a
+			JOIN like_t b
+			ON a.dl_Num = b.dl_Num
+			WHERE b.user_Id = #{user_Id}
+		]]>
+	</select>
+
+
+</mapper>

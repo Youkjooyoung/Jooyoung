@@ -1,0 +1,161 @@
+		* {
+            box-sizing: border-box;
+            user-select: none;
+            font-family: 'Merriweather Sans', sans-serif !important;
+        }
+
+        /* maintab */
+        .maintab {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            background: rgb(238, 232, 232);
+            font-weight:lighter;	
+			font-size: larger;
+            
+        }
+        #mypage{
+			padding:0;
+		}
+		#mypage:active{
+			box-shadow: inset -.3rem -.1rem 1.4rem  #FBFBFB, inset .3rem .4rem .8rem #BEC5D0; 
+    		cursor: pointer;
+    		position:relative;
+			top:1px;
+		}
+
+          .maintab a{
+            width: 100%;
+            text-decoration: none;
+            color: black;
+		}
+        .maintab a li {
+            padding: 20px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+        }
+		.maintab a:first-child{
+			border-right: solid 0.5px;
+			
+		}
+
+        .maintab .a:hover {
+            background-color: rgb(146, 142, 142);
+        }
+
+        .maintab .b:hover {
+            background-color: rgb(161, 117, 20);
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .red {
+            background-color: rgb(146, 142, 142);
+        }
+
+        .blue {
+            background-color: rgb(161, 117, 20);
+        }
+
+
+ /*---------------------------------------- header---------------------------------- */
+        .header {
+            margin: 20px 0 0 150px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            height:52.5px;
+            margin-bottom: 20px;
+        }
+
+        header .Main_Logo {
+            width: 220px;
+            height: 50px;
+        }
+
+        .headerleft {
+            display: flex;
+        }
+        .ppcursor {
+		cursor: pointer;
+	
+		}
+    	.ppcursor li h6 {
+			text-decoration: underline;
+		 	text-underline-position : under;
+		  	text-decoration-thickness: 2px;
+		}
+		.ppcursor li h6:hover{
+			color:gray;
+		}
+
+        .headerul ul {
+            /*margin-top: 2%;*/
+            font-size: 18px;
+            /*margin-left: 100px;*/
+            height: 22.5px;
+            width:770px;
+            line-height: normal;
+        }
+
+        .headerul ul li {
+            display: inline-flex;
+            font-weight: bold;
+            margin-left: 20px;
+            font-size: 20px;
+        }
+        .headerul ul li:active{
+			box-shadow: inset -.3rem -.1rem 1.4rem  #FBFBFB, inset .3rem .4rem .8rem #BEC5D0; 
+		    cursor: pointer;
+		    position:relative;
+			top:1px;
+}
+
+        .headerul ul a {
+            text-decoration: none;
+            color: black;
+        }
+
+        /* top버튼 */
+        .top {
+            text-decoration: none;
+            color: black;
+            position: fixed;
+            bottom: 100px;
+            right: 40px;
+        }
+        
+        .headerpp > a{
+			display:block;	
+		}
+	
+		.headerpp> * {
+			margin-top: 5px;
+			
+		}
+		
+       .hidee{
+			display:none;
+		}
+		.pan{
+			text-decoration: none;
+            color: black;
+            position: fixed;
+           bottom: 110px;
+            right: 33px;
+		}
+		
+		
+ /*-----------------------User_Id(hidden처리된부분)-------------------------- */
+ 
+ 		#user_id{
+			display: none;
+		}
+		
+		
+		
+       

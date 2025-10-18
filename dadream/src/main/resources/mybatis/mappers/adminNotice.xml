@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+   <mapper namespace="com.dd.admin.dao.AdminDAO">
+   
+	<resultMap id="noticeResult" type="noticeVO">
+		<result property="notice_Num" column="notice_Num" />
+		<result property="notice_Title" column="notice_Title" />
+		<result property="notice_Text" column="notice_Text" />
+		<result property="notice_Date" column="notice_Date" />
+		<result property="notice_Category" column="notice_Category" />
+		<result property="user_Id" column="user_Id" />
+		<result property="viewCnt" column="viewCnt" />
+		
+	
+	</resultMap> 
+	
+	
+	<!-- 공지사항 리스트 조회 -->
+	<select id="adminNoticeList" resultMap="noticeResult">	
+	<![CDATA[
+		SELECT * FROM notice_t
+		]]> 
+	</select>
+	
+	<!-- 공지사항 상세보기 -->
+	<select id="adminNoticeView" resultMap="noticeResult" parameterType="int">
+		<![CDATA[
+			SELECT *
+			FROM notice_t
+			WHERE Notice_Num = #{Notice_Num}
+		]]>
+	</select>
+	
+	<!-- 공지사항 수정 -->
+	<update id="modNotice" parameterType="noticeVO">
+		UPDATE notice_t
+		SET 
+		Notice_Title = #{notice_Title}, 
+		Notice_Text = #{notice_Text}, 
+		Notice_Category = #{notice_Category} 
+		WHERE Notice_Num = #{notice_Num}
+	</update>
+	
+	<!-- 공지사항 삭제 -->
+	<delete id="deleteNotice" parameterType="java.util.Map">
+		DELETE
+		FROM notice_t
+		<where>
+			<if test="ntsList != null and ntsList.size != 0">
+				Notice_Num IN
+				<foreach collection="ntsList" item="item" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+
+
+	<!-- 공지사항 등록 현재db에 뷰컬럼이 없어서 빼놈 -->
+	<insert id="addNotice"  parameterType="noticeVO">
+		<![CDATA[
+			insert into notice_t(notice_Num,notice_Title,notice_Text,notice_Date,notice_Category,user_Id, viewCnt)
+			values(#{notice_Num},#{notice_Title},#{notice_Text},#{notice_Date},#{notice_Category},#{user_Id},#{viewCnt})
+		]]>  
+	</insert>
+</mapper>

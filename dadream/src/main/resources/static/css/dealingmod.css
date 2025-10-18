@@ -1,0 +1,77 @@
+		 * {
+            margin: 0px;
+            padding: 0px;
+			font-family: 'Merriweather Sans', sans-serif 
+			!important;
+        }
+
+        .first>h1 {
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+
+
+        .dlImg {
+            display: flex;
+            margin: 0 0 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .dlMain {
+            margin-bottom: 0px;
+        }
+
+        /* 나중에 width길이 조정 필요할 수 있음 */
+        .middle {
+            display: flex;
+            justify-content: space-between;
+            width: 1130px;
+
+        }
+
+        .dealingcon {
+            line-height: 2;
+        }
+        .dealingcon >h3{
+            font-weight: bold;
+        }
+
+        .dlThumbnail1 {
+            display: flex;
+            position: relative;
+            margin: 10px 0 0 5px;
+            right: 5px;
+            overflow-x: auto;
+            white-space: nowarp;
+        }
+
+        .dlThumbnail2 {
+            width: 100px;
+            height: 100px;
+            margin-right: 10px;
+        }
+
+        .cg {
+            margin: 50px 0 0 20px;
+        }
+
+        .cg select,
+        input {
+            width: 300px;
+        }
+
+        .bds02 {
+            margin: 100px 0 0 20px;
+            text-align: center;
+            width: 200px;
+            display: inline-block;
+        }
+        .cg >h3{
+            font-weight: bold;
+            font-size: 19px;
+        }
+        .cg > h5{
+            line-height: 2;
+            font-weight: bold;
+        }

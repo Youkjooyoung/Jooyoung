@@ -1,0 +1,65 @@
+#order_State{
+	border:none;
+	border-radius: 5px; 
+	outline: none; 
+	font-weight: bold; 
+	font-size: 18px;
+	margin-left:10px;
+}
+#flexdiv{
+	display:flex;
+	font-size:18px;
+}
+#psize{
+	font-size:18px;
+	color:rgb(255, 0, 166);
+}
+#flexdiv p{
+	padding: 5px;
+	font-weight: bold;
+}
+#flexdiv2{
+	display:flex;
+	margin-top: 14px;
+}
+#paydeletes{
+	display:flex;
+	overflow-x: auto;
+	width:1130px;
+	border-radius: 15px;
+	min-height: 555px;
+	background-color: #c0c0c0;
+}
+#update{
+	margin:50px;
+}
+.proName{
+	color:rgb(255, 128, 64);
+}
+
+#updatebtn,#orderdelete{
+				width: 110px;
+				border: 1px solid;
+				height: 30px;
+				text-align: center;
+				cursor:pointer;
+				background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+				background-color:#bddbfa;
+				border-radius:15px;
+				border:1px solid #84bbf3;
+				display:inline-block;
+				color:#471f54;
+				font-family:Arial;
+				font-size:17px;
+				font-weight:bold;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+}
+#updatebtn:hover,#orderdelete:hover{
+	background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+				background-color:#80b5ea;
+}
+#updatebtn:active,#orderdelete:active{
+	position:relative;
+				top:1px;
+}

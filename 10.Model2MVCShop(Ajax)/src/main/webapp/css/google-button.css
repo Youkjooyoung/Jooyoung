@@ -1,0 +1,53 @@
+@charset "UTF-8";
+/* /css/google-button.css */
+.gsi-material-button {
+	user-select: none;
+	appearance: none;
+	background-color: #fff;
+	border: 1px solid #dadce0;
+	border-radius: 20px;
+	box-sizing: border-box;
+	color: #3c4043;
+	cursor: pointer;
+	font-family: 'Roboto', arial, sans-serif;
+	font-size: 14px;
+	height: 40px;
+	letter-spacing: 0.25px;
+	outline: none;
+	overflow: hidden;
+	padding: 0 12px;
+	position: relative;
+	text-align: center;
+	transition: all 0.2s ease-in-out;
+	vertical-align: middle;
+	white-space: nowrap;
+	width: 100%;
+	max-width: 400px;
+	min-width: 200px;
+}
+
+.gsi-material-button:hover {
+	box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px
+		rgba(60, 64, 67, 0.15);
+}
+
+.gsi-material-button:active {
+	background-color: #f1f3f4;
+}
+
+.gsi-material-button .gsi-material-button-content-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+.gsi-material-button .gsi-material-button-icon {
+	height: 18px;
+	width: 18px;
+	margin-right: 10px;
+}
+
+.gsi-material-button .gsi-material-button-contents {
+	font-weight: 500;
+}

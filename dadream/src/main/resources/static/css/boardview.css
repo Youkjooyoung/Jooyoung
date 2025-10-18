@@ -1,0 +1,264 @@
+	* {
+		font-family: 'Merriweather Sans', sans-serif !important;
+	}
+	#readForm{
+		font-weight:lighter;
+
+	}
+	#container{
+		margin-top: 30px;
+		margin-left: 8px;
+	}
+	#viewboardform {
+		display: table-caption;
+	}
+	#viewboardform > div {
+		margin-bottom: 8px;
+	}
+
+	#content{
+		display: grid;
+	}
+	#inputNumber{
+		width:40px; 
+		text-align: center; 
+		border: 0.5px;
+	}
+	#Number{
+		display: grid;
+	}
+	#writerName{
+		display: inline-grid;
+	}
+	#readbtn{
+		display: flow-root;
+		margin-top: 10px;
+	}
+	.mod_btn{
+		text-decoration: none;
+		color: black;	
+	}
+	#delete{
+			cursor:pointer;
+			width: 120px;
+    		height: 30px;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+			text-align-last: center;
+			margin-left: 10px;
+		}
+	#delete:hover{
+		 background: linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+   		 background-color: #80b5ea;
+   		 
+	}
+	
+	#backList{
+			cursor: pointer;
+			margin-left: 152px;
+			width: 120px;
+    		height: 30px;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+			text-align-last: center;
+			
+	}
+	#backList:hover{
+		 background: linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+   		 background-color: #80b5ea;
+	}
+	#backList:hover:active{
+		position:relative;
+		top:3px;
+		left:2px;
+		box-shadow : none;
+	}
+	#updatebtn{
+			cursor:pointer;
+			width: 120px;
+    		height: 30px;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+			text-align-last: center;
+			
+	}
+	#updatebtn:hover{
+		 background: linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+   		 background-color: #80b5ea;
+   		 
+	}
+	#delete:active{
+		position:relative;
+		top:3px;
+		left:2px;
+		box-shadow : none;
+	}
+	#updatebtn:active{
+		position:relative;
+		top:3px;
+		left:2px;
+		box-shadow : none;
+	}
+	#viewCount{
+		width: 35px;
+		text-align: center;
+		margin-bottom: 8px;
+	}
+	
+
+/*---------------------댓글--------------------- */
+
+	#reply_form{
+		margin-right: 30px;
+		margin-top: 10px;
+	}
+	.No_reply{
+		width:190px;
+		margin-top: 10px;
+		margin-left:50%;
+	}
+	#chat{
+		width: 480px;
+		height: auto;
+		margin-top: 35px;
+	}
+	#write_form{
+		width: 480px;
+		display: flex;
+	}
+	#replyUL{
+		margin-right: 334px;
+		padding: 5px;
+
+	}
+	#reply_content{
+		 resize: none;
+		 height: 70px;
+		 
+	}
+	#writer_Date{
+		display: inline-flex;
+		align-items: baseline;
+	}
+	#Replyeachform{
+		margin: 3px;
+		display: block;
+	}
+	#line{
+		width: 450px;
+		color: rgb(192, 188, 188);
+	}
+	#Eachform{
+		display: flex;
+	}
+	
+	.content_area{
+		width:448px;
+		height:70px;
+		resize:none;
+		border:0.5px solid gray;
+		padding:10px;
+		
+	}
+	
+	#Date{
+		width: 110px;
+		font-size:small;
+	}
+	#btn_add{
+		width: 88px;
+		cursor:pointer;
+			width: 120px;
+    		height: 40px;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+			text-align-last: center;
+			margin-left: 10px;
+			margin: auto;
+	}
+	
+	#Modify_Delete{
+		width: 90px;
+		margin-left: 124px;
+	    }
+	input[type=text],input[type=password],input[type=email],textarea{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+			}
+		
+	    
+/*------------------------------더보기-----------------------------*/
+	#load{
+		box-shadow: 0px 0px 13px 4px #9fb4f2;
+		background:linear-gradient(to bottom, #7892c2 5%, #476e9e 100%);
+		background-color:#7892c2;
+		border-radius:20px;
+		display:inline-block;
+		cursor:pointer;
+		color:#ffffff;
+		font-family:Arial;
+		font-size:15px;
+		font-weight:bold;
+		padding:12px 37px;
+		text-decoration:none;
+		text-shadow:0px -2px 0px #283966;
+		margin-left: 95px;
+		}
+	#load:hover {
+		background:linear-gradient(to bottom, #476e9e 5%, #7892c2 100%);
+		background-color:#476e9e;
+		}
+	#load:active {
+		position:relative;
+		top:1px;
+		}
+	
+	
+	
+	
+	
+	

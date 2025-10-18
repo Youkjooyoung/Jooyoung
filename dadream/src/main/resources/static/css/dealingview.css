@@ -1,0 +1,235 @@
+		* {
+            box-sizing: border-box;
+            margin: 0px;
+            padding: 0px;
+            font-family: 'Merriweather Sans', sans-serif !important;
+        }
+		
+
+        .first>h1 {
+            font-weight: bold;
+            font-size: 35px;
+            margin: 20px 0;
+        }
+
+
+
+        .dlImg {
+            display: flex;
+            margin: 0 0 0 20px;
+            flex-wrap: wrap;
+            height:483px;
+            border: 0.5px solid #ccc;
+            margin-right: 3px;
+        }
+        .dlMain >img{
+			height:483px;
+		}
+
+
+
+        .middle {
+            display: flex;
+            justify-content: space-between;
+            width: 1130px;
+        }
+
+        .dlThumbnail1 {
+            display: flex;
+            /* position: relative; */
+            margin: 10px 0 0 5px;
+        }
+
+        .dlThumbnail2 {
+            width: 100px;
+            margin-right: 10px;
+        }
+
+        .dlComments {
+            border: 2px solid black;
+            text-align: center;
+        }
+
+
+        .dlComments>div h3 {
+            font-weight: bold;
+        }
+
+        .dlComments1 {
+            margin-top: 20px;
+        }
+
+        .dlComments1 p {
+			margin:10px 0;
+			font-weight: bold;
+        }
+        .dlName{
+			text-align: center;
+		}
+		.dlAddr{
+			width: 300px; 
+			height: 50px; 
+			text-align: center;
+		}
+		
+
+        #dlComments2 {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        #dlComments2 p {
+            width: 170px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .dlCategory{
+			text-align: center;
+		}
+		
+		.transaction_form{
+			text-align: center; 
+			width: 106px;
+		}
+
+        #dlComments3 {
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-left: 8px;
+        }
+
+        #dlComments3 p {
+			margin:10px 0;
+			font-weight: bold;
+        }
+		#call{
+			margin-top: 37px;
+			cursor:pointer;
+			width:87px;
+			height:30px;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+			text-align-last: center;
+			
+		}
+		#call:hover{
+			background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+			background-color:#80b5ea;
+		}
+		#call:active{
+			position:relative;
+			top:1px;
+		}
+		
+		.Opt{
+			text-align: center;
+		}
+		
+		.PriceNum{
+			text-align: center;
+		}
+       	.JJIM_CALL{
+			display: flex; 
+			justify-content:center;
+		}
+
+        #dlComments4 {
+            display: flex;
+            margin-top: 40px;
+        }
+
+        #dlcontents {
+            margin-top: 100px;
+            margin-left: 20px;
+            width: 650px;
+        }
+        .viewcontent{
+			resize:none;
+			
+		}
+
+        #reportbtn {
+            margin-top: 100px;
+            margin-left: 18px;
+            text-align-last: justify;
+            
+            
+        }
+        #backList{
+			cursor:pointer;
+			width:87px;
+			height:30px;
+			box-shadow: 3px 4px 0px 0px #dcecfb;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+			text-align-last: center;
+			margin-left: 940px;
+			}
+			
+		#backList:hover{
+			background:linear-gradient(to bottom, #80b5ea 5%, #bddbfa 100%);
+			background-color:#80b5ea;
+			}
+		
+		#backList:active{
+			position:relative;
+			top:1px;
+		}
+		.btn{
+			border-radius: 15px;
+		}
+		
+		 #sold{
+			font-weight: bold;
+			color:orange;
+			margin-top: 13px;
+			
+			}
+		
+		.btnorder{
+			cursor:pointer;
+			width: 130px;
+    		height: 41px;
+			background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+			background-color:#bddbfa;
+			border-radius:15px;
+			border:1px solid #84bbf3;
+			display:inline-block;
+			cursor:pointer;
+			color:#471f54;
+			font-family:Arial;
+			font-size:17px;
+			font-weight:bold;
+			padding:2px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #528ecc;
+			text-align-last: center;
+			margin-left: 20px;
+		}
+		
+		input[type=text],input[type=password],input[type=email]{
+				border-radius: 5px;
+				border:0.5px solid skyblue;
+			}

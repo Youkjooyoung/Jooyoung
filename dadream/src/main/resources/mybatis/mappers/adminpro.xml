@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dd.admin.dao.AdminDAO">
+
+	<resultMap id="proResult" type="productVO">
+		<result property="product_Num" column="product_Num" />
+		<result property="product_Name" column="product_Name" />
+		<result property="product_Price" column="product_Price" />
+		<result property="product_TotalCount"
+			column="product_TotalCount" />
+		<result property="product_Date" column="product_Date" />
+		<result property="product_Content" column="product_Content" />
+		<result property="product_Image" column="product_Image" />
+		<result property="user_Id" column="user_Id" />
+		<result property="product_Views" column="product_Views" />
+		<result property="product_Option1" column="product_Option1" />
+		<result property="product_Option2" column="product_Option2" />
+	</resultMap>
+
+	<select id="adminpro" resultMap="proResult">
+		<![CDATA[
+			select * from product_t  order by product_Views DESC
+		]]>
+	</select>	
+	
+	<select id="proSum" resultType="Integer">
+		<![CDATA[
+			SELECT SUM(product_TotalPrice) 
+			FROM oft_t 
+			GROUP BY order_Date DESC
+			LIMIT 7
+		]]>
+	</select>
+
+</mapper>

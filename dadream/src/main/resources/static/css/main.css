@@ -1,0 +1,247 @@
+/*--------------------------------카테고리 & 검색---------------------------------------*/
+			*{	
+				font-family: 'Merriweather Sans', sans-serif !important;	
+				}
+				
+		 #main1{
+            background-image:url("../image/livingRoom.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 1550px;
+            height: 350px;
+            margin-bottom: 50px;
+            display: inline-block;
+            /* margin: 15px ; */
+            
+	        }
+	        .search{
+				display:flex;
+				justify-content: center;
+				
+				
+			}
+	        .search li{
+	            margin-top: 80px;
+	        }
+	        
+	        #main_search{
+				font-weight:bold;
+			}
+	        .dealingsearch{
+				width: 400px;
+	            height: 40px;
+	          	border:0.5px solid skyblue;
+	          	outline: none;
+			}
+			.searching{
+				font-weight:bold;
+			}
+	
+	        ul{display: inline-block;
+	            list-style-type: none;
+	            justify-content: center;
+	        }
+	        li button{
+	          	cursor:pointer;
+				width:100px;
+				height:28px;
+				background:linear-gradient(to bottom, rgb(64,64,64) 5%, rgb(125,80,8) 100%);
+				background-color:#bddbfa;
+				border-radius:5px;
+				margin-left: 3px;
+				border:1px solid black;
+				display:inline-block;
+				cursor:pointer;
+				color:white;
+				font-family:Arial;
+				font-size:13px;
+				/*font-weight:bold;*/
+				padding:2px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+	        }
+	        
+	        li button:hover{
+				cursor:pointer;
+				background:linear-gradient(to bottom, rgb(125,80,8) 5%, lightgray 100%);
+				background-color:#80b5ea;
+			}
+			li button:active{
+				position:relative;
+				top:1px;
+			}
+	        #search{
+	            text-align: center;
+	            justify-content: center;
+	            margin-left: 40px;
+	            
+	        }
+	        #mapForm{
+				display:inline-flex;
+	            margin-top: 25px;
+			}
+	        .img-button{
+	            background: url(../images/pro.JPG);
+	            width: 150px;
+	            height: 150px;
+	            margin: 15px;
+	            
+	        }
+	        .MainSearch{
+				
+				cursor:pointer;
+				width:100px;
+				height:40px;
+				background:linear-gradient(to bottom, rgb(64,64,64) 5%, rgb(125,80,8) 100%);
+				background-color:#bddbfa;
+				border:1px solid black;
+				display:inline-block;
+				cursor:pointer;
+				color:white;
+				font-family:Arial;
+				font-size:17px;
+				font-weight:bold;
+				padding:2px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #528ecc;
+			}
+			.MainSearch:hover{
+				background:linear-gradient(to bottom, rgb(125,80,8) 5%, lightgray 100%);
+				background-color:#80b5ea;
+	}
+			.MainSearch:active{
+				position:relative;
+				top:1px;
+	}
+/*---------------------------------위치기반리스트---------------------------------------*/	
+		
+	        #mainList{
+				width:1550px;
+			}
+	        #main2{
+	            width: 1130px;
+	            justify-content: center;
+            	justify-items: center;
+	            
+	            
+	        }
+	        
+	        .hereMe{
+	       font-weight:bold; 
+	       font-size:x-large; 
+	       margin-bottom: 40px;
+	       
+	        }
+	        #main2_1{
+	            justify-content: center; /* 중앙 정렬*/ 
+	        }
+	        
+	        
+			
+			#main2 h1{
+				margin-top:15px;
+				margin-left: 10px;
+				line-height: 25px;
+				font-weight:bold; 
+				
+			}
+			
+			#dealingListImg{
+				width:300px;
+				height:250px; 
+				margin: 20px 0 20px 0;
+			}
+			#ListNum{
+				color:black;
+			}
+			
+			#Listeachform{
+				display: inline-block; 
+				border: 1px solid #ccc; 
+				border-radius: 10px;
+				margin-bottom: 20px; 
+				margin-left: 30px; 
+				width:350px; 
+				height:485px;
+			}
+			#List_infoform{
+				margin-left:15px;
+			}
+			#ListName{
+				font-size:20px;
+				font-weight:bold;
+				margin-left:10px;
+				color:skyblue;
+			}
+	        
+	        #main3{
+	            border: 1px solid red;
+	            width: 1130px;
+	            height: 300px;
+	            /* margin: 15px; */
+	            display: flex;
+	            justify-content: space-evenly;
+	            display: table;
+	           border-collapse: collapse;
+	        }
+	        
+/*---------------------------------부동산 가이드---------------------------------------*/  
+	      
+	        #main4 ul{
+	            width: 1130;
+	            /* margin: 15px; */
+	            display: flex;
+	        }
+	        #main4 ul li{
+				/*border: 1px solid black;*/
+				width: 300px;
+				height:180px;
+				text-align: center;
+				line-height: 180px;
+				margin-right: 1px;
+			}
+			.a1{
+				background-color: rgb(210, 162, 233);
+			}
+			.a2{
+				background-color: rgb(149, 178, 240);
+			}
+			.a3{
+				background-color: rgb(178, 240, 149);
+			}
+			.a4{
+				background-color: rgb(236, 81, 75);
+			}
+	        #main4 > div{
+	            display: flex;
+	            width: 250px;
+	            height: 150px;
+	            border: 1px solid black;
+	            /* margin: 15px; */
+			            
+	            
+	        }
+	        #main4 a{
+				margin: auto;
+				text-decoration: none;
+				color:black;
+				display:block;
+				font-weight: bold;
+				font-size: 18px;
+				
+			}
+	         
+	        .Tip{
+				font-size: 30px; 
+				font-weight: bolder;
+				margin: 30px 0 40px 45%; 
+			}
+	       	h2{
+	        margin-left: 50px;
+	       	}
+	       	
+	       	
+	       	
+	       
+       
+       

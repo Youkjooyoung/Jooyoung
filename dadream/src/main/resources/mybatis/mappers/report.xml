@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dd.dealing.dao.DealingDAO">
+   
+	<resultMap id="rpResult" type="reportVO">
+		<result property="dl_ReportNum" column="dl_ReportNum" />
+        <result property="rp_Title" column="rp_Title" />
+        <result property="rp_Content" column="rp_Content" />
+        <result property="rp_Date" column="rp_Date" />
+        <result property="user_Id" column="user_Id" />
+        <result property="dl_Num" column="dl_Num" />
+	</resultMap>
+	
+	
+
+	
+	<insert id="insertReport" parameterType="java.util.Map">
+	<![CDATA[
+		insert into 
+		report_t(dl_ReportNum, rp_Title, rp_Content, user_Id, dl_Num) 
+		values(#{dl_ReportNum}, #{rp_Title}, #{rp_Content}, #{user_Id}, 
+		#{dl_Num})
+	]]>
+	</insert>
+	
+	<select id="myReport" resultMap="rpResult" parameterType="reportVO">
+	<![CDATA[
+		SELECT *
+		FROM report_t
+		WHERE user_Id = #{user_Id}
+	]]>
+	</select>
+
+</mapper>
