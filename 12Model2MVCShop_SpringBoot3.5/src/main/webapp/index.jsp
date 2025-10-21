@@ -33,6 +33,7 @@
 ">
 
   <!-- JS: 전역 로더 + 라우팅 -->
+  <script src="${ctx}/javascript/app-core.js" defer></script>
   <script src="https://code.jquery.com/jquery-3.6.1.min.js" ></script>
   <script>window.App = window.App || {}; App.ctx = function(){ return '${ctx}'; };</script>
   <script src="${ctx}/javascript/layout.js" defer></script>

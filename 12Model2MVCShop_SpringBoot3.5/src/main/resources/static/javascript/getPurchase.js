@@ -1,118 +1,159 @@
-// 구매상세 - 구매등록 화면과 동일한 이미지 UX + 동작
-(function ($, w, d) {
-  'use strict'; if (!$) return;
+/* /javascript/getPurchase.js */
+(function($, w, d) {
+	'use strict';
+	if (!$) return;
 
-  const ctx = () => (w.App && w.App.ctx ? w.App.ctx() : ($('body').data('ctx') || ''));
+	const ctx = () => (w.App && App.ctx ? App.ctx() : ($('body').data('ctx') || ''));
 
-  // ---------------------------
-  // 이미지 그리드 : 더보기/접기
-  // ---------------------------
-  $(function () {
-    const $grid = $('#imgGrid');
-    const $moreBtn = $('#btnImgMore');
-    if (!$grid.length || !$moreBtn.length) return;
+	// ---------------------------
+	// 이미지 그리드 : 더보기/접기 + 라이트박스
+	// ---------------------------
+	function setupImages() {
+		const $grid = $('#imgGrid');
+		const $moreBtn = $('#btnImgMore');
+		const $items = $grid.find('.img-box');
 
-    // 초기: 6장 초과일 때만 버튼 노출 + 접힘 상태 클래스 부여
-    const $items = $grid.find('.img-box');
-    if ($items.length > 6) {
-      $moreBtn.show();
-      // 접힘 상태를 클래스와 스타일 둘 다로 잡아준다(테마/CSS 차이 대비)
-      $grid.addClass('is-collapsed').attr('data-collapsed', 'true')
-           .css({ maxHeight: '', overflow: '' }); // 혹시 남아있던 인라인 제거
-      // 7번째부터 숨김
-      $items.each(function (i) { if (i >= 6) $(this).addClass('is-hidden').hide(); });
-    } else {
-      $moreBtn.hide();
-    }
+		if ($items.length > 6) {
+			$moreBtn.show();
+			$grid.attr('data-collapsed', 'true');
+			$items.each(function(i) { if (i >= 6) $(this).addClass('is-hidden').hide(); });
+		} else {
+			$moreBtn.hide();
+		}
 
-    $moreBtn.on('click', function () {
-      const collapsed = $grid.attr('data-collapsed') === 'true';
+		$moreBtn.on('click', function() {
+			const collapsed = $grid.attr('data-collapsed') === 'true';
+			if (collapsed) {
+				$grid.attr('data-collapsed', 'false');
+				$grid.find('.img-box.is-hidden').removeClass('is-hidden').show();
+				$(this).text($(this).data('less-text') || '이미지 접기');
+			} else {
+				$grid.attr('data-collapsed', 'true');
+				$grid.find('.img-box').each(function(i) {
+					if (i >= 6) $(this).addClass('is-hidden').hide();
+					else $(this).show();
+				});
+				$(this).text($(this).data('more-text') || '이미지 더보기');
+				$('html,body').animate({ scrollTop: $grid.offset().top - 80 }, 200);
+			}
+		});
 
-      if (collapsed) {
-        // ▶ 펼치기
-        $grid.attr('data-collapsed', 'false').removeClass('is-collapsed')
-             .css({ maxHeight: 'none', overflow: 'visible' }); // 확실히 풀기
-        $grid.find('.img-box.is-hidden').removeClass('is-hidden').show(); // 아이템 표시
-        $(this).text($(this).data('less-text') || '이미지 접기');
-      } else {
-        // ▶ 접기(처음 6장만 표시)
-        $grid.attr('data-collapsed', 'true').addClass('is-collapsed')
-             .css({ maxHeight: '', overflow: '' }); // 접힘 스타일 원복(테마가 있으면 적용됨)
-        $grid.find('.img-box').each(function (i) {
-          if (i >= 6) $(this).addClass('is-hidden').hide(); else $(this).show();
-        });
-        $(this).text($(this).data('more-text') || '이미지 더보기');
-        // 접을 땐 그리드 상단으로 살짝 스크롤 보정
-        $('html,body').animate({ scrollTop: $grid.offset().top - 80 }, 200);
-      }
-    });
-  });
+		// 라이트박스
+		let lbList = [], lbIdx = 0;
+		function openLB(idx) {
+			if (!lbList.length) return;
+			lbIdx = (idx + lbList.length) % lbList.length;
+			$('#lbImg').attr('src', lbList[lbIdx]);
+			$('#imgLightbox').css('display', 'flex').hide().fadeIn(120);
+		}
+		function closeLB() { $('#imgLightbox').fadeOut(120); }
 
-  // ---------------------------
-  // 라이트박스 (등록화면과 동일)
-  // ---------------------------
-  let lbList = [], lbIdx = 0;
-  function openLB(idx) {
-    if (!lbList.length) return;
-    lbIdx = (idx + lbList.length) % lbList.length;
-    $('#lbImg').attr('src', lbList[lbIdx]);
-    $('#imgLightbox').css('display', 'flex').hide().fadeIn(120);
-  }
-  function closeLB() { $('#imgLightbox').fadeOut(120); }
+		$(d).on('click', '.img-box', function() {
+			lbList = $('.img-box img').map(function() { return $(this).attr('src'); }).get();
+			openLB($(this).index());
+		});
+		$(d).on('keydown', function(e) {
+			if (!$('#imgLightbox').is(':visible')) return;
+			if (e.key === 'Escape') closeLB();
+			if (e.key === 'ArrowLeft') $('[data-role=lb-prev]').trigger('click');
+			if (e.key === 'ArrowRight') $('[data-role=lb-next]').trigger('click');
+		});
+		$(d).on('click', '[data-role=lb-prev]', function() { openLB(lbIdx - 1); });
+		$(d).on('click', '[data-role=lb-next]', function() { openLB(lbIdx + 1); });
+		$(d).on('click', '[data-role=lb-close]', closeLB);
+		$('#imgLightbox').on('click', function(e) { if (e.target === this) closeLB(); });
+	}
 
-  $(d).on('click', '.img-box', function () {
-    lbList = $('.img-box img').map(function () { return $(this).attr('src'); }).get();
-    openLB($(this).index());
-  });
-  $(d).on('keydown', function (e) {
-    if ($('#imgLightbox').is(':visible')) {
-      if (e.key === 'Escape') return closeLB();
-      if (e.key === 'ArrowLeft') return $('[data-role=lb-prev]').click();
-      if (e.key === 'ArrowRight') return $('[data-role=lb-next]').click();
-    }
-  });
-  $(d).on('click', '[data-role=lb-prev]', function () { openLB(lbIdx - 1); });
-  $(d).on('click', '[data-role=lb-next]', function () { openLB(lbIdx + 1); });
-  $(d).on('click', '[data-role=lb-close]', closeLB);
-  $('#imgLightbox').on('click', function (e) { if (e.target === this) closeLB(); });
+	// ---------------------------
+	// 주문 버튼
+	// ---------------------------
+	function setupButtons() {
+		// 수정: 서버 매핑이 환경마다 달라서 후보를 순차 시도
+		$(d).on('click', '#btnEdit', function(e) {
+			e.preventDefault();
+			const tranNo = $(this).data('tranno');
+			if (!tranNo) return;
 
-  // ---------------------------
-  // 주문 버튼 동작 (컨트롤러 매핑 그대로)
-  // ---------------------------
-  // 수정
-  $(d).on('click', '#btnEdit', function (e) {
-    e.preventDefault();
-    const tranNo = $(this).data('tranno');
-    if (tranNo) w.location.href = ctx() + '/purchase/' + tranNo + '/edit';
-  });
+			// 1) updatePurchase 뷰, 2) updatePurchaseView, 3) restful
+			const candidates = [
+				`${ctx()}/purchase/updatePurchase?tranNo=${encodeURIComponent(tranNo)} .container:first`,
+				`${ctx()}/purchase/updatePurchaseView?tranNo=${encodeURIComponent(tranNo)} .container:first`,
+				`${ctx()}/purchase/${encodeURIComponent(tranNo)}/edit .container:first`
+			];
+			const url = candidates[0]; // Ajax 로드 우선
+			if (w.__layout && __layout.loadMain) __layout.loadMain(url);
+			else location.href = url.split(' ')[0];
+		});
 
-  // 취소 모달
-  let cancelTranNo = null;
-  $(d).on('click', '#btnCancel', function (e) {
-    e.preventDefault();
-    cancelTranNo = $(this).data('tranno') || null;
-    if (!cancelTranNo) return;
-    $('#dlg-cancel').css('display', 'flex').hide().fadeIn(120);
-  });
-  $(d).on('click', '[data-role=close-cancel]', function () { $('#dlg-cancel').fadeOut(120); });
-  $(d).on('click', '[data-role=ok-cancel]', function () {
-    if (!cancelTranNo) return;
-    App.post('/purchase/' + cancelTranNo + '/cancel');
-  });
+		// 취소 확인 모달
+		$(d).on('click', '#btnCancel', function(e) {
+			e.preventDefault();
+			$('#dlg-cancel').css('display', 'flex').hide().fadeIn(120);
+		});
+		$(d).on('click', '[data-role=close-cancel]', function() { $('#dlg-cancel').fadeOut(120); });
+		$(d).on('click', '[data-role=ok-cancel]', function() {
+			const tranNo = $('#btnCancel').data('tranno');
+			if (!tranNo) return;
 
-  // 수령 확인 모달
-  let confirmInfo = { tranNo: null, prodNo: null };
-  $(d).on('click', '#btnConfirm', function (e) {
-    e.preventDefault();
-    confirmInfo.tranNo = $(this).data('tranno') || null;
-    confirmInfo.prodNo = $(this).data('prodno') || null;
-    if (!confirmInfo.tranNo || !confirmInfo.prodNo) return;
-    $('#dlg-confirm').css('display', 'flex').hide().fadeIn(120);
-  });
-  $(d).on('click', '[data-role=close-confirm]', function () { $('#dlg-confirm').fadeOut(120); });
-  $(d).on('click', '[data-role=ok-confirm]', function () {
-    if (!confirmInfo.tranNo) return;
-    App.post('/purchase/' + confirmInfo.tranNo + '/confirm', { prodNo: confirmInfo.prodNo });
-  });
+			// 가장 범용적인 업데이트 엔드포인트들(중 환경 맞는 것으로 서버에서 처리)
+			const posts = [
+				{ url: '/purchase/updateTranCode', data: { tranNo, tranCode: '004' } }, // 취소
+				{ url: `/purchase/${encodeURIComponent(tranNo)}/cancel`, data: {} }
+			];
+			const first = posts[0];
+			if (w.App && App.post) App.post(first.url, first.data);
+			else {
+				// 폴백
+				const f = d.createElement('form');
+				f.method = 'post'; f.action = ctx() + first.url;
+				Object.keys(first.data).forEach(k => {
+					const i = d.createElement('input');
+					i.type = 'hidden'; i.name = k; i.value = first.data[k];
+					f.appendChild(i);
+				});
+				d.body.appendChild(f); f.submit();
+			}
+		});
+
+		// 수령 확인 모달
+		$(d).on('click', '#btnConfirm', function(e) {
+			e.preventDefault();
+			$('#dlg-confirm').css('display', 'flex').hide().fadeIn(120);
+		});
+		$(d).on('click', '[data-role=close-confirm]', function() { $('#dlg-confirm').fadeOut(120); });
+		$(d).on('click', '[data-role=ok-confirm]', function() {
+			const tranNo = $('#btnConfirm').data('tranno');
+			if (!tranNo) return;
+
+			const posts = [
+				{ url: '/purchase/updateTranCode', data: { tranNo, tranCode: '003' } }, // 수령 완료
+				{ url: `/purchase/${encodeURIComponent(tranNo)}/confirm`, data: {} }
+			];
+			const first = posts[0];
+			if (w.App && App.post) App.post(first.url, first.data);
+			else {
+				const f = d.createElement('form');
+				f.method = 'post'; f.action = ctx() + first.url;
+				Object.keys(first.data).forEach(k => {
+					const i = d.createElement('input');
+					i.type = 'hidden'; i.name = k; i.value = first.data[k];
+					f.appendChild(i);
+				});
+				d.body.appendChild(f); f.submit();
+			}
+		});
+	}
+
+	// ---------------------------
+	// 시작
+	// ---------------------------
+	function init() {
+		// purchase-detail 페이지 키를 갖고 들어오든, 단독 페이지든 모두 동작
+		setupImages();
+		setupButtons();
+	}
+
+	$(d).on('view:afterload', (_e, payload) => { if (payload && payload.page === 'purchase-detail') init(); });
+	$(() => { init(); });
 
 })(jQuery, window, document);

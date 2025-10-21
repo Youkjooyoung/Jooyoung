@@ -22,29 +22,24 @@
       </div>
 
       <!-- 가격 범위 : 슬라이더 + 현재값 표시 (hidden은 기존 JS와 호환용) -->
-      <div class="nv-price">
-        <span class="nv-price-label">가격 범위</span>
+			<div class="nv-price">
+				<span class="nv-price-label"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+				<div class="nv-pr nv-pr--no-fallback">
+					<div class="nv-pr-track"></div>
+					<div class="nv-pr-fill"></div>
+					<input id="rMin" type="range" class="nv-pr-range" min="0"
+						max="2000000" step="5000" value="0" aria-label="최소 가격" /> <input
+						id="rMax" type="range" class="nv-pr-range" min="200000"
+						max="2000000" step="5000" value="2000000" aria-label="최대 가격" />
+					<div class="nv-pr-ticks"></div>
+				</div>
+				<div class="nv-pr-values">
+					<span id="priceMinView">0</span> ~ <span id="priceMaxView">2,000,000</span>
+					원
+				</div>
+			</div>
 
-        <input type="hidden" id="minPrice" value="">
-        <input type="hidden" id="maxPrice" value="">
-
-        <div class="nv-pr">
-          <div class="nv-pr-track"></div>
-          <div class="nv-pr-fill"></div>
-          <input type="range" id="rMin" class="nv-pr-range"
-       min="0" max="2000000" step="5000" value="0" aria-label="최소 가격">
-          <input type="range" id="rMax" class="nv-pr-range" min="200000" max="2000000" step="5000" value="2000000" aria-label="최대 가격">
-        </div>
-
-        <div class="nv-pr-values">
-          <span id="priceMinView">0</span>
-          <span class="tilde">~</span>
-          <span id="priceMaxView">2,000,000</span>
-          <span class="unit">원</span>
-        </div>
-      </div>
-
-      <span class="btn-group" role="group" aria-label="검색 실행">
+			<span class="btn-group" role="group" aria-label="검색 실행">
         <button type="button" id="btnSearch" class="btn-green">검색</button>
         <button type="button" id="btnAll" class="btn-gray">전체보기</button>
       </span>

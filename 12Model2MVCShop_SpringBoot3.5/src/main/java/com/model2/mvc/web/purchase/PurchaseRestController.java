@@ -22,7 +22,7 @@ import com.model2.mvc.service.purchase.PurchaseService;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/purchase/*")
+@RequestMapping("/purchase")
 public class PurchaseRestController {
 
 	@Autowired
@@ -33,11 +33,9 @@ public class PurchaseRestController {
 		System.out.println("==> PurchaseRestController 실행됨 : " + this.getClass());
 	}
 
-	/** 구매 등록 (세션의 로그인 사용자 자동세팅) */
 	@PostMapping("json/addPurchase")
 	public boolean addPurchase(@RequestBody Purchase purchase, HttpSession session) throws Exception {
 		System.out.println("/purchase/json/addPurchase : POST 호출됨");
-
 		User login = (User) session.getAttribute("user");
 		if (login != null && purchase.getBuyer() == null) {
 			purchase.setBuyer(login);
@@ -46,19 +44,16 @@ public class PurchaseRestController {
 			purchase.setQty(1);
 		if (purchase.getTranCode() == null)
 			purchase.setTranCode("001");
-
 		purchaseService.addPurchase(purchase);
 		return true;
 	}
 
-	/** 구매 상세 */
 	@GetMapping("json/getPurchase/{tranNo}")
 	public Purchase getPurchase(@PathVariable int tranNo) throws Exception {
 		System.out.println("/purchase/json/getPurchase : GET 호출됨");
 		return purchaseService.getPurchase(tranNo);
 	}
 
-	/** 구매 목록(사용자 기준) */
 	@PostMapping("json/getPurchaseList")
 	public Map<String, Object> getPurchaseList(@RequestBody Search search, @RequestParam String buyerId)
 			throws Exception {
@@ -70,7 +65,6 @@ public class PurchaseRestController {
 		return purchaseService.getPurchaseList(search, buyerId);
 	}
 
-	/** 판매 목록(관리자 기준) */
 	@PostMapping("json/getSaleList")
 	public Map<String, Object> getSaleList(@RequestBody Search search) throws Exception {
 		System.out.println("/purchase/json/getSaleList : POST 호출됨");
@@ -81,7 +75,6 @@ public class PurchaseRestController {
 		return purchaseService.getSaleList(search);
 	}
 
-	/** 구매 정보 수정 */
 	@PostMapping("json/updatePurchase")
 	public boolean updatePurchase(@RequestBody Purchase purchase) throws Exception {
 		System.out.println("/purchase/json/updatePurchase : POST 호출됨");
@@ -89,7 +82,6 @@ public class PurchaseRestController {
 		return true;
 	}
 
-	/** 거래상태 코드 변경(거래번호 단건) */
 	@PostMapping("json/updateTranCode")
 	public Map<String, Object> updateTranCode(@RequestParam int tranNo, @RequestParam String tranCode)
 			throws Exception {
@@ -102,7 +94,6 @@ public class PurchaseRestController {
 		return res;
 	}
 
-	/** 거래상태 코드 변경(상품번호 일괄) */
 	@PostMapping("json/updateTranCodeByProd")
 	public Map<String, Object> updateTranCodeByProd(@RequestParam int prodNo, @RequestParam String tranCode)
 			throws Exception {
@@ -115,7 +106,6 @@ public class PurchaseRestController {
 		return res;
 	}
 
-	/** 최신 거래상태(단일 상품) */
 	@GetMapping("json/getLatestTranCodeByProd/{prodNo}")
 	public Map<String, Object> getLatestTranCodeByProd(@PathVariable int prodNo) throws Exception {
 		System.out.println("/purchase/json/getLatestTranCodeByProd : GET 호출됨");
@@ -126,10 +116,19 @@ public class PurchaseRestController {
 		return res;
 	}
 
-	/** 최신 거래상태(여러 상품) */
 	@PostMapping("json/getLatestTranCodeByProdNos")
 	public Map<Integer, String> getLatestTranCodeByProdNos(@RequestBody List<Integer> prodNos) throws Exception {
 		System.out.println("/purchase/json/getLatestTranCodeByProdNos : POST 호출됨");
 		return purchaseService.getLatestTranCodeByProdNos(prodNos);
+	}
+
+	@PostMapping("{tranNo}/confirm")
+	public Map<String, Object> confirm(@PathVariable int tranNo) throws Exception {
+		System.out.println("/purchase/{tranNo}/confirm : POST 호출됨");
+		purchaseService.updateTranCode(tranNo, "003");
+		Map<String, Object> res = new HashMap<>();
+		res.put("updated", 1);
+		res.put("tranNo", tranNo);
+		return res;
 	}
 }

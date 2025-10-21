@@ -8,11 +8,11 @@ import com.model2.mvc.service.domain.Cart;
 
 @Mapper
 public interface CartDao {
-	void addCart(Cart cart) throws Exception;
+	int addCart(Cart cart) throws Exception;
 
-	void updateQty(Cart cart) throws Exception;
+	int updateQty(Cart cart) throws Exception;
 
-	void deleteCart(int cartId) throws Exception;
+	int deleteCart(int cartId) throws Exception;
 
 	Cart getCart(int cartId) throws Exception;
 

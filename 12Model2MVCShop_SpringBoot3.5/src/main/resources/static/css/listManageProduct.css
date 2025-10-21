@@ -36,3 +36,6 @@
   height:520px;
   border:0;
 }
+
+
+#historyModal.hidden { display:none !important; pointer-events:none !important; }

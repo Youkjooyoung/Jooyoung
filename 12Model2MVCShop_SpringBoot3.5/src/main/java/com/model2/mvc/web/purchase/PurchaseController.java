@@ -10,10 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.model2.mvc.common.Page;
@@ -28,7 +28,7 @@ import com.model2.mvc.service.purchase.PurchaseService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/purchase/*")
+@RequestMapping("/purchase")
 public class PurchaseController {
 
 	@Autowired
@@ -48,14 +48,13 @@ public class PurchaseController {
 
 	@Value("${pageSize}")
 	private int pageSize;
-	
+
 	@GetMapping("add")
 	public String addRedirect(@RequestParam("prodNo") int prodNo,
 			@RequestParam(value = "qty", defaultValue = "1") int qty) {
 		return "redirect:/purchase/addPurchase?prodNo=" + prodNo + "&qty=" + qty;
 	}
 
-	// ===== 구매 등록 화면 =====
 	@GetMapping("addPurchase")
 	public String addPurchase(@RequestParam("prodNo") int prodNo,
 			@RequestParam(value = "qty", defaultValue = "1") int qty,
@@ -72,7 +71,6 @@ public class PurchaseController {
 		model.addAttribute("qty", Math.max(1, qty));
 
 		boolean isFragment = embed || "XMLHttpRequest".equalsIgnoreCase(xrw);
-
 		if (isFragment) {
 			return "forward:/purchase/addPurchase.jsp";
 		}
@@ -85,7 +83,6 @@ public class PurchaseController {
 		return "forward:/index.jsp";
 	}
 
-	// ===== 구매 등록 처리 =====
 	@PostMapping("addPurchase")
 	public String addPurchase(@ModelAttribute("purchase") Purchase purchase,
 			@RequestParam(value = "prodNo", required = false) Integer prodNo,
@@ -99,66 +96,32 @@ public class PurchaseController {
 		}
 
 		if (purchase.getPurchaseProd() == null && prodNo != null) {
-			Product p = new Product();
+			com.model2.mvc.service.domain.Product p = new com.model2.mvc.service.domain.Product();
 			p.setProdNo(prodNo);
 			purchase.setPurchaseProd(p);
 		}
 
 		purchase.setQty(qty <= 0 ? 1 : qty);
 		if (purchase.getTranCode() == null) {
-			purchase.setTranCode("001"); // 주문완료
+			purchase.setTranCode("001");
 		}
 
 		purchaseService.addPurchase(purchase);
 		return "redirect:/purchase/getPurchase?tranNo=" + purchase.getTranNo();
 	}
 
-	// ===== 구매 상세 =====
-	@RequestMapping(value = "getPurchase", method = RequestMethod.GET)
+	@GetMapping("getPurchase")
 	public String getPurchase(@RequestParam("tranNo") int tranNo, Model model) throws Exception {
 		System.out.println("/purchase/getPurchase : GET");
-
 		Purchase purchase = purchaseService.getPurchase(tranNo);
 		int prodNo = purchase.getPurchaseProd().getProdNo();
 		List<ProductImage> productImages = productService.getProductImages(prodNo);
-
 		model.addAttribute("purchase", purchase);
 		model.addAttribute("productImages", productImages);
-
 		return "forward:/purchase/getPurchase.jsp";
 	}
 
-	// ===== 구매 수정 화면 =====
-	@RequestMapping(value = "updatePurchase", method = RequestMethod.GET)
-	public String updatePurchase(@RequestParam("tranNo") int tranNo, Model model) throws Exception {
-		System.out.println("/purchase/updatePurchase : GET");
-
-		model.addAttribute("purchase", purchaseService.getPurchase(tranNo));
-		return "forward:/purchase/updatePurchaseView.jsp";
-	}
-
-	// ===== 구매 수정 처리 =====
-	@RequestMapping(value = "updatePurchase", method = RequestMethod.POST)
-	public String updatePurchase(@ModelAttribute("purchase") Purchase purchase) throws Exception {
-		System.out.println("/purchase/updatePurchase : POST");
-
-		purchaseService.updatePurchase(purchase);
-		return "redirect:/purchase/getPurchase?tranNo=" + purchase.getTranNo();
-	}
-
-	// ===== 구매 취소 =====
-	@RequestMapping(value = "cancelPurchase", method = RequestMethod.POST)
-	public String cancelPurchase(@RequestParam("tranNo") int tranNo,
-			@RequestParam(value = "reason", required = false) String reason) throws Exception {
-		System.out.println("/purchase/cancelPurchase : POST");
-
-		// 상태 검증은 서비스에서 처리(정책변경 용이)
-		purchaseService.cancelPurchaseWithReason(tranNo, reason == null ? "" : reason.trim());
-		return "redirect:/purchase/listPurchase";
-	}
-
-	// ===== 구매 목록(사용자) =====
-	@RequestMapping(value = "listPurchase")
+	@GetMapping({ "listPurchase", "list" })
 	public String listPurchase(@ModelAttribute("search") Search search, HttpSession session, Model model)
 			throws Exception {
 		System.out.println("/purchase/listPurchase : GET / POST");
@@ -174,9 +137,11 @@ public class PurchaseController {
 			search.setPageSize(pageSize);
 
 		Map<String, Object> map = purchaseService.getPurchaseList(search, login.getUserId());
-
 		Page resultPage = new Page(search.getCurrentPage(), ((Integer) map.get("totalCount")).intValue(), pageUnit,
 				search.getPageSize());
+
+		System.out.println(
+				"[/purchase/list] buyer=" + login.getUserId() + ", size=" + ((List<?>) map.get("list")).size());
 
 		model.addAttribute("list", map.get("list"));
 		model.addAttribute("resultPage", resultPage);
@@ -185,53 +150,62 @@ public class PurchaseController {
 		return "forward:/purchase/listPurchase.jsp";
 	}
 
-	// ===== 거래상태 코드 변경(거래번호 기준, 공용) =====
-	@RequestMapping(value = "updateTranCode", method = RequestMethod.POST)
+	@GetMapping("{tranNo}")
+	public String viewByPath(@PathVariable int tranNo) {
+		return "redirect:/purchase/getPurchase?tranNo=" + tranNo;
+	}
+
+	@PostMapping("updatePurchase")
+	public String updatePurchase(@ModelAttribute("purchase") Purchase purchase) throws Exception {
+		System.out.println("/purchase/updatePurchase : POST");
+		purchaseService.updatePurchase(purchase);
+		return "redirect:/purchase/getPurchase?tranNo=" + purchase.getTranNo();
+	}
+
+	@PostMapping("cancelPurchase")
+	public String cancelPurchase(@RequestParam("tranNo") int tranNo,
+			@RequestParam(value = "reason", required = false) String reason) throws Exception {
+		System.out.println("/purchase/cancelPurchase : POST");
+		purchaseService.cancelPurchaseWithReason(tranNo, reason == null ? "" : reason.trim());
+		return "redirect:/purchase/listPurchase";
+	}
+
+	@PostMapping("updateTranCode")
 	public String updateTranCode(@RequestParam("tranNo") int tranNo, @RequestParam("tranCode") String tranCode)
 			throws Exception {
 		System.out.println("/purchase/updateTranCode : POST");
-
 		purchaseService.updateTranCode(tranNo, tranCode);
 		return "redirect:/purchase/getPurchase?tranNo=" + tranNo;
 	}
 
-	// ===== 구매자 수령확인 =====
-	@RequestMapping(value = "confirmReceive", method = RequestMethod.POST)
+	@PostMapping("confirmReceive")
 	public String confirmReceive(@RequestParam("tranNo") int tranNo) throws Exception {
 		System.out.println("/purchase/confirmReceive : POST");
-
-		purchaseService.updateTranCode(tranNo, "003"); // 배송완료
+		purchaseService.updateTranCode(tranNo, "003");
 		return "redirect:/purchase/getPurchase?tranNo=" + tranNo;
 	}
 
-	// ===== 관리자: 상품별 상태 일괄변경 =====
-	@RequestMapping(value = "updateTranCodeByProd", method = RequestMethod.POST)
+	@PostMapping("updateTranCodeByProd")
 	public String updateTranCodeByProd(@RequestParam("prodNo") int prodNo, @RequestParam("tranCode") String tranCode)
 			throws Exception {
 		System.out.println("/purchase/updateTranCodeByProd : POST");
-
 		purchaseService.updateTranCodeByProd(prodNo, tranCode);
 		return "redirect:/product/listProduct?menu=manage";
 	}
 
-	// ===== 관리자: 취소요청 승인(단건) =====
-	@RequestMapping(value = "ackCancelByTran", method = RequestMethod.POST)
+	@PostMapping("ackCancelByTran")
 	public String acknowledgeCancelByTran(@RequestParam("tranNo") int tranNo) throws Exception {
 		System.out.println("/purchase/ackCancelByTran : POST");
-
-		purchaseService.updateTranCode(tranNo, "005"); // 취소확인
+		purchaseService.updateTranCode(tranNo, "005");
 		return "redirect:/product/listProduct?menu=manage";
 	}
 
-	// ===== 관리자: 상품별 주문내역 팝업 =====
-	@RequestMapping(value = "historyByProduct", method = RequestMethod.GET)
+	@GetMapping("historyByProduct")
 	public String getHistoryByProduct(@RequestParam("prodNo") int prodNo, Model model) throws Exception {
 		System.out.println("/purchase/historyByProduct : GET");
-
 		List<Purchase> list = purchaseService.getPurchaseHistoryByProduct(prodNo);
 		model.addAttribute("prodNo", prodNo);
 		model.addAttribute("list", list);
-
 		return "forward:/purchase/historyByProduct.jsp";
 	}
 }
