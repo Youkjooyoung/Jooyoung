@@ -45,38 +45,37 @@ public class UserController {
 	@Qualifier("googleOAuthService")
 	private GoogleOAuthService googleOAuthService;
 
-	@Value("#{commonProperties['google.clientId']}")
+	@Value("${google.clientId}")
 	private String googleClientId;
 
-	@Value("#{commonProperties['google.redirectUri']}")
+	@Value("${google.redirectUri}")
 	private String googleRedirectUri;
+
 	@Autowired
 	@Qualifier("kakaoOAuthService")
 	private KakaoOAuthService kakaoOAuthService;
 
-	@Value("#{commonProperties['kakao.clientId']}")
+	@Value("${kakao.clientId}")
 	private String kakaoClientId;
 
-	@Value("#{commonProperties['kakao.logoutRedirectUri']}")
+	@Value("${kakao.logoutRedirectUri}")
 	private String kakaoLogoutRedirectUri;
 
-	@Value("#{commonProperties['pageUnit']}")
+	@Value("${pageUnit}")
 	private int pageUnit;
 
-	@Value("#{commonProperties['pageSize']}")
+	@Value("${pageSize}")
 	private int pageSize;
 
 	public UserController() {
 		System.out.println(this.getClass());
 	}
 
-	/** 회원가입 화면 */
 	@RequestMapping(value = "addUser", method = RequestMethod.GET)
 	public String addUser() throws Exception {
 		return "redirect:/user/addUserView.jsp";
 	}
 
-	/** 회원 상세조회 화면 */
 	@RequestMapping(value = "getUser", method = RequestMethod.GET)
 	public String getUser(@RequestParam("userId") String userId, Model model) throws Exception {
 		User user = userService.getUser(userId);
@@ -84,21 +83,25 @@ public class UserController {
 		return "forward:/user/getUser.jsp";
 	}
 
-	/** 회원 수정 화면 */
-	@RequestMapping(value = "updateUser", method = RequestMethod.GET)
-	public String updateUser(@RequestParam("userId") String userId, Model model) throws Exception {
+	@GetMapping("updateUser")
+	public String updateUser(@RequestParam String userId, @RequestParam(value = "embed", required = false) String embed,
+			Model model) throws Exception {
 		User user = userService.getUser(userId);
 		model.addAttribute("user", user);
-		return "forward:/user/updateUser.jsp";
+		if ("1".equals(embed))
+			return "forward:/user/updateUser.jsp";
+		String entry = "/user/updateUser?userId="
+				+ java.net.URLEncoder.encode(userId, java.nio.charset.StandardCharsets.UTF_8)
+				+ "&embed=1 [data-page=user-update]:first";
+		model.addAttribute("entry", entry);
+		return "forward:/index.jsp";
 	}
 
-	/** 로그인 화면 */
 	@RequestMapping(value = "login", method = RequestMethod.GET)
 	public String login() throws Exception {
 		return "redirect:/user/loginView.jsp";
 	}
 
-	/** 회원 리스트 화면 */
 	@RequestMapping(value = "listUser")
 	public String listUser(@ModelAttribute("search") Search search, Model model, HttpServletRequest request)
 			throws Exception {
@@ -119,7 +122,6 @@ public class UserController {
 		return "forward:/user/listUser.jsp";
 	}
 
-	/** 로그아웃 (카카오만 API 호출, 구글은 세션 무효화만) */
 	@RequestMapping(value = "logout", method = { RequestMethod.GET, RequestMethod.POST })
 	public String logout(HttpSession session) throws Exception {
 		String loginType = (String) session.getAttribute("loginType");
@@ -215,5 +217,19 @@ public class UserController {
 			e.printStackTrace();
 			return "redirect:/common/error.jsp";
 		}
+	}
+
+	@GetMapping("myInfo")
+	public String myInfo(HttpSession session, Model model,
+			@RequestParam(value = "embed", required = false) String embed) throws Exception {
+		User me = (User) session.getAttribute("user");
+		if (me == null)
+			return "redirect:/user/loginView.jsp";
+		User fresh = userService.getUser(me.getUserId());
+		model.addAttribute("user", fresh);
+		if ("1".equals(embed))
+			return "forward:/user/getUser.jsp";
+		model.addAttribute("entry", "/user/myInfo?embed=1 [data-page=user-detail]:first");
+		return "forward:/index.jsp";
 	}
 }

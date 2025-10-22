@@ -1,167 +1,74 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<div class="profile-wrap" data-page="user-detail"
+	data-user-id="${user.userId}">
+	<section class="profile-card">
+		<div class="profile-hero">
+			<div class="avatar">
+				<c:choose>
+					<c:when test="${not empty user.profileImg}">
+						<img src="${user.profileImg}" alt="프로필" />
+					</c:when>
+					<c:otherwise>
+						<span class="avatar-initial"> <c:out
+								value="${empty user.userName ? 'U' : fn:substring(user.userName,0,1)}" />
+						</span>
+					</c:otherwise>
+				</c:choose>
+			</div>
+			<div class="hero-meta">
+				<h1 class="profile-name">
+					<c:out value="${empty user.userName ? '사용자' : user.userName}" />
+				</h1>
+				<div class="chip-row">
+					<span class="chip role"><c:out
+							value="${empty user.role ? 'user' : user.role}" /></span> <span
+						class="chip join">가입일자&nbsp;<c:out value="${user.regDate}" /></span>
+				</div>
+			</div>
+		</div>
 
-<!DOCTYPE html>
-<html>
+		<div class="profile-body">
+			<div class="kv">
+				<div class="kv-item">
+					<div class="kv-label">아이디</div>
+					<div class="kv-value">
+						<c:out
+							value="${empty user.email ? (empty user.userName ? user.kakaoId : user.userName) : user.email}" />
+					</div>
+				</div>
+				<div class="kv-item">
+					<div class="kv-label">이름</div>
+					<div class="kv-value">
+						<c:out value="${user.userName}" />
+					</div>
+				</div>
+				<div class="kv-item kv-span">
+					<div class="kv-label">주소</div>
+					<div class="kv-value">
+						<c:out value="${user.addr}" />
+					</div>
+				</div>
+				<div class="kv-item">
+					<div class="kv-label">휴대전화번호</div>
+					<div class="kv-value copyable" data-copy="${user.phone}">
+						<c:out value="${empty user.phone ? '' : user.phone}" />
+					</div>
+				</div>
+				<div class="kv-item">
+					<div class="kv-label">이메일</div>
+					<div class="kv-value copyable" data-copy="${user.email}">
+						<c:out value="${user.email}" />
+					</div>
+				</div>
+			</div>
+		</div>
 
-<head>
-	<meta charset="UTF-8">
-	<title>회원정보조회</title>
-	
-	<link rel="stylesheet" href="/css/admin.css" type="text/css">
-	
-	<!-- CDN(Content Delivery Network) 호스트 사용 -->
-	<script type="text/javascript">
-		
-		//==>"수정" "확인"  Event 연결 및 처리
-		 $(function() {
-			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
-			//==> 1 과 3 방법 조합 : $("tagName.className:filter함수") 사용함.	
-			 $( "td.ct_btn01:contains('확인')" ).on("click" , function() {
-				//Debug..
-				//alert(  $( "td.ct_btn01:contains('확인')" ).html() );
-				history.go(-1);
-			});
-			
-			 $( "td.ct_btn01:contains('수정')" ).on("click" , function() {
-					//Debug..
-					//alert(  $( "td.ct_btn01:contains('수정')" ).html() );
-					self.location = "/user/updateUser?userId=${user.userId}"
-				});
-		});
-		
-	</script>
-
-</head>
-
-<body bgcolor="#ffffff" text="#000000">
-
-<table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
-	<tr>
-		<td width="15" height="37"><img src="/images/ct_ttl_img01.gif" width="15" height="37"></td>
-		<td background="/images/ct_ttl_img02.gif" width="100%" style="padding-left:10px;">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td width="93%" class="ct_ttl01">회원정보조회</td>
-					<td width="20%" align="right">&nbsp;</td>
-				</tr>
-			</table>
-		</td>
-		<td width="12" height="37">
-			<img src="/images/ct_ttl_img03.gif" width="12" height="37"/>
-		</td>
-	</tr>
-</table>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:13px;">
-	
-	<tr>
-		<td height="1" colspan="3" bgcolor="D6D6D6"></td>
-	</tr>
-	
-	<tr>
-		  <td width="104" class="ct_write">
-		    아이디 <img src="/images/ct_icon_red.gif" width="3" height="3" align="absmiddle"/>
-		  </td>
-		  <td bgcolor="D6D6D6" width="1"></td>
-		  <td class="ct_write01">
-		    <c:choose>
-		      <c:when test="${not empty user.email}">
-		        ${user.email}
-		      </c:when>
-		      <c:when test="${not empty user.userName}">
-		        ${user.userName}
-		      </c:when>
-		      <c:otherwise>
-		        ${user.kakaoId}
-		      </c:otherwise>
-		    </c:choose>
-		  </td>
-	</tr>
-
-	<tr>
-		<td height="1" colspan="3" bgcolor="D6D6D6"></td>
-	</tr>
-	
-	<tr>
-		<td width="104" class="ct_write">
-			이름 <img src="/images/ct_icon_red.gif" width="3" height="3" align="absmiddle" />
-		</td>
-		<td bgcolor="D6D6D6" width="1"></td>
-		<td class="ct_write01">${user.userName}</td>
-	</tr>
-	
-	<tr>
-		<td height="1" colspan="3" bgcolor="D6D6D6"></td>
-	</tr>
-	
-	<tr>
-		<td width="104" class="ct_write">주소</td>
-		<td bgcolor="D6D6D6" width="1"></td>
-		<td class="ct_write01">${user.addr}</td>
-	</tr>
-	
-	<tr>
-		<td height="1" colspan="3" bgcolor="D6D6D6"></td>
-	</tr>
-	
-	<tr>
-		<td width="104" class="ct_write">휴대전화번호</td>
-		<td bgcolor="D6D6D6" width="1"></td>
-		<td class="ct_write01">${ !empty user.phone ? user.phone : ''}	</td>
-	</tr>
-
-	<tr>
-		<td height="1" colspan="3" bgcolor="D6D6D6"></td>
-	</tr>
-	
-	<tr>
-		<td width="104" class="ct_write">이메일 </td>
-		<td bgcolor="D6D6D6" width="1"></td>
-		<td class="ct_write01">${user.email}</td>
-	</tr>
-
-	<tr>
-		<td height="1" colspan="3" bgcolor="D6D6D6"></td>
-	</tr>
-	
-	<tr>
-		<td width="104" class="ct_write">가입일자</td>
-		<td bgcolor="D6D6D6" width="1"></td>
-		<td class="ct_write01">${user.regDate}</td>
-	</tr>
-	
-	<tr>
-		<td height="1" colspan="3" bgcolor="D6D6D6"></td>
-	</tr>
-	
-</table>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0"	style="margin-top:10px;">
-	<tr>
-		<td width="53%"></td>
-		<td align="right">
-			<table border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td width="17" height="23"><img src="/images/ct_btnbg01.gif" width="17" height="23"></td>
-					<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top:3px;">
-						 수정
-					</td>
-					<td width="14" height="23"><img src="/images/ct_btnbg03.gif" width="14" height="23"></td>
-					<td width="30"></td>					
-					<td width="17" height="23"><img src="/images/ct_btnbg01.gif" width="17" height="23"></td>
-					<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top:3px;">
-						확인
-					</td>
-					<td width="14" height="23"><img src="/images/ct_btnbg03.gif" width="14" height="23"></td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-</table>
-
-</body>
-
-</html>
+		<div class="profile-actions">
+			<button type="button" class="nv-btn nv-btn-primary" data-role="edit">수정</button>
+			<button type="button" class="nv-btn nv-btn-ghost" data-role="back">확인</button>
+		</div>
+	</section>
+</div>

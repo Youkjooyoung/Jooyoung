@@ -22,9 +22,6 @@ import com.model2.mvc.service.user.UserService;
 
 import jakarta.servlet.http.HttpSession;
 
-/**
- * UserRestController.java 회원 관리를 위한 RESTful API 컨트롤러 URL Prefix : /user/json/
- */
 @RestController
 @RequestMapping("/user/*")
 public class UserRestController {
@@ -41,7 +38,6 @@ public class UserRestController {
 	@Value("#{commonProperties['kakao.logoutRedirectUri']}")
 	private String kakaoLogoutRedirectUri;
 
-	// 구글 관련 Bean/프로퍼티
 	@Autowired
 	@Qualifier("googleOAuthService")
 	private GoogleOAuthService googleOAuthService;
@@ -56,14 +52,12 @@ public class UserRestController {
 		System.out.println("==> UserRestController 실행됨 : " + this.getClass());
 	}
 
-	/** 회원가입 */
 	@PostMapping("json/addUser")
 	public boolean addUser(@RequestBody User user) throws Exception {
 		userService.addUser(user);
 		return true;
 	}
 
-	/** 로그인 */
 	@PostMapping("json/login")
 	public Map<String, Object> login(@RequestBody User user, HttpSession session) throws Exception {
 		Map<String, Object> result = new HashMap<>();
@@ -82,7 +76,6 @@ public class UserRestController {
 		return result;
 	}
 
-	/** 로그아웃 */
 	@PostMapping("json/logout")
 	public Map<String, Object> logout(HttpSession session) {
 		String loginType = (String) session.getAttribute("loginType");
@@ -93,32 +86,27 @@ public class UserRestController {
 		return result;
 	}
 
-	/** 회원 상세 조회 */
 	@GetMapping("json/getUser/{userId}")
 	public User getUser(@PathVariable String userId) throws Exception {
 		return userService.getUser(userId);
 	}
 
-	/** 회원 목록 조회 */
 	@PostMapping("json/getUserList")
 	public Map<String, Object> getUserList(@RequestBody Search search) throws Exception {
 		return userService.getUserList(search);
 	}
 
-	/** 회원 수정 */
 	@PostMapping("json/updateUser")
 	public boolean updateUser(@RequestBody User user) throws Exception {
 		userService.updateUser(user);
 		return true;
 	}
 
-	/** 아이디 중복 체크 */
 	@GetMapping("json/checkDuplication/{userId}")
 	public boolean checkDuplication(@PathVariable String userId) throws Exception {
 		return userService.checkDuplication(userId);
 	}
 
-	/** 현재 로그인 사용자 조회 */
 	@GetMapping("json/me")
 	public Map<String, Object> me(HttpSession session) {
 		Map<String, Object> res = new HashMap<>();
@@ -140,10 +128,8 @@ public class UserRestController {
 		return res;
 	}
 
-	// ===== 프로필 보완 저장 =====
 	@PostMapping("json/completeProfile")
 	public Map<String, Object> completeProfile(@RequestBody User req, HttpSession session) throws Exception {
-
 		System.out.println("===== [completeProfile] 요청 수신 =====");
 		System.out.println("수신 데이터 : " + req);
 
@@ -156,41 +142,32 @@ public class UserRestController {
 		}
 		String myId = loginUser.getUserId();
 		req.setUserId(myId);
-		if (req.getUserName() == null || req.getUserName().trim().isEmpty()) {
-			return msg(false, "이름을 입력해주세요.");
-		}
 
+		if (req.getUserName() == null || req.getUserName().trim().isEmpty())
+			return msg(false, "이름을 입력해주세요.");
 		String email = req.getEmail();
 		if (email == null || email.trim().isEmpty()
-				|| !email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,10}$")) {
+				|| !email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,10}$"))
 			return msg(false, "이메일 형식이 올바르지 않습니다.");
-		}
-
 		String phone = req.getPhone();
-		if (phone == null || phone.trim().isEmpty() || !phone.matches("^\\d{2,3}-\\d{3,4}-\\d{4}$")) {
+		if (phone == null || phone.trim().isEmpty() || !phone.matches("^\\d{2,3}-\\d{3,4}-\\d{4}$"))
 			return msg(false, "전화번호 형식이 올바르지 않습니다. 예) 010-1234-5678");
-		}
-
-		if (req.getZipcode() == null || req.getZipcode().trim().isEmpty()) {
+		if (req.getZipcode() == null || req.getZipcode().trim().isEmpty())
 			return msg(false, "우편번호를 입력해주세요.");
-		}
-
-		if (req.getAddr() == null || req.getAddr().trim().isEmpty()) {
+		if (req.getAddr() == null || req.getAddr().trim().isEmpty())
 			return msg(false, "기본 주소를 입력해주세요.");
-		}
-		if (userService.existsEmail(req.getEmail(), myId)) {
+		if (userService.existsEmail(req.getEmail(), myId))
 			return msg(false, "이미 사용 중인 이메일입니다.");
-		}
-
-		if (userService.existsPhone(req.getPhone(), myId)) {
+		if (userService.existsPhone(req.getPhone(), myId))
 			return msg(false, "이미 사용 중인 전화번호입니다.");
-		}
+
 		try {
-			userService.isProfileComplete(req);
+			userService.completeProfile(req);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return msg(false, "DB 저장 중 오류가 발생했습니다.");
 		}
+
 		User refreshed = userService.getUser(myId);
 		session.setAttribute("user", refreshed);
 		result.put("success", true);
@@ -199,7 +176,6 @@ public class UserRestController {
 		return result;
 	}
 
-	// 공통 응답 메시지 헬퍼
 	private Map<String, Object> msg(boolean ok, String message) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("success", ok);
@@ -207,7 +183,6 @@ public class UserRestController {
 		return res;
 	}
 
-	// ===== 이메일/휴대폰 중복검사 =====
 	@GetMapping("json/existsEmail")
 	public Map<String, Object> existsEmail(@RequestParam String email, HttpSession session) throws Exception {
 		User me = (User) session.getAttribute("user");

@@ -4,9 +4,6 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.model2.mvc.service.user.UserDao">
 
-	<!-- ========================================== -->
-	<!-- ✅ ResultMap : 모든 컬럼 매핑 -->
-	<!-- ========================================== -->
 	<resultMap id="userSelectMap" type="user">
 		<id property="userId" column="user_id" jdbcType="VARCHAR" />
 		<result property="userName" column="user_name"
@@ -29,9 +26,6 @@
 			jdbcType="VARCHAR" />
 	</resultMap>
 
-	<!-- ========================================== -->
-	<!-- ✅ INSERT : 회원가입 -->
-	<!-- ========================================== -->
 	<insert id="addUser" parameterType="user">
 		INSERT INTO USERS (
 		user_id, user_name, password, role, ssn, cell_phone, zipcode, addr,
@@ -47,17 +41,11 @@
 		)
 	</insert>
 
-	<!-- ========================================== -->
-	<!-- ✅ SELECT ONE -->
-	<!-- ========================================== -->
 	<select id="getUser" parameterType="string"
 		resultMap="userSelectMap">
 		SELECT * FROM USERS WHERE user_id = #{value}
 	</select>
 
-	<!-- ========================================== -->
-	<!-- ✅ UPDATE : 기존 회원정보 수정 -->
-	<!-- ========================================== -->
 	<update id="updateUser" parameterType="user">
 		UPDATE USERS
 		<set>
@@ -69,9 +57,6 @@
 		WHERE user_id = #{userId}
 	</update>
 
-	<!-- ========================================== -->
-	<!-- ✅ UPDATE : 회원정보 보완 (온보딩용) -->
-	<!-- ========================================== -->
 	<update id="updateUserProfile" parameterType="user">
 		UPDATE USERS
 		SET
@@ -84,9 +69,6 @@
 		WHERE user_id = #{userId}
 	</update>
 
-	<!-- ========================================== -->
-	<!-- ✅ SELECT LIST -->
-	<!-- ========================================== -->
 	<select id="getUserList" parameterType="search"
 		resultMap="userSelectMap">
 		SELECT *
@@ -113,9 +95,6 @@
 		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
 	</select>
 
-	<!-- ========================================== -->
-	<!-- ✅ COUNT (for pagination) -->
-	<!-- ========================================== -->
 	<select id="getTotalCount" parameterType="search"
 		resultType="int">
 		SELECT COUNT(*)
@@ -135,22 +114,16 @@
 		)
 	</select>
 
-	<!-- ========================================== -->
-	<!-- ✅ SNS LOGIN : 카카오 / 구글 -->
-	<!-- ========================================== -->
 	<select id="getUserByKakaoId" parameterType="string"
 		resultMap="userSelectMap">
-		SELECT * FROM USERS WHERE kakao_id = #{kakaoId}
+		SELECT * FROM USERS WHERE kakao_id = #{value}
 	</select>
 
 	<select id="getUserByGoogleId" parameterType="string"
 		resultMap="userSelectMap">
-		SELECT * FROM USERS WHERE google_id = #{googleId}
+		SELECT * FROM USERS WHERE google_id = #{value}
 	</select>
 
-	<!-- ========================================== -->
-	<!-- ✅ 이메일 중복확인 -->
-	<!-- ========================================== -->
 	<select id="countByEmail" resultType="int">
 		SELECT COUNT(*)
 		FROM USERS
@@ -160,9 +133,6 @@
 		</if>
 	</select>
 
-	<!-- ========================================== -->
-	<!-- ✅ 전화번호 중복확인 -->
-	<!-- ========================================== -->
 	<select id="countByPhone" resultType="int">
 		SELECT COUNT(*)
 		FROM USERS

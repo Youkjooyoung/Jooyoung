@@ -6,16 +6,16 @@
 	$(() => {
 		const ctx = $('body').data('ctx') || '';
 		const routes = {
-			home: `${ctx}/layout/home.fragment.jsp`,
+			 home: `${ctx}/layout/home.fragment.jsp`,
 			searchProduct: `${ctx}/product/listProduct?embed=1 .container:first`,
 			manageProduct: `${ctx}/product/listProduct?menu=manage&embed=1 .container:first`,
 			addProduct: `${ctx}/product/addProductView?embed=1 .container:first`,
-			myInfo: `${ctx}/user/getUser?embed=1 .container:first`,
+			myInfo: `${ctx}/user/myInfo?embed=1 [data-page=user-detail]:first`,
 			userList: `${ctx}/user/listUser?embed=1 .container:first`,
 			login: `${ctx}/user/loginView.jsp`,
-			join: `${ctx}/user/addUserView?embed=1 .container:first`,
+			join: `${ctx}/user/addUserView.jsp?embed=1 .container:first`,
 			purchaseList: `${ctx}/purchase/listPurchase?embed=1 .container:first`,
-			cart: `${ctx}/cart?embed=1 .nv-panel:first`,
+			cart: `${ctx}/purchase/cart.jsp?embed=1 .nv-panel:first`,
 			recentPopup: `${ctx}/layout/recentProduct.jsp`
 		};
 
