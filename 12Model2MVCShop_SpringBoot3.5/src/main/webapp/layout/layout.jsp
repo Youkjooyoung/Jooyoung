@@ -1,64 +1,102 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8"/>
-  <title>Model2 MVC Shop</title>
-  <link rel="stylesheet" href="${ctx}/css/naver-common.css"/>
+<meta charset="UTF-8" />
+<title>Model2 MVC Shop</title>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+	tailwind.config = {
+		theme : {
+			extend : {
+				colors : {
+					naver : {
+						green : '#03c75a',
+						dark : '#02b857',
+						gray : {
+							50 : '#f7f8f9',
+							100 : '#f0f2f4',
+							200 : '#e5e8eb',
+							400 : '#98a2b3'
+						}
+					}
+				},
+				borderRadius : {
+					nv : '12px'
+				},
+				boxShadow : {
+					nv : '0 4px 14px rgba(0,0,0,.06)'
+				}
+			}
+		}
+	};
+</script>
+<link rel="stylesheet" href="${ctx}/css/naver-common.css" />
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" defer></script>
 <script src="${ctx}/javascript/layout.js" defer></script>
 <script src="${ctx}/javascript/left.js" defer></script>
-  <script>
-    window.App = window.App || {};
-    App.ctx = function(){ return '${ctx}'; };
-  </script>
-  
-  <style>
-  /* 좌측 메뉴가 항상 클릭 가능하도록 레이어 우선순위 고정 */
-  .nv-aside, #leftArea, .left-menu { position: relative; z-index: 1000; pointer-events: auto; }
-  #appMain, #mainArea { position: relative; z-index: 1; }
+<script>
+	window.App = window.App || {};
+	App.ctx = function() {
+		return '${ctx}';
+	};
+</script>
+<style>
+.nv-aside, #leftArea, .left-menu {
+	position: relative;
+	z-index: 1000;
+	pointer-events: auto;
+}
 
-  /* 만약 로딩 오버레이가 전체를 덮는 경우를 방지: 메인 컨텐츠에만 국한 */
-  #appMain.loading, #mainArea.loading { position: relative; }
-  #appMain.loading::after, #mainArea.loading::after {
-    content: "";
-    position: absolute; inset: 0;
-    background: rgba(255,255,255,.4);
-    /* 클릭 막지 않도록 */
-    pointer-events: none;
-  }
+#appMain, #mainArea {
+	position: relative;
+	z-index: 1;
+}
 
-  /* 혹시 남아있는 마스크/모달이 투명하게 덮고 있었다면 클릭 통과 */
-  .nv-dp-mask, .dlg-mask { pointer-events: none; }
-  .dlg-mask:not(.hidden) { pointer-events: auto; } /* 실제로 보일 때만 이벤트 받도록 */
+#appMain.loading::after, #mainArea.loading::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, .4);
+	pointer-events: none;
+}
+
+.nv-dp-mask, .dlg-mask {
+	pointer-events: none;
+}
+
+.dlg-mask:not(.hidden) {
+	pointer-events: auto;
+}
 </style>
 </head>
+<body class="nv-shell min-h-screen flex flex-col bg-white"
+	data-ctx="${ctx}">
+	<header class="nv-header shadow-nv border-b border-naver-green z-50">
+		<jsp:include page="/layout/top.jsp" />
+	</header>
+	<div class="nv-body flex flex-1 min-h-[calc(100vh-120px)]">
+		<aside
+			class="nv-aside w-[260px] bg-naver-gray-50 border-r border-naver-gray-200">
+			<jsp:include page="/layout/left.jsp" />
+		</aside>
+		<main id="appMain" role="main" aria-live="polite"
+			class="flex-1 bg-white p-6">
+			<jsp:include page="/layout/home.fragment.jsp" />
+		</main>
 
-<body class="nv-shell" data-ctx="${ctx}">
-  <header class="nv-header">
-    <!-- top / fragment 전용 -->
-    <jsp:include page="/layout/top.jsp" />
-  </header>
+	</div>
+	<footer
+		class="nv-footer border-t border-naver-gray-200 bg-naver-gray-50">
+		<jsp:include page="/layout/footer.jsp" />
+	</footer>
 
-  <div class="nv-body">
-    <aside class="nv-aside">
-      <!-- left / fragment 전용 -->
-      <jsp:include page="/layout/left.jsp" />
-    </aside>
+	<noscript>본 서비스는 자바스크립트가 필요합니다.</noscript>
 
-    <!-- ✅ 메인만 Ajax로 교체 -->
-    <main id="appMain" role="main" aria-live="polite">
-      <jsp:include page="/layout/home.fragment.jsp"/>
-    </main>
-  </div>
-
-  <footer class="nv-footer">
-    <jsp:include page="/layout/footer.jsp"/>
-  </footer>
-
-  <noscript>본 서비스는 자바스크립트가 필요합니다.</noscript>
 </body>
 </html>

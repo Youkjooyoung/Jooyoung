@@ -592,8 +592,13 @@ height:32px; line-height:30px; text-align:center;
 
 /* ========== 보기 전환 토글(중복 제거) ========== */
 .seg{
-  margin-left:auto; display:inline-flex; align-items:center; gap:0;
-  background:#f1f3f5; padding:3px; border-radius:9999px;
+  /* margin-left:auto;  */
+  display:inline-flex; 
+  align-items:center; 
+  gap:0;
+  background:#f1f3f5; 
+  padding:3px; 
+  border-radius:9999px;
 }
 .seg-btn{
   border:0; background:transparent; padding:8px 16px; border-radius:9999px;
