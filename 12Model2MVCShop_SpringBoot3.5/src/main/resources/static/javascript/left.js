@@ -6,9 +6,9 @@
 	$(() => {
 		const ctx = $('body').data('ctx') || '';
 		const routes = {
-			 home: `${ctx}/layout/home.fragment.jsp`,
-			searchProduct: `${ctx}/product/listProduct?embed=1 .container:first`,
-			manageProduct: `${ctx}/product/listProduct?menu=manage&embed=1 .container:first`,
+			home: `${ctx}/layout/home.fragment.jsp`,
+			searchProduct: `${ctx}/product/listProduct.fragment.jsp .container:first`,
+			manageProduct: `${ctx}/product/listManageProduct.jsp .container:first`,
 			addProduct: `${ctx}/product/addProductView?embed=1 .container:first`,
 			myInfo: `${ctx}/user/myInfo?embed=1 [data-page=user-detail]:first`,
 			userList: `${ctx}/user/listUser?embed=1 .container:first`,

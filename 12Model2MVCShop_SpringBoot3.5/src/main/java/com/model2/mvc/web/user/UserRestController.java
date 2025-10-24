@@ -86,9 +86,13 @@ public class UserRestController {
 		return result;
 	}
 
-	@GetMapping("json/getUser/{userId}")
-	public User getUser(@PathVariable String userId) throws Exception {
-		return userService.getUser(userId);
+	@GetMapping("json/getUser")
+	public User getUser(HttpSession session) throws Exception {
+		User loginUser = (User) session.getAttribute("user");
+		if (loginUser == null) {
+			return null;
+		}
+		return userService.getUser(loginUser.getUserId());
 	}
 
 	@PostMapping("json/getUserList")

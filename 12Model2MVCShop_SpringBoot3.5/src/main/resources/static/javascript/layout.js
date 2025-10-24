@@ -36,15 +36,52 @@
 	};
 
 	const ROUTE = {
-		home: () => ({ pretty: ctx() + '/home', partial: ctx() + '/layout/home.fragment.jsp' }),
-		myInfo: () => ({ pretty: ctx() + '/user/myInfo', partial: ctx() + '/user/myInfo?embed=1 [data-page=user-detail]:first' }),
-		searchProduct: () => ({ pretty: ctx() + '/product/listProduct', partial: ctx() + '/product/listProduct.fragment.jsp' }),
-		manageProduct: () => ({ pretty: ctx() + '/product/listProduct?menu=manage', partial: ctx() + '/product/listProduct?menu=manage .container:first' }),
-		addProduct: () => ({ pretty: ctx() + '/product/addProduct', partial: ctx() + '/product/addProductView.jsp .container:first' }),
-		editProduct: (no) => ({ pretty: ctx() + `/product/updateProduct?prodNo=${encodeURIComponent(no)}`, partial: ctx() + `/product/updateProduct?prodNo=${encodeURIComponent(no)} .container:first` }),
-		productDetail: (no) => ({ pretty: ctx() + `/product/getProduct?prodNo=${encodeURIComponent(no)}`, partial: ctx() + `/product/getProduct?prodNo=${encodeURIComponent(no)} .container:first` }),
-		purchaseList: () => ({ pretty: ctx() + '/purchase/list', partial: ctx() + '/purchase/list .container:first' }),
-		cart: () => ({ pretty: ctx() + '/cart', partial: ctx() + '/purchase/cart.jsp .container:first' })
+	  home: () => ({
+	    pretty: ctx() + '/home',
+	    partial: ctx() + '/layout/home.fragment.jsp'
+	  }),
+
+	  myInfo: () => ({
+	    pretty: ctx() + '/user/myInfo',
+	    partial: ctx() + '/user/myInfo?embed=1 [data-page=user-detail]:first'
+	  }),
+
+	  // ✅ 상품검색 (fragment 직접 호출)
+	  searchProduct: () => ({
+	    pretty: ctx() + '/product/listProduct.fragment.jsp',
+	    partial: ctx() + '/product/listProduct.fragment.jsp .container:first'
+	  }),
+
+	  // ✅ 판매상품관리 (관리 전용 JSP)
+	  manageProduct: () => ({
+	    pretty: ctx() + '/product/listManageProduct.jsp',
+	    partial: ctx() + '/product/listManageProduct.jsp .container:first'
+	  }),
+
+	  addProduct: () => ({
+	    pretty: ctx() + '/product/addProductView.jsp',
+	    partial: ctx() + '/product/addProductView.jsp .container:first'
+	  }),
+
+	  editProduct: (no) => ({
+	    pretty: ctx() + `/product/updateProduct.jsp?prodNo=${encodeURIComponent(no)}`,
+	    partial: ctx() + `/product/updateProduct.jsp?prodNo=${encodeURIComponent(no)} .container:first`
+	  }),
+
+	  productDetail: (no) => ({
+	    pretty: ctx() + `/product/getProduct.jsp?prodNo=${encodeURIComponent(no)}`,
+	    partial: ctx() + `/product/getProduct.jsp?prodNo=${encodeURIComponent(no)} .container:first`
+	  }),
+
+	  purchaseList: () => ({
+	    pretty: ctx() + '/purchase/listPurchase.jsp',
+	    partial: ctx() + '/purchase/listPurchase.jsp .container:first'
+	  }),
+
+	  cart: () => ({
+	    pretty: ctx() + '/purchase/cart.jsp',
+	    partial: ctx() + '/purchase/cart.jsp .container:first'
+	  })
 	};
 
 	const PAGE_CSS = {

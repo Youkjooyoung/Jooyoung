@@ -8,34 +8,6 @@
 <head>
 <meta charset="UTF-8" />
 <title>Model2 MVC Shop</title>
-<!-- Tailwind -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-<script>
-	tailwind.config = {
-		theme : {
-			extend : {
-				colors : {
-					naver : {
-						green : '#03c75a',
-						dark : '#02b857',
-						gray : {
-							50 : '#f7f8f9',
-							100 : '#f0f2f4',
-							200 : '#e5e8eb',
-							400 : '#98a2b3'
-						}
-					}
-				},
-				borderRadius : {
-					nv : '12px'
-				},
-				boxShadow : {
-					nv : '0 4px 14px rgba(0,0,0,.06)'
-				}
-			}
-		}
-	};
-</script>
 <link rel="stylesheet" href="${ctx}/css/naver-common.css" />
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" defer></script>
 <script src="${ctx}/javascript/layout.js" defer></script>

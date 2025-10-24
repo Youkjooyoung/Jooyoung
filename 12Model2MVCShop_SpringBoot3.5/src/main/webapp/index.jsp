@@ -48,9 +48,6 @@
 <script src="${ctx}/javascript/footer.js" defer></script>
 <script src="${ctx}/javascript/getProduct.js" defer></script>
 <script src="${ctx}/javascript/index-loading.js" defer></script>
-
-<!-- ✅ Tailwind CSS CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
     theme: {

@@ -1,79 +1,96 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 
-<section class="container" data-page="product-search" data-ctx="${ctx}" data-role="${sessionScope.user.role}">
-  <div class="page-title"><h2>상품 검색</h2></div>
+<section class="max-w-7xl mx-auto bg-white shadow-nv rounded-nv p-8 mt-6"
+	data-page="product-search" data-ctx="${ctx}"
+	data-role="${sessionScope.user.role}">
 
-  <!-- 검색 바 (네이버 톤 + 가격 슬라이더) -->
-  <div class="search-bar nv-searchbar">
-    <div class="search-controls">
-      <input type="hidden" id="sort" value="">
+	<!-- 제목 및 검색 바 -->
+	<div class="flex items-center justify-between mb-6 border-b pb-3">
+		<h2 class="text-2xl font-extrabold text-naver">상품 검색</h2>
+		<div class="flex flex-wrap gap-2 items-center">
+			<select id="searchCondition"
+				class="border border-gray-300 rounded-lg px-3 h-[44px] text-gray-700 focus:border-naver focus:ring focus:ring-naver/20">
+				<option value="0">전체</option>
+				<option value="prodName">상품명</option>
+				<option value="prodDetail">상세설명</option>
+			</select>
 
-      <select id="searchCondition" class="input-select" aria-label="검색 조건">
-        <option value="0">전체</option>
-        <option value="prodName">상품명</option>
-        <option value="prodDetail">상세설명</option>
-      </select>
-
-      <div class="ac-wrap nv-input">
-        <input type="text" id="searchKeyword" class="input-text search-keyword" placeholder="검색어 입력" aria-label="검색어">
-        <div id="acList" class="ac-list"></div>
-      </div>
-
-      <!-- 가격 범위 : 슬라이더 + 현재값 표시 (hidden은 기존 JS와 호환용) -->
-			<div class="nv-price">
-				<span class="nv-price-label"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-				<div class="nv-pr nv-pr--no-fallback">
-					<div class="nv-pr-track"></div>
-					<div class="nv-pr-fill"></div>
-					<input id="rMin" type="range" class="nv-pr-range" min="0"
-						max="2000000" step="5000" value="0" aria-label="최소 가격" /> <input
-						id="rMax" type="range" class="nv-pr-range" min="200000"
-						max="2000000" step="5000" value="2000000" aria-label="최대 가격" />
-					<div class="nv-pr-ticks"></div>
-				</div>
-				<div class="nv-pr-values">
-					<span id="priceMinView">0</span> ~ <span id="priceMaxView">2,000,000</span>
-					원
-				</div>
+			<div class="relative w-64">
+				<input type="text" id="searchKeyword" placeholder="검색어 입력"
+					class="w-full border border-gray-300 rounded-lg h-[44px] pl-3 pr-10 text-sm focus:border-naver focus:ring focus:ring-naver/20" />
+				<div id="acList"
+					class="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 w-full hidden max-h-60 overflow-auto text-sm"></div>
 			</div>
 
-			<span class="btn-group" role="group" aria-label="검색 실행">
-        <button type="button" id="btnSearch" class="btn-green">검색</button>
-        <button type="button" id="btnAll" class="btn-gray">전체보기</button>
-      </span>
-    </div>
+			<button id="btnSearch"
+				class="bg-naver hover:bg-naver-dark text-white font-semibold px-6 h-[44px] rounded-lg transition">검색</button>
+			<button id="btnAll"
+				class="border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold px-6 h-[44px] rounded-lg transition">전체보기</button>
+		</div>
+	</div>
 
-    <!-- 오른쪽 끝 토글 -->
-    <div class="seg" role="group" aria-label="보기 전환">
-      <button type="button" id="btnListView"  class="seg-btn is-active" aria-pressed="true">리스트 보기</button>
-      <button type="button" id="btnThumbView" class="seg-btn" aria-pressed="false">썸네일 보기</button>
-    </div>
-  </div>
+	<!-- 가격 슬라이더 -->
+	<div class="flex items-center gap-4 mb-6">
+		<div class="flex-1">
+			<div class="h-2 bg-gray-200 rounded-full relative">
+				<div class="absolute bg-naver h-2 rounded-full" id="priceBar"></div>
+			</div>
+			<div class="flex justify-between text-xs text-gray-500 mt-1">
+				<span id="priceMinView">0</span> <span id="priceMaxView">2,000,000</span>
+			</div>
+			<div class="relative">
+				<input id="rMin" type="range" min="0" max="2000000" step="5000" value="0"
+					class="absolute top-[-6px] w-full appearance-none bg-transparent cursor-pointer" />
+				<input id="rMax" type="range" min="0" max="2000000" step="5000"
+					value="2000000"
+					class="absolute top-[-6px] w-full appearance-none bg-transparent cursor-pointer" />
+			</div>
+		</div>
+	</div>
 
-  <div class="list-table-wrapper" id="listTableWrap">
-    <table class="list-table">
-      <thead>
-        <tr>
-          <th style="width:80px;">번호</th>
-          <th style="width:200px;">상품명</th>
-          <th style="width:160px;">가격
-            <span class="sort-btn" data-sort="priceAsc">▲</span>
-            <span class="sort-btn" data-sort="priceDesc">▼</span>
-          </th>
-          <th style="width:140px;">등록일자</th>
-          <th style="width:120px;">조회수</th>
-          <th style="width:120px;">상태</th>
-          <th style="width:160px;">관리</th>
-        </tr>
-      </thead>
-      <tbody id="listBody"></tbody>
-    </table>
-  </div>
+	<!-- 보기 전환 버튼 -->
+	<div class="flex justify-end gap-2 mb-6">
+		<button id="btnListView"
+			class="seg-btn bg-naver text-white font-bold px-4 py-2 rounded-full transition is-active">리스트
+			보기</button>
+		<button id="btnThumbView"
+			class="seg-btn bg-gray-200 text-gray-700 font-bold px-4 py-2 rounded-full transition">썸네일
+			보기</button>
+	</div>
 
-  <div id="gridBody" class="thumb-grid" style="display:none;"></div>
+	<!-- 리스트 보기 -->
+	<div id="listTableWrap">
+		<table class="w-full text-sm border-t border-gray-200">
+			<thead class="bg-naver-gray text-gray-700 font-semibold">
+				<tr>
+					<th class="p-3 w-[60px]">번호</th>
+					<th class="p-3 w-[200px]">상품명</th>
+					<th class="p-3 w-[160px]">가격 <span
+						class="sort-btn text-gray-400 cursor-pointer ml-1"
+						data-sort="priceAsc">▲</span> <span
+						class="sort-btn text-gray-400 cursor-pointer ml-1"
+						data-sort="priceDesc">▼</span>
+					</th>
+					<th class="p-3 w-[140px]">등록일자</th>
+					<th class="p-3 w-[120px]">조회수</th>
+					<th class="p-3 w-[100px]">상태</th>
+					<th class="p-3 w-[160px]">관리</th>
+				</tr>
+			</thead>
+			<tbody id="listBody" class="divide-y divide-gray-100"></tbody>
+		</table>
+	</div>
 
-  <div id="infiniteLoader" style="display:none;">불러오는 중...</div>
-  <div id="endOfList" style="display:none;">마지막 상품입니다.</div>
+	<!-- 썸네일 보기 -->
+	<div id="gridBody"
+		class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hidden mt-6"></div>
+
+	<div id="infiniteLoader"
+		class="text-center text-gray-400 text-sm mt-4 hidden">불러오는 중...</div>
+	<div id="endOfList"
+		class="text-center text-gray-400 text-sm mt-4 hidden">마지막 상품입니다.</div>
 </section>
+
+<script src="${ctx}/javascript/listProduct.js"></script>

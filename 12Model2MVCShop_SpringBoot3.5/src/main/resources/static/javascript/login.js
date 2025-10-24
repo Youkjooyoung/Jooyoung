@@ -2,86 +2,68 @@
 (($, w, d) => {
 	'use strict';
 	if (!w || !d || !$) return;
+
+	// ====== 1. nvToast (Tailwind 스타일) ======
 	if (typeof nvToast !== 'function') {
-	  window.nvToast = (msg, opt = {}) => {
-	    const type = typeof opt === 'object' ? (opt.type || 'info') : opt;
-	    alert(`[${type.toUpperCase()}] ${msg}`);
-	  };
+		window.nvToast = (msg, opt = {}) => {
+			const type = opt.type || 'info';
+			const stay = opt.stay || 1500;
+			const onClose = opt.onClose || (() => { });
+			const bgMap = {
+				success: 'bg-naver text-white',
+				error: 'bg-red-500 text-white',
+				info: 'bg-gray-800 text-white',
+			};
+
+			// 호스트 없으면 새로 만들기
+			let host = d.querySelector('#nvToastHost');
+			if (!host) {
+				host = d.createElement('div');
+				host.id = 'nvToastHost';
+				host.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-2';
+				d.body.appendChild(host);
+			}
+
+			// 토스트 생성
+			const toast = d.createElement('div');
+			toast.className = `px-5 py-2 rounded-full shadow-md font-semibold text-sm opacity-0 translate-y-2 transition-all duration-300 ${bgMap[type] || bgMap.info}`;
+			toast.textContent = msg;
+
+			host.appendChild(toast);
+			setTimeout(() => {
+				toast.classList.remove('opacity-0', 'translate-y-2');
+				toast.classList.add('opacity-100', 'translate-y-0');
+			}, 30);
+
+			// 일정 시간 후 제거
+			setTimeout(() => {
+				toast.classList.add('opacity-0', 'translate-y-2');
+				setTimeout(() => {
+					toast.remove();
+					onClose();
+				}, 300);
+			}, stay);
+		};
 	}
 
-	// ====== 공통 유틸 ======
+	// ====== 2. 공통 유틸 ======
 	const meta = (name) => {
 		const m = d.querySelector(`meta[name="${name}"]`);
 		return m ? (m.content || '') : '';
 	};
-	const _ = (sel, root = d) => root.querySelector(sel); // jQuery 충돌 방지
+	const _ = (sel, root = d) => root.querySelector(sel);
 	const BODY = d.body;
 	const CTX = BODY?.getAttribute('data-ctx') || '';
 
-	// ====== 공용 redirect URL builder ======
-	const buildRedirect = (provider) =>
-		`http://localhost:8080${CTX}/user/${provider}/callback`;
+	// ====== 3. 공용 redirect URL builder ======
+	const buildRedirect = (provider) => `http://localhost:8080${CTX}/user/${provider}/callback`;
 
-	// ====== Kakao ======
-	const wireKakaoLogin = () => {
-		const btn = _('#btnKakaoLogin');
-		if (!btn) return;
-
-		const jsKey =
-			meta('kakao-js-key') || BODY?.getAttribute('data-kakao-jskey') || '';
-		const clientId =
-			meta('kakao-client-id') || BODY?.getAttribute('data-kakao-client') || '';
-
-		if (w.Kakao) {
-			try {
-				if (!Kakao.isInitialized() && jsKey) Kakao.init(jsKey);
-				console.log('[Kakao] Initialized:', Kakao.isInitialized());
-			} catch (e) {
-				console.error('[Kakao] init failed:', e);
-			}
-		} else {
-			console.warn('[Kakao] SDK not loaded');
-		}
-
-		btn.addEventListener('click', () => {
-			if (!clientId) {
-				nvToast('카카오 설정 오류: clientId가 없습니다.', { type: 'error' });
-				return;
-			}
-			const redirect = buildRedirect('kakao');
-			const url =
-				`https://kauth.kakao.com/oauth/authorize?client_id=${encodeURIComponent(clientId)}` +
-				`&redirect_uri=${encodeURIComponent(redirect)}&response_type=code&prompt=login`;
-			w.top.location.href = url;
-		});
-	};
-
-	// ====== Google ======
-	const wireGoogleLogin = () => {
-		const btn = _('#btnGoogleLogin');
-		if (!btn) return;
-
-		const cid = meta('google-client-id') || BODY?.getAttribute('data-google-client') || '';
-		if (!cid) return;
-
-		btn.addEventListener('click', (e) => {
-			e.preventDefault();
-			const redirect = buildRedirect('google');
-			const scopes = 'openid email profile';
-			const authUrl =
-				`https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(cid)}` +
-				`&redirect_uri=${encodeURIComponent(redirect)}&response_type=code` +
-				`&scope=${encodeURIComponent(scopes)}&include_granted_scopes=true&prompt=select_account`;
-			(w.top !== w.self ? w.top : w).location.href = authUrl;
-		});
-	};
-
-	// ====== 기본 로그인 ======
+	// ====== 4. 기본 로그인 ======
 	const wireBasicLogin = () => {
 		const btnLogin = _('#btnLoginSubmit');
 		const btnJoin = _('#btnGoJoin');
-		const $id = _('#userId');
-		const $pw = _('#password');
+		const $id = _('[name="userId"]');
+		const $pw = _('[name="password"]');
 
 		if (!btnLogin) return;
 
@@ -103,17 +85,13 @@
 					if (res.success) {
 						nvToast('로그인 성공!', {
 							type: 'success',
-							stay: 900,
+							stay: 1000,
 							onClose: () => {
-								w.App?.go
-									? w.App.go('/index.jsp')
-									: (location.href = `${CTX}/index.jsp`);
+								w.location.href = `${CTX}/index.jsp`;
 							},
 						});
 					} else {
-						nvToast(res.message || '아이디 또는 비밀번호가 올바르지 않습니다.', {
-							type: 'error',
-						});
+						nvToast(res.message || '아이디 또는 비밀번호가 올바르지 않습니다.', { type: 'error' });
 					}
 				},
 				error: (xhr, _status, err) => {
@@ -125,9 +103,7 @@
 
 		if (btnJoin) {
 			btnJoin.addEventListener('click', () => {
-				w.App?.go
-					? w.App.go('/user/addUserView.jsp')
-					: (location.href = `${CTX}/user/addUserView.jsp`);
+				location.href = `${CTX}/user/addUserView.jsp`;
 			});
 		}
 
@@ -136,7 +112,52 @@
 		});
 	};
 
-	// ====== 초기화 ======
+	// ====== 5. Kakao 로그인 ======
+	const wireKakaoLogin = () => {
+		const btn = _('#btnKakao');
+		if (!btn) return;
+
+		const clientId =
+			meta('kakao-client-id') || BODY?.getAttribute('data-kakao-client') || '';
+		if (!clientId) {
+			console.warn('[Kakao] clientId 미설정');
+			return;
+		}
+
+		btn.addEventListener('click', () => {
+			const redirect = buildRedirect('kakao');
+			const url =
+				`https://kauth.kakao.com/oauth/authorize?client_id=${encodeURIComponent(clientId)}` +
+				`&redirect_uri=${encodeURIComponent(redirect)}&response_type=code&prompt=login`;
+			w.location.href = url;
+		});
+	};
+
+	// ====== 6. Google 로그인 ======
+	const wireGoogleLogin = () => {
+		const btn = _('#btnGoogle');
+		if (!btn) return;
+
+		const cid =
+			meta('google-client-id') || BODY?.getAttribute('data-google-client') || '';
+		if (!cid) {
+			console.warn('[Google] clientId 미설정');
+			return;
+		}
+
+		btn.addEventListener('click', (e) => {
+			e.preventDefault();
+			const redirect = buildRedirect('google');
+			const scopes = 'openid email profile';
+			const authUrl =
+				`https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(cid)}` +
+				`&redirect_uri=${encodeURIComponent(redirect)}&response_type=code` +
+				`&scope=${encodeURIComponent(scopes)}&include_granted_scopes=true&prompt=select_account`;
+			w.location.href = authUrl;
+		});
+	};
+
+	// ====== 7. 초기화 ======
 	const init = () => {
 		wireBasicLogin();
 		wireKakaoLogin();
