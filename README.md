@@ -1,2 +1,1 @@
-2025-09-26 깃 연동시작했습니당!
-2025-10-01 10.Model Project ==> Ajax 시작 ++ 무한스크롤 처리
+Final Project Ready...
