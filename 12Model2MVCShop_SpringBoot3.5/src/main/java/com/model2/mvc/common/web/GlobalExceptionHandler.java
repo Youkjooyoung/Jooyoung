@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(NullPointerException.class)
 	public ModelAndView handleNpe(NullPointerException ex) {
-		ModelAndView mv = new ModelAndView("/common/nullError.jsp");
+		ModelAndView mv = new ModelAndView("common/nullError");
 		mv.addObject("exception", ex);
 		mv.addObject("message", ex.getMessage());
 		return mv;
@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(NumberFormatException.class)
 	public ModelAndView handleNfe(NumberFormatException ex) {
-		ModelAndView mv = new ModelAndView("/common/numberFormatError.jsp");
+		ModelAndView mv = new ModelAndView("common/numberFormatError");
 		mv.addObject("exception", ex);
 		mv.addObject("message", ex.getMessage());
 		return mv;
@@ -28,10 +28,9 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ModelAndView handleDefault(Exception ex) {
-		ModelAndView mv = new ModelAndView("common/error.jsp");
+		ModelAndView mv = new ModelAndView("common/error");
 		mv.addObject("exception", ex);
 		mv.addObject("message", ex.getMessage());
 		return mv;
 	}
-
 }

@@ -1,0 +1,10 @@
+@charset "UTF-8";
+header { position: sticky; top: 0; z-index: 40; background: #fff; }
+#menuDropdown { z-index: 60; }
+.swiper, .swiper * { z-index: 0; }
+.nv-footer { margin-top: 32px; }
+html, body { height: 100%; }
+body { min-height: 100vh; display: flex; flex-direction: column; }
+#mainRoot { flex: 1 0 auto; }
+[data-page="home"] .swiper::before,
+[data-page="home"] .swiper::after { display: none; content: none; }

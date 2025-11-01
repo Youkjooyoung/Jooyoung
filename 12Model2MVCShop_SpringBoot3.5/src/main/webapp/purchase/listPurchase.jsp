@@ -6,73 +6,79 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8"/>
-  <title>구매 내역</title>
-  <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-  <script src="${ctx}/javascript/app-core.js"></script>
-  <script src="${ctx}/javascript/listPurchase.js"></script>
-  <script src="${ctx}/javascript/cancel-order.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>구매 내역</title>
+<link rel="icon" href="${ctx}/images/favicon.ico"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{naver:'#03c75a','naver-dark':'#00a74a','naver-gray':'#f7f9fa'}}}}
+</script>
+<link rel="stylesheet" href="${ctx}/css/purchase-list.css"/>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+<script defer src="${ctx}/javascript/listPurchase.js"></script>
 </head>
 <body data-ctx="${ctx}">
-<div class="container" data-page="purchase-list">
-  <div class="page-title"><h2>구매 내역</h2></div>
+<main class="max-w-6xl mx-auto p-4" data-page="purchase-list">
+  <h1 class="text-2xl font-bold mb-4">구매 내역</h1>
 
-  <table class="list-table">
-    <thead>
-  <tr>
-    <th>No</th>
-    <th>상품명</th>
-    <th>수량</th>
-    <th>총 금액</th>
-    <th>주문일자</th>
-    <th>상태</th>
-  </tr>
-</thead>
-<tbody>
-  <c:forEach var="p" items="${list}" varStatus="st">
-    <tr>
-      <td>${st.index + 1}</td>
-      <td>
-        <span class="purchase-link" data-tranno="${p.tranNo}">
-          ${p.purchaseProd.prodName}
-        </span>
-      </td>
-
-      <!-- 수량 -->
-      <td><fmt:formatNumber value="${p.qty}" type="number"/> 개</td>
-
-      <!-- 총 결제금액: paymentAmount가 0이면(구버전 주문 대비) 단가*수량으로 폴백 -->
-      <td>
-        <c:choose>
-          <c:when test="${p.paymentAmount ne 0}">
-            <fmt:formatNumber value="${p.paymentAmount}" type="number"/> 원
-          </c:when>
-          <c:otherwise>
-            <fmt:formatNumber value="${p.purchaseProd.price * (p.qty == 0 ? 1 : p.qty)}" type="number"/> 원
-          </c:otherwise>
-        </c:choose>
-      </td>
-
-      <td><fmt:formatDate value="${p.orderDate}" pattern="yyyy-MM-dd"/></td>
-      <td>
-        <c:choose>
-          <c:when test="${p.tranCode == '001'}">주문완료</c:when>
-          <c:when test="${p.tranCode == '002'}">물품수령대기
-            <button type="button" class="btn-green btn-confirm"
-                    data-tranno="${p.tranNo}" data-prodno="${p.purchaseProd.prodNo}">
-              수령확인
-            </button>
-          </c:when>
-          <c:when test="${p.tranCode == '003'}">배송완료</c:when>
-          <c:when test="${p.tranCode == '004'}"><span class="text-red">주문취소요청</span></c:when>
-          <c:when test="${p.tranCode == '005'}"><span class="text-red">주문취소완료</span></c:when>
-          <c:otherwise>-</c:otherwise>
-        </c:choose>
-      </td>
-    </tr>
-  </c:forEach>
-</tbody>
-  </table>
-</div>
+  <div class="overflow-x-auto bg-white border rounded-2xl shadow">
+    <table class="min-w-full text-sm">
+      <thead class="bg-naver-gray">
+        <tr class="text-left">
+          <th class="p-3">주문번호</th>
+          <th class="p-3">상품명</th>
+          <th class="p-3">수량</th>
+          <th class="p-3">총 금액</th>
+          <th class="p-3">주문일자</th>
+          <th class="p-3">상태</th>
+          <th class="p-3">작업</th>
+        </tr>
+      </thead>
+      <tbody id="purchBody">
+        <c:forEach var="p" items="${list}">
+          <tr class="border-t" data-tranno="${p.tranNo}" data-prodno="${p.purchaseProd.prodNo}">
+            <td class="p-3">${p.tranNo}</td>
+            <td class="p-3"><span class="purchase-link">${p.purchaseProd.prodName}</span></td>
+            <td class="p-3"><fmt:formatNumber value="${p.qty}" type="number"/> 개</td>
+            <td class="p-3">
+              <c:choose>
+                <c:when test="${p.paymentAmount ne 0}">
+                  <fmt:formatNumber value="${p.paymentAmount}" type="number"/> 원
+                </c:when>
+                <c:otherwise>
+                  <fmt:formatNumber value="${p.purchaseProd.price * (p.qty == 0 ? 1 : p.qty)}" type="number"/> 원
+                </c:otherwise>
+              </c:choose>
+            </td>
+            <td class="p-3"><fmt:formatDate value="${p.orderDate}" pattern="yyyy-MM-dd"/></td>
+            <td class="p-3">
+              <c:choose>
+                <c:when test="${p.tranCode == '001'}">주문완료</c:when>
+                <c:when test="${p.tranCode == '002'}">물품수령대기</c:when>
+                <c:when test="${p.tranCode == '003'}">배송완료</c:when>
+                <c:when test="${p.tranCode == '004'}">취소요청</c:when>
+                <c:when test="${p.tranCode == '005'}">취소완료</c:when>
+                <c:otherwise>-</c:otherwise>
+              </c:choose>
+            </td>
+            <td class="p-3 space-x-2">
+              <button type="button" class="px-4 py-2 rounded-xl bg-gray-900 text-white btn-detail">상세</button>
+              <c:if test="${p.tranCode == '002'}">
+                <button type="button" class="px-4 py-2 rounded-xl bg-naver text-white btn-confirm">수령확인</button>
+              </c:if>
+              <c:if test="${p.tranCode == '001'}">
+                <button type="button" class="px-4 py-2 rounded-xl bg-gray-200 btn-cancel">취소</button>
+              </c:if>
+            </td>
+          </tr>
+        </c:forEach>
+        <c:if test="${empty list}">
+          <tr><td class="p-6 text-center text-gray-500" colspan="7">구매 내역이 없습니다.</td></tr>
+        </c:if>
+      </tbody>
+    </table>
+  </div>
+</main>
 </body>
 </html>

@@ -8,7 +8,6 @@
 <title>Model2 MVC Shop</title>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" defer></script>
 <script src="${ctx}/javascript/layout.js" defer></script>
-<script src="${ctx}/javascript/left.js" defer></script>
 <script>window.App=window.App||{};App.ctx=function(){return '${ctx}';};</script>
 <style>
 .nv-aside,#leftArea,.left-menu{position:relative;z-index:1000;pointer-events:auto}
@@ -24,9 +23,6 @@
     <jsp:include page="/layout/top.jsp" />
   </header>
   <div class="nv-body flex flex-1 min-h-[calc(100vh-120px)]">
-    <aside class="nv-aside w-[260px] bg-naver-gray-50 border-r border-naver-gray-200">
-      <jsp:include page="/layout/left.jsp" />
-    </aside>
     <main id="appMain" role="main" aria-live="polite" class="flex-1 bg-white p-6">
       <jsp:include page="/layout/home.jsp" />
     </main>

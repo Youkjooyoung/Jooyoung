@@ -3,12 +3,11 @@
   if (!$) return;
 
   const ctx = () => $('body').data('ctx') || '';
-
   const $root = () => $('[data-page="user-update"]').first();
   const $form = () => $root().find('#updateUserForm');
 
-  const ensurePostcode = () => {
-    return new Promise((resolve, reject) => {
+  const ensurePostcode = () =>
+    new Promise((resolve, reject) => {
       if (w.daum && w.daum.Postcode) {
         resolve();
         return;
@@ -19,7 +18,6 @@
       s.onerror = () => reject();
       d.head.appendChild(s);
     });
-  };
 
   const openPostcode = async () => {
     try {
@@ -51,17 +49,19 @@
     return {
       userId: f.find('[name=userId]').val(),
       userName: f.find('[name=userName]').val(),
-      addr: addr,
       email: f.find('[name=email]').val(),
-      phone: phone
+      phone,
+      addr,
+      zipcode: (f.find('[name=zipCode]').val() || '').trim(),
+      addrDetail: detailAddr
     };
   };
 
   const validate = (m) => {
-    if (!m.userName) return '이름 누락';
+    if (!m.addr) return '주소 누락';
+    if (!m.zipcode) return '우편번호 누락';
     if (m.email && !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,10}$/.test(m.email)) return '이메일 형식 오류';
     if (m.phone && !/^\d{2,3}-\d{3,4}-\d{4}$/.test(m.phone)) return '전화번호 형식 오류';
-    if (!m.addr) return '주소 누락';
     return '';
   };
 
@@ -81,9 +81,7 @@
   const save = () => {
     const m = buildDto();
     const v = validate(m);
-    if (v) {
-      return;
-    }
+    if (v) return;
     $.ajax({
       url: `${ctx()}/user/json/updateUser`,
       method: 'POST',
@@ -116,5 +114,4 @@
     e.preventDefault();
     cancel();
   });
-
 })(window, document, window.jQuery);

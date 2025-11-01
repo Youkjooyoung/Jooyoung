@@ -9,7 +9,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>내 정보 | Model2 MVC Shop</title>
 <link rel="icon" href="${ctx}/images/favicon.ico" />
-
 <meta http-equiv="Content-Security-Policy"
   content="
   default-src 'self' data: blob:;
@@ -89,6 +88,7 @@
           <div class="flex justify-between border-b border-[#e5e8eb] py-2"><span class="font-semibold text-gray-600">아이디</span><span data-field="userId" class="font-bold text-gray-900"></span></div>
           <div class="flex justify-between border-b border-[#e5e8eb] py-2"><span class="font-semibold text-gray-600">이름</span><span data-field="userName" class="text-gray-900"></span></div>
           <div class="flex justify-between border-b border-[#e5e8eb] py-2"><span class="font-semibold text-gray-600">이메일</span><span data-field="email" class="text-gray-900 break-all text-right"></span></div>
+          <div class="flex justify-between border-b border-[#e5e8eb] py-2"><span class="font-semibold text-gray-600">우편번호</span><span data-field="zipcode" class="text-gray-900"></span></div>
           <div class="flex justify-between border-b border-[#e5e8eb] py-2"><span class="font-semibold text-gray-600">주소</span><span data-field="addr" class="text-gray-900 text-right break-words max-w-[260px]"></span></div>
           <div class="flex justify-between border-b border-[#e5e8eb] py-2"><span class="font-semibold text-gray-600">전화번호</span><span data-field="phone" class="text-gray-900"></span></div>
           <div class="flex justify-between border-b border-[#e5e8eb] py-2"><span class="font-semibold text-gray-600">가입일</span><span data-field="regDate" class="text-gray-900"></span></div>

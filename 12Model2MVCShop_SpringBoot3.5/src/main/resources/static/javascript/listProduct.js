@@ -1,178 +1,117 @@
-(($, w, d) => {
+(function(w, d, $){
   'use strict';
-  if (!$) return;
+  if(!$) return;
 
-  const ctx = () => $('body').data('ctx') || '';
-  const NS = '.lp';
-  let state = { view: 'list', page: 1, pageSize: 10, minPrice: 0, maxPrice: 2000000, cond: '0', kw: '', sort: '', loading: false, done: false };
+  const CTX = $('body').data('ctx') || '';
+  const $MAIN = $('#mainArea');
 
-  const apiUrl = (p) => ctx() + '/api/products?' + $.param({ ...(p || {}), _: Date.now() });
-  const acUrl = (type, kw) => ctx() + '/api/products/suggest?' + $.param({ type, keyword: $.trim(kw || ''), _: Date.now() });
-
-  const fmt = (n) => Number(n || 0).toLocaleString('ko-KR');
-  const isAdmin = () => String($('body').data('role') || '').toUpperCase() === 'ADMIN';
-  const NO_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="160"><rect width="100%" height="100%" fill="#f8f9fa"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="#999">no image</text></svg>`);
-
-  const loadProducts = () => {
-    if (state.loading || state.done) return;
-    state.loading = true;
-    $('#infiniteLoader').show(); $('#endOfList').hide();
-
-    const params = {
-      currentPage: state.page,
-      pageSize: state.pageSize,
-      searchCondition: state.cond,
-      searchKeyword: state.kw,
-      sort: state.sort,
-      minPrice: state.minPrice,
-      maxPrice: state.maxPrice
-    };
-
-    $.getJSON(apiUrl(params))
-      .done((res) => {
-        const list = res?.list || [];
-        if (!list.length && state.page === 1) {
-          $('#listBody, #gridBody').html('<tr><td colspan="7" class="text-center text-gray-400 p-4">검색 결과가 없습니다.</td></tr>');
-          $('#infiniteLoader').hide();
-          return;
-        }
-        render(list);
-        state.page++;
-        state.done = !(res.hasNext ?? list.length === state.pageSize);
-      })
-      .fail(() => {
-        if (state.page === 1) $('#listBody').html('<tr><td colspan="7" class="text-center text-red-400 p-4">불러오기 실패</td></tr>');
-      })
-      .always(() => {
-        state.loading = false;
-        $('#infiniteLoader').hide();
-        if (state.done) $('#endOfList').show();
-      });
+  const loadOnce = (url, key, isCss) => {
+    const k = key || url;
+    const sel = isCss ? `link[data-key="${k}"]` : `script[data-key="${k}"]`;
+    if (d.querySelector(sel)) return $.Deferred().resolve().promise();
+    const df = $.Deferred();
+    const el = d.createElement(isCss ? 'link' : 'script');
+    if (isCss){ el.rel='stylesheet'; el.href=url; } else { el.src=url; el.defer=true; }
+    el.setAttribute('data-key', k);
+    el.onload=()=>df.resolve();
+    el.onerror=()=>df.reject();
+    d.head.appendChild(el);
+    return df.promise();
   };
 
-  const render = (list) => {
-    const $list = $('#listBody');
-    const $grid = $('#gridBody');
-    const html = list.map((p) => {
-      const img = p.fileName ? `${ctx()}/upload/${p.fileName}` : NO_IMG;
-      const soldOut = Number(p.stockQty || 0) <= 0;
-      const btn = soldOut
-        ? `<button class="bg-gray-300 text-gray-600 font-semibold px-3 py-1 rounded" disabled>품절</button>`
-        : !isAdmin()
-          ? `<button class="bg-naver hover:bg-naver-dark text-white font-semibold px-3 py-1 rounded btn-buy" data-prodno="${p.prodNo}">구매</button>`
-          : '';
-      if (state.view === 'list') {
-        return `
-          <tr class="hover:bg-gray-50" data-prodno="${p.prodNo}">
-            <td class="p-3 text-center">${p.prodNo}</td>
-            <td class="p-3 font-bold text-naver cursor-pointer prod-link">${p.prodName}</td>
-            <td class="p-3">${fmt(p.price)} 원</td>
-            <td class="p-3">${p.manuDate || ''}</td>
-            <td class="p-3">${p.viewCount || 0}</td>
-            <td class="p-3">${soldOut ? '<span class="text-red-500">품절</span>' : '판매중'}</td>
-            <td class="p-3">${btn}</td>
-          </tr>`;
-      } else {
-        return `
-          <div class="bg-white shadow-card rounded-xl overflow-hidden hover:shadow-lg transition cursor-pointer prod-link" data-prodno="${p.prodNo}">
-            <img src="${img}" alt="${p.prodName}" class="w-full h-48 object-cover">
-            <div class="p-4">
-              <div class="font-bold text-gray-900 truncate">${p.prodName}</div>
-              <div class="text-naver font-semibold mt-1">${fmt(p.price)} 원</div>
-              <div class="text-xs text-gray-500 mt-1">${p.manuDate || ''} · 조회 ${p.viewCount || 0}</div>
-            </div>
-            <div class="px-4 pb-4">${btn}</div>
-          </div>`;
+  const PAGE_JS = {
+    'home': [CTX+'/javascript/home.js'],
+    'user-detail': [CTX+'/javascript/getUser.js'],
+    'user-update': [CTX+'/javascript/updateUser.js'],
+    'product-list': [CTX+'/javascript/listProduct.js'],
+    'product-manage': [CTX+'/javascript/listManageProduct.js'],
+    'product-detail': [CTX+'/javascript/getProduct.js'],
+    'product-update': [
+      'https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js',
+      'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js',
+      'https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js',
+      CTX+'/javascript/updateProduct.js'
+    ],
+    'purchase-add': [CTX+'/javascript/app-core.js', CTX+'/javascript/addPurchase.js'],
+    'purchase-list': [CTX+'/javascript/app-core.js', CTX+'/javascript/listPurchase.js', CTX+'/javascript/cancel-order.js'],
+    'purchase-detail': [CTX+'/javascript/app-core.js', CTX+'/javascript/getPurchase.js'],
+    'cart': [CTX+'/javascript/app-core.js', CTX+'/javascript/cart.js']
+  };
+
+  const toPartial = (href, frag) => {
+    const u = String(href || '');
+    const sel = String(frag || '[data-page]:first');
+    const j = u.indexOf('?') >= 0 ? '&' : '?';
+    return `${u}${j}embed=1 ${sel}`;
+  };
+
+  function afterLoad(pageKey){
+    $MAIN.scrollTop(0);
+    $(d).trigger('view:afterload', { page: pageKey, $main: $MAIN });
+  }
+
+  function loadMain(url){
+    if (!$MAIN.length || !url) return;
+    $MAIN.attr('data-loading','1').addClass('loading').html(
+      '<div class="w-full flex justify-center items-center py-16 text-gray-500 text-sm select-none"><div class="animate-pulse flex flex-col items-center gap-3"><div class="w-12 h-12 rounded-xl bg-[#03c75a]/10 shadow-[0_16px_40px_rgba(3,199,90,0.25)]"></div><div class="text-gray-400 font-medium">로딩중...</div></div></div>'
+    );
+
+    const parts = url.split(' ');
+    const href = parts[0];
+    const frag = parts.slice(1).join(' ') || '[data-page]:first';
+
+    $.ajax({
+      url: href,
+      method: 'GET',
+      dataType: 'html',
+      headers: {'X-Requested-With':'XMLHttpRequest'}
+    }).done((html) => {
+      const $tmp = $('<div>').append($.parseHTML(html, document, true));
+      const $sel = $tmp.find(frag);
+      if (!$sel.length){
+        $MAIN.removeAttr('data-loading').removeClass('loading').html('<div class="p-10 text-center text-red-500 font-semibold text-sm">컨텐츠를 찾지 못했습니다.</div>');
+        return;
       }
-    }).join('');
-
-    if (state.view === 'list') $list.append(html);
-    else $grid.append(html);
-  };
-
-  const reset = () => {
-    state.page = 1; state.done = false;
-    $('#listBody, #gridBody').empty(); loadProducts();
-  };
-
-  const syncSlider = () => {
-    const min = +$('#rMin').val(), max = +$('#rMax').val();
-    if (min > max) $('#rMin').val(max - 5000);
-    $('#priceMinView').text(fmt($('#rMin').val()));
-    $('#priceMaxView').text(fmt($('#rMax').val()));
-    const pctMin = (min / 2000000) * 100, pctMax = (max / 2000000) * 100;
-    $('#priceBar').css({ left: pctMin + '%', width: (pctMax - pctMin) + '%' });
-  };
-
-  const toggleView = (v) => {
-    state.view = v;
-    if (v === 'list') { $('#gridBody').addClass('hidden'); $('#listTableWrap').show(); }
-    else { $('#listTableWrap').hide(); $('#gridBody').removeClass('hidden'); }
-    $('.seg-btn').removeClass('bg-naver text-white').addClass('bg-gray-200 text-gray-700');
-    if (v === 'list') $('#btnListView').addClass('bg-naver text-white');
-    else $('#btnThumbView').addClass('bg-naver text-white');
-    reset();
-  };
-
-  const bindAutoComplete = () => {
-    const $kw = $('#searchKeyword');
-    const $ac = $('#acList');
-    let xhr = null;
-    const renderAC = (items) => {
-      if (!items.length) return $ac.hide();
-      $ac.html(items.map((v) => `<div class="px-3 py-2 hover:bg-naver hover:text-white cursor-pointer">${v}</div>`).join('')).show();
-    };
-    $kw.on('input focus', () => {
-      const v = $kw.val().trim(); if (!v) return $ac.hide();
-      if (xhr && xhr.readyState !== 4) xhr.abort();
-      const tSel = $('#searchCondition').val() || 'prodName';
-      xhr = $.getJSON(acUrl(tSel, v)).done((res) => renderAC(res.items || []));
+      $sel.find('script').remove();
+      $MAIN.removeAttr('data-loading').removeClass('loading').empty().append($sel);
+      const $page = $MAIN.find('[data-page]').first();
+      const key = ($page.attr('data-page')||'').trim();
+      let chain = $.Deferred().resolve().promise();
+      (PAGE_JS[key]||[]).forEach(src => chain = chain.then(()=> loadOnce(src, src, false)));
+      chain.always(()=> afterLoad(key));
+    }).fail((xhr) => {
+      $MAIN.removeAttr('data-loading').removeClass('loading');
+      if (xhr && (xhr.status===401 || xhr.status===403)){ w.location.href = CTX + '/user/loginView.jsp'; return; }
+      $MAIN.html('<div class="p-10 text-center text-red-500 font-semibold text-sm">컨텐츠를 불러오지 못했습니다.</div>');
     });
-    $ac.on('mousedown', 'div', function() {
-      $kw.val($(this).text()); $ac.hide(); reset();
-    });
-    $(d).on('click', (e) => { if (!$(e.target).closest('#acList, #searchKeyword').length) $ac.hide(); });
-  };
+  }
 
-  const bindEvents = () => {
-    $('#btnSearch').on('click', () => {
-      state.kw = $('#searchKeyword').val().trim();
-      state.cond = $('#searchCondition').val();
-      state.minPrice = +$('#rMin').val();
-      state.maxPrice = +$('#rMax').val();
-      reset();
-    });
+  function pushAndLoad(pretty, partial){
+    if (history.pushState) history.pushState({ pretty, partial }, '', pretty);
+    loadMain(partial);
+  }
 
-    $('#btnAll').on('click', () => {
-      $('#searchKeyword').val('');
-      $('#rMin').val(0); $('#rMax').val(2000000);
-      syncSlider(); reset();
-    });
+  function navigate(href, opts={}){
+    const frag = opts.frag || '[data-page]:first';
+    const partial = toPartial(href, frag);
+    pushAndLoad(href, partial);
+  }
 
-    $('#rMin,#rMax').on('input', syncSlider);
-
-    $('#btnListView').on('click', () => toggleView('list'));
-    $('#btnThumbView').on('click', () => toggleView('thumb'));
-
-    $(d).on('click', '.prod-link', function() {
-      const no = $(this).closest('[data-prodno]').data('prodno');
-      location.href = `${ctx()}/product/getProduct?prodNo=${no}`;
-    });
-
-    $(d).on('click', '.btn-buy', function() {
-      const no = $(this).data('prodno');
-      location.href = `${ctx()}/purchase/addPurchase?prodNo=${no}`;
-    });
-
-    $(w).on('scroll', () => {
-      if ($(window).scrollTop() + $(window).height() + 200 >= $(document).height()) loadProducts();
-    });
-  };
-
-  $(() => {
-    syncSlider();
-    bindEvents();
-    bindAutoComplete();
-    loadProducts();
+  w.addEventListener('popstate', function(e){
+    const st = e.state;
+    if (st && st.partial) { loadMain(st.partial); return; }
+    location.reload();
   });
-})(jQuery, window, document);
+
+  $(function(){
+    const entry = $('body').data('entry');
+    if (history && history.replaceState){
+      history.replaceState({ pretty: location.pathname+location.search, partial: entry }, '', location.pathname+location.search);
+      if (entry) loadMain(entry);
+    }
+  });
+
+  w.__layout = w.__layout || {};
+  w.__layout.loadMain = loadMain;
+  w.__layout.navigate = navigate;
+})(window, document, window.jQuery);

@@ -108,7 +108,7 @@
 
 			if (isPostcodeLoaded || (w.daum && w.daum.Postcode)) return openPostcode();
 			const s = d.createElement('script');
-			s.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'; // ❌ 파라미터 금지
+			s.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
 			s.async = true;
 			s.onload = () => { isPostcodeLoaded = true; openPostcode(); };
 			s.onerror = () => alert('우편번호 API 로드 실패: 네트워크/CSP 설정 확인');

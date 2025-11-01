@@ -62,8 +62,27 @@ public class ProductRestController {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
 		return productService.getProductList(search, (sort == null ? "" : sort));
+	}
+
+	@GetMapping("/newest")
+	public Map<String, Object> newest(@RequestParam(name = "pageSize", defaultValue = "8") int pageSize)
+			throws Exception {
+		Search search = new Search();
+		search.setCurrentPage(1);
+		search.setPageSize(pageSize);
+		Map<String, Object> map = productService.getProductList(search, "NEWEST");
+		Map<String, Object> res = new HashMap<>(map);
+		res.put("items", map.getOrDefault("list", List.of()));
+		return res;
+	}
+
+	@GetMapping({ "/review/top", "/reviewTop" })
+	public Map<String, Object> reviewTop(@RequestParam(name = "pageSize", defaultValue = "8") int pageSize) {
+		Map<String, Object> res = new HashMap<>();
+		res.put("items", List.of());
+		res.put("totalCount", 0);
+		return res;
 	}
 
 	@GetMapping("/{prodNo}")
@@ -80,7 +99,8 @@ public class ProductRestController {
 		Product p = new Product();
 		p.setProdName(prodName);
 		p.setProdDetail(prodDetail);
-		p.setManuDate(manuDate.replaceAll("\\D", "").substring(0, 8));
+		String md = manuDate.replaceAll("\\D", "");
+		p.setManuDate(md.length() >= 8 ? md.substring(0, 8) : md);
 		p.setPrice(price);
 		p.setStockQty(stockQty);
 
@@ -137,7 +157,6 @@ public class ProductRestController {
 		if (!CollectionUtils.isEmpty(saved)) {
 			for (ProductImage img : saved)
 				productService.addProductImage(img);
-
 			Product p = productService.getProduct(prodNo);
 			if (p != null && (p.getFileName() == null || p.getFileName().isEmpty())) {
 				p.setFileName(saved.get(0).getFileName());

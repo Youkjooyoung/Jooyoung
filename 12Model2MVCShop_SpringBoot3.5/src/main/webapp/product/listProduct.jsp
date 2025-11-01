@@ -1,115 +1,57 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
-
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>상품 목록 | Model2 MVC Shop</title>
-<link rel="icon" href="${ctx}/images/favicon.ico" />
-
-<!-- ✅ Tailwind (네이버 스타일) -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          naver: '#03c75a',
-          'naver-dark': '#00a74a',
-          'naver-gray': '#f7f9fa'
-        },
-        boxShadow: {
-          nv: '0 2px 4px rgba(0,0,0,0.08)',
-          card: '0 2px 8px rgba(0,0,0,0.06)'
-        },
-        borderRadius: {
-          nv: '0.75rem'
-        }
-      }
-    }
-  }
-</script>
-
-<!-- ✅ CSP (보안정책) -->
-<meta http-equiv="Content-Security-Policy" content="
- default-src 'self' data: blob:;
- script-src 'self' 'unsafe-inline' 'unsafe-eval'
-   http://localhost:8080
-   https://code.jquery.com
-   https://cdn.tailwindcss.com;
- style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com;
- img-src 'self' data: blob:;
- font-src 'self' https://fonts.gstatic.com;">
-
-<!-- ✅ jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-</head>
-
-<body class="bg-naver-gray" data-ctx="${ctx}" data-role="${sessionScope.user.role}">
-  <main class="max-w-7xl mx-auto bg-white shadow-nv rounded-nv p-8 mt-8" data-page="product-list">
-
-    <!-- ✅ 헤더 -->
-    <div class="flex items-center justify-between mb-8 border-b pb-3">
-      <h1 class="text-2xl font-extrabold text-naver">상품 검색</h1>
-      <div class="flex gap-2 items-center flex-wrap">
-        <select id="searchCondition"
-          class="border border-gray-300 rounded-lg px-3 h-[44px] text-gray-700 focus:border-naver focus:ring focus:ring-naver/20">
-          <option value="0">전체</option>
-          <option value="prodName">상품명</option>
-          <option value="prodDetail">상세설명</option>
-        </select>
-
-        <div class="relative w-64">
-          <input id="searchKeyword" type="text" placeholder="검색어 입력"
-            class="w-full border border-gray-300 rounded-lg h-[44px] pl-3 pr-10 text-sm focus:border-naver focus:ring focus:ring-naver/20" />
-          <div id="acList"
-            class="absolute z-50 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 w-full hidden max-h-60 overflow-auto text-sm"></div>
+<section class="max-w-[1100px] mx-auto px-4 py-8" data-page="product-list" data-ctx="${ctx}">
+  <section class="bg-white shadow-[0_4px_14px_rgba(0,0,0,.06)] rounded-[12px] p-5">
+    <div class="sticky top-[68px] z-10 -mx-5 -mt-5 px-5 pt-5 pb-3 bg-white/95 backdrop-blur border-b">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="searchCondition" class="h-[42px] px-3 rounded-[10px] border border-gray-300">
+            <option value="0">전체</option>
+            <option value="prodName">상품명</option>
+            <option value="prodDetail">상세설명</option>
+          </select>
+          <div class="relative w-64">
+            <input id="searchKeyword" type="text" placeholder="검색어 입력" class="h-[42px] w-full px-3 pr-10 rounded-[10px] border border-gray-300" />
+            <div id="acList" class="hidden absolute left-0 right-0 mt-1 max-h-60 overflow-auto bg-white border border-gray-200 rounded-[10px] shadow-[0_16px_40px_rgba(0,0,0,.12)] text-sm"></div>
+          </div>
+          <select id="sortSelect" class="h-[42px] px-3 rounded-[10px] border border-gray-300">
+            <option value="">정렬 없음</option>
+            <option value="priceAsc">가격↑</option>
+            <option value="priceDesc">가격↓</option>
+            <option value="dateDesc">최신순</option>
+            <option value="viewDesc">조회순</option>
+          </select>
+          <button id="btnSearch" class="h-[42px] px-5 rounded-[10px] font-semibold text-white bg-[#03c75a]">검색</button>
+          <button id="btnAll" class="h-[42px] px-5 rounded-[10px] font-semibold border border-gray-300">전체보기</button>
         </div>
-
-        <button id="btnSearch"
-          class="bg-naver hover:bg-naver-dark text-white font-semibold px-6 h-[44px] rounded-lg transition">검색</button>
-        <button id="btnAll"
-          class="border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold px-6 h-[44px] rounded-lg transition">전체보기</button>
+        <div class="flex items-center gap-2">
+          <button id="btnListView" class="seg-btn h-[36px] px-4 rounded-full bg-[#03c75a] text-white font-bold">리스트 보기</button>
+          <button id="btnThumbView" class="seg-btn h-[36px] px-4 rounded-full bg-gray-200 text-gray-700 font-bold">썸네일 보기</button>
+        </div>
       </div>
-    </div>
 
-    <!-- ✅ 가격 슬라이더 -->
-    <div class="flex items-center gap-4 mb-8">
-      <div class="flex-1">
+      <div class="mt-3">
         <div class="h-2 bg-gray-200 rounded-full relative">
-          <div class="absolute bg-naver h-2 rounded-full" id="priceBar"></div>
+          <div id="priceBar" class="absolute h-2 bg-[#03c75a] rounded-full" style="left:0;width:100%"></div>
         </div>
         <div class="flex justify-between text-xs text-gray-500 mt-1">
           <span id="priceMinView">0</span>
           <span id="priceMaxView">2,000,000</span>
         </div>
         <div class="relative">
-          <input id="rMin" type="range" min="0" max="2000000" step="5000" value="0"
-            class="absolute top-[-6px] w-full appearance-none bg-transparent cursor-pointer" />
-          <input id="rMax" type="range" min="0" max="2000000" step="5000" value="2000000"
-            class="absolute top-[-6px] w-full appearance-none bg-transparent cursor-pointer" />
+          <input id="rMin" type="range" min="0" max="2000000" step="5000" value="0" class="absolute top-[-6px] w-full appearance-none bg-transparent cursor-pointer" />
+          <input id="rMax" type="range" min="0" max="2000000" step="5000" value="2000000" class="absolute top-[-6px] w-full appearance-none bg-transparent cursor-pointer" />
         </div>
       </div>
     </div>
 
-    <!-- ✅ 보기 전환 -->
-    <div class="flex justify-end gap-2 mb-6">
-      <button id="btnListView"
-        class="seg-btn bg-naver text-white font-bold px-4 py-2 rounded-full transition">리스트 보기</button>
-      <button id="btnThumbView"
-        class="seg-btn bg-gray-200 text-gray-700 font-bold px-4 py-2 rounded-full transition">썸네일 보기</button>
-    </div>
-
-    <!-- ✅ 리스트 테이블 -->
-    <div id="listTableWrap">
+    <div id="listTableWrap" class="mt-5">
       <table class="w-full text-sm border-t border-gray-200">
-        <thead class="bg-naver-gray text-gray-700 font-semibold">
+        <thead class="bg-[#f0f2f4] text-gray-700 font-semibold">
           <tr>
             <th class="p-3 w-[60px]">번호</th>
-            <th class="p-3 w-[200px]">상품명</th>
+            <th class="p-3 w-[240px]">상품명</th>
             <th class="p-3 w-[140px]">가격</th>
             <th class="p-3 w-[140px]">등록일자</th>
             <th class="p-3 w-[120px]">조회수</th>
@@ -121,17 +63,11 @@
       </table>
     </div>
 
-    <!-- ✅ 썸네일 보기 -->
-    <div id="gridBody"
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hidden mt-6"></div>
+    <div id="gridBody" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"></div>
+    <div id="infiniteLoader" class="hidden text-center text-gray-400 text-sm mt-6">불러오는 중...</div>
+    <div id="endOfList" class="hidden text-center text-gray-400 text-sm mt-6">마지막 상품입니다.</div>
+    <div id="ioSentinel" class="h-8"></div>
+  </section>
+</section>
 
-    <div id="infiniteLoader"
-      class="text-center text-gray-400 text-sm mt-4 hidden">불러오는 중...</div>
-    <div id="endOfList"
-      class="text-center text-gray-400 text-sm mt-4 hidden">마지막 상품입니다.</div>
-  </main>
-
-  <!-- ✅ 외부 JS -->
-  <script src="${ctx}/javascript/listProduct.js?v=<%=System.currentTimeMillis()%>"></script>
-</body>
-</html>
+  <button id="btnTop" type="button" class="hidden fixed right-6 bottom-6 w-11 h-11 rounded-full shadow-[0_6px_16px_rgba(0,0,0,.2)] bg-[#03c75a] text-white text-lg">↑</button>

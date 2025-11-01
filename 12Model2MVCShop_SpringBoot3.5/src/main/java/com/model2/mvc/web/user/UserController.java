@@ -1,6 +1,5 @@
 package com.model2.mvc.web.user;
 
-import java.net.URLEncoder;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,14 +124,12 @@ public class UserController {
 	public String logout(HttpSession session) throws Exception {
 		String loginType = (String) session.getAttribute("loginType");
 		session.invalidate();
-
 		if ("kakao".equals(loginType)) {
 			String kakaoLogoutUrl = "https://kauth.kakao.com/oauth/logout" + "?client_id=" + kakaoClientId
-					+ "&logout_redirect_uri=" + URLEncoder.encode(kakaoLogoutRedirectUri, "UTF-8");
-
+					+ "&logout_redirect_uri=" + java.net.URLEncoder.encode(kakaoLogoutRedirectUri, "UTF-8");
 			return "redirect:" + kakaoLogoutUrl;
 		}
-		return "redirect:/index.jsp";
+		return "redirect:/";
 	}
 
 	@GetMapping("kakao/callback")
@@ -161,7 +158,7 @@ public class UserController {
 			if (needOnboard) {
 				mav.setViewName("redirect:/user/onboardView.jsp");
 			} else {
-				mav.setViewName("redirect:/index.jsp");
+				mav.setViewName("redirect:/");
 			}
 
 		} catch (Exception e) {
@@ -211,7 +208,7 @@ public class UserController {
 			session.setAttribute("loginType", "google");
 			session.setMaxInactiveInterval(60 * 60);
 
-			return !userService.isProfileComplete(dbUser) ? "redirect:/user/onboardView.jsp" : "redirect:/index.jsp";
+			return !userService.isProfileComplete(dbUser) ? "redirect:/user/onboardView.jsp" : "redirect:/";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "redirect:/common/error.jsp";

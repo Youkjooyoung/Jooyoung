@@ -1,48 +1,46 @@
-/* /javascript/listPurchase.js */
-(function (w, d, $) {
+(() => {
   'use strict';
+  const $ = window.jQuery;
   if (!$) return;
+  const ctx = () => document.body.getAttribute('data-ctx') || '';
 
-  const S = '#mainArea [data-page="purchase-list"], #appMain [data-page="purchase-list"]';
-  const ctx = () => (w.App && App.ctx ? App.ctx() : ($('body').data('ctx') || ''));
+  const postForm = (url, data) => {
+    const f = document.createElement('form');
+    f.method = 'post'; f.action = ctx()+url;
+    Object.keys(data||{}).forEach(k => {
+      const i = document.createElement('input');
+      i.type='hidden'; i.name=k; i.value=data[k]; f.appendChild(i);
+    });
+    document.body.appendChild(f); f.submit();
+  };
 
-  function nav(urlOrPartial) {
-    // fragment 주면 Ajax, 아니면 전체 이동
-    if (w.__layout && __layout.loadMain && (urlOrPartial.indexOf(' ') > -1 || /\.fragment\.jsp(\?|$)/.test(urlOrPartial))) {
-      __layout.loadMain(urlOrPartial);
-    } else if (w.App && App.go) {
-      App.go(urlOrPartial);
-    } else {
-      location.href = urlOrPartial.startsWith(ctx()) ? urlOrPartial : (ctx() + urlOrPartial);
-    }
-  }
+  const boot = () => {
+    const $root = $('[data-page="purchase-list"]');
+    if (!$root.length) return;
 
-  function init() {
-    const $view = $(S).first();
-    if (!$view.length) return;
-
-    // 행/제목 클릭 → 구매상세
-    $(d).off('.lpurch');
-    $(d).on('click.lpurch', '[data-tranno], .purchase-link', function (e) {
-      e.preventDefault();
-      const tranNo = $(this).data('tranno') || $(this).closest('[data-tranno]').data('tranno');
+    $(document).on('click', '.btn-detail, .purchase-link, tr[data-tranno] td', function(e){
+      const tr = $(this).closest('tr[data-tranno]');
+      const tranNo = tr.data('tranno');
       if (!tranNo) return;
-
-      const full = `${ctx()}/purchase/getPurchase?tranNo=${encodeURIComponent(tranNo)}`;
-      const partial = `${full} .container:first`;
-      if (w.__layout && __layout.loadMain) __layout.loadMain(partial); else location.href = full;
+      location.href = `${ctx()}/purchase/getPurchase?tranNo=${encodeURIComponent(tranNo)}`;
     });
 
-    // 페이징/정렬/검색 등은 서버 렌더를 그대로 사용한다면 별도 JS 불필요.
-    // 필요 시 data-href를 이용하도록 통합:
-    $(d).on('click.lpurch', '[data-href]', function (e) {
-      e.preventDefault();
-      const href = this.getAttribute('data-href');
-      if (href) nav(href);
+    $(document).on('click', '.btn-confirm', function(e){
+      e.stopPropagation();
+      const tr = $(this).closest('tr[data-tranno]');
+      const tranNo = tr.data('tranno');
+      if (!tranNo) return;
+      postForm('/purchase/updateTranCode', { tranNo, tranCode:'003' });
     });
-  }
 
-  $(d).on('view:afterload', (_e, payload) => { if (payload && payload.page === 'purchase-list') init(); });
-  $(() => { if ($(S).length) init(); });
+    $(document).on('click', '.btn-cancel', function(e){
+      e.stopPropagation();
+      const tr = $(this).closest('tr[data-tranno]');
+      const tranNo = tr.data('tranno');
+      if (!tranNo) return;
+      postForm('/purchase/updateTranCode', { tranNo, tranCode:'004' });
+    });
+  };
 
-})(window, document, window.jQuery);
+  $(boot);
+})();

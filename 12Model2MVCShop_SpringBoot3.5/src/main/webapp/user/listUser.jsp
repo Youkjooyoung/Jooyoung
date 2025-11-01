@@ -46,7 +46,6 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
 <script>window.App=window.App||{};App.ctx=()=>'${ctx}';</script>
-<script src="${ctx}/javascript/left.js" defer></script>
 <script src="${ctx}/javascript/listUser.js" defer></script>
 </head>
 

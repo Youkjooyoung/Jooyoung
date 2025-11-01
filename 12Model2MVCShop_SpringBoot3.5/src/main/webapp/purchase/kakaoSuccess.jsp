@@ -17,9 +17,6 @@
 
 <!-- ✅ 메인 레이아웃 -->
 <main class="nv-container flex">
-  <aside class="nv-aside">
-    <jsp:include page="/layout/left.jsp"/>
-  </aside>
 
   <!-- ✅ 본문 컨텐츠 -->
   <section class="nv-content">

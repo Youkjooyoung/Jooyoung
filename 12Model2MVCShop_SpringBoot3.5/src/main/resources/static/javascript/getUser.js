@@ -38,20 +38,20 @@
     const $wrap = $('[data-page="user-detail"]');
     if (!$wrap.length) return;
 
-    Object.keys(user).forEach((key) => {
+    Object.keys(user || {}).forEach((key) => {
       const $target = $wrap.find(`[data-field="${key}"]`);
       if ($target.length) {
         let val = user[key] || '';
         if (key === 'regDate' && val) {
           try {
             val = new Date(val).toLocaleDateString('ko-KR');
-          } catch (e) {}
+          } catch (_) {}
         }
         $target.text(val);
       }
     });
 
-    const greetName = user.userName || user.userId || '';
+    const greetName = (user && (user.userName || user.userId)) || '';
     $('[data-header-greeting]').text(greetName ? `${greetName}님 환영합니다` : '');
   };
 
@@ -64,8 +64,8 @@
         if (!user) {
           nvToast('로그인이 필요합니다.', 'error');
           setTimeout(() => {
-            w.location.href = `${ctx()}/user/loginView.jsp`;
-          }, 1000);
+            w.location.assign(`${ctx()}/user/loginView.jsp`);
+          }, 800);
           return;
         }
         fillUserInfo(user);
@@ -85,8 +85,8 @@
       $editBtn.on('click', () => {
         const userId = $('[data-field="userId"]').text().trim();
         if (!userId) return;
-        const target = `${ctx()}/user/updateUser?userId=${encodeURIComponent(userId)}`;
-        w.location.href = target;
+		const target = `${ctx()}/user/updateUser?userId=${encodeURIComponent(userId)}&embed=1`;
+		window.location.assign(target);
       });
     }
 
@@ -97,7 +97,7 @@
         const loginPage = `${ctx()}/user/loginView.jsp`;
 
         if (ref && ref.includes(w.location.origin)) {
-          w.location.href = ref;
+          w.location.assign(ref);
         } else {
           $.ajax({
             url: `${ctx()}/user/json/getUser`,
@@ -105,13 +105,13 @@
             dataType: 'json',
             success: (user) => {
               if (user) {
-                w.location.href = mainPage;
+                w.location.assign(mainPage);
               } else {
-                w.location.href = loginPage;
+                w.location.assign(loginPage);
               }
             },
             error: () => {
-              w.location.href = loginPage;
+              w.location.assign(loginPage);
             }
           });
         }
@@ -127,11 +127,11 @@
           success: () => {
             nvToast('로그아웃 되었습니다.', 'info');
             setTimeout(() => {
-              w.location.href = `${ctx()}/user/loginView.jsp`;
-            }, 800);
+              w.location.assign(`${ctx()}/user/loginView.jsp`);
+            }, 600);
           },
           error: () => {
-            w.location.href = `${ctx()}/user/loginView.jsp`;
+            w.location.assign(`${ctx()}/user/loginView.jsp`);
           }
         });
       });

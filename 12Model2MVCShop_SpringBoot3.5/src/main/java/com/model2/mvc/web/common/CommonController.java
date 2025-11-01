@@ -21,11 +21,6 @@ public class CommonController {
 		return "layout/top";
 	}
 
-	@GetMapping("/layout/left.jsp")
-	public String left() {
-		return "layout/left";
-	}
-
 	@GetMapping("/layout/home.jsp")
 	public String main() {
 		return "layout/home";

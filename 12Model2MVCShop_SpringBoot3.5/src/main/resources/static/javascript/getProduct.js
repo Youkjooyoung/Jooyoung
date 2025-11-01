@@ -1,98 +1,167 @@
-// getProduct.js
-(function ($, w, d) {
+(($, w, d) => {
   'use strict';
   if (!$) return;
 
-  // SPA(partial) / full reload 모두에서 동작
-  function boot($scope) {
-    const $root = ($scope && $scope.length) ? $scope : $('#mainArea [data-page="product-detail"], .product-detail-wrap');
+  const ROOT_SEL = '[data-page="product-manage"]';
+  const getRoot = () => $(ROOT_SEL).first();
+  const ctx = () => $('body').data('ctx') || getRoot().data('ctx') || (w.APP_CTX || '');
+  let historyLoading = false;
+
+  const closeModal = () => {
+    const $root = getRoot();
     if (!$root.length) return;
+    const $modal = $root.find('#historyModal');
+    const $iframe = $modal.find('iframe');
+    $iframe.off('load.pm').removeAttr('src');
+    $modal.addClass('hidden').hide().attr('aria-hidden', 'true');
+    $('body').removeClass('no-scroll');
+    historyLoading = false;
+  };
 
-    const CTX = $('body').data('ctx') || $root.closest('body').data('ctx') || '';
-    const prodNo = String($root.data('prodno') || '');
+  const useLoad = (url) => {
+    closeModal();
+    if (w.__layout?.loadMain) w.__layout.loadMain(url);
+    else location.href = url.replace(' .container:first', '');
+  };
 
-    // 썸네일 클릭 → 메인 이미지 교체
-    const $main = $root.find('#mainImg');
-    const $thumbs = $root.find('#thumbList');
-    if ($main.length && $thumbs.length) {
-      $thumbs.off('click.getprod').on('click.getprod', 'img', function () {
-        const src = this.getAttribute('src');
-        if (src) {
-          $main.attr('src', src);
-          $thumbs.find('img').removeClass('active');
-          this.classList.add('active');
-        }
-      });
-    }
+  const buildQuery = (extra = {}) => {
+    const $root = getRoot();
+    const condSel = String($root.find('#searchCondition').val() || '0');
+    const cond = ['0', 'prodName', 'prodDetail'].includes(condSel) ? condSel : '0';
+    const kw = String($root.find('#searchKeyword').val() || '').trim();
+    return { menu: 'manage', searchCondition: cond, searchKeyword: kw, ...extra };
+  };
 
-    // 구매하기(앵커) : __layout 이 있으면 partial 로, 없으면 기본 이동
-    $root.off('click.buy').on('click.buy', 'a.js-buy', function (e) {
-      const url = this.getAttribute('href');
-      const embed = this.getAttribute('data-embed') === '1';
-      if (embed && w.__layout && typeof __layout.loadMain === 'function') {
-        e.preventDefault();
-        __layout.loadMain(`${url}&embed=1 .container:first`);
-        if (w.history && w.history.pushState) {
-          w.history.pushState({ pretty: url, partial: `${url}&embed=1 .container:first` }, '', url);
-        }
+  const toQS = (obj) => Object.keys(obj).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(obj[k])}`).join('&');
+
+  const doSearch = () => {
+    const qs = toQS(buildQuery());
+    const url = `${ctx()}/product/listProduct?${qs} [data-page=product-list]:first`;
+    useLoad(url);
+  };
+
+  const goPage = (page) => {
+    const qs = toQS(buildQuery({ currentPage: String(page || 1) }));
+    const url = `${ctx()}/product/listProduct?${qs} [data-page=product-list]:first`;
+    useLoad(url);
+  };
+
+  w.fncGetUserList = (p) => { goPage(p); };
+
+  const interceptPagination = () => {
+    $(d).off('click.lpm-pg').on(
+      'click.lpm-pg',
+      `${ROOT_SEL} .pagination a, ${ROOT_SEL} .pager a`,
+      function(e) {
+        const href = $(this).attr('href') || '';
+        const m = href.match(/fncGetUserList\(['"]?(\d+)['"]?\)/);
+        if (m) { e.preventDefault(); goPage(m[1]); }
       }
-    });
+    );
+  };
 
-    // 장바구니: 필요시 AJAX 처리로 확장 가능. 기본은 링크 이동 유지
-    $root.off('click.cart').on('click.cart', 'a.js-cart', function (e) {
-      // 확장 포인트
-    });
+  const bindAutocomplete = () => {
+    const $root = getRoot();
+    if (!$root.length) return;
+    const $kw = $root.find('#searchKeyword');
+    const $list = $root.find('#acList');
+    const debounce = w.App?.debounce || ((fn, t = 150) => { let to; return (...a) => { clearTimeout(to); to = setTimeout(() => fn(...a), t); }; });
 
-    // (옵션) 서버가 이미 그려줬지만, API 기반으로 보강하고 싶다면 아래 주석을 참고
-    // fetchDetailAndEnhance(CTX, prodNo, $root);
-  }
+    const requestAC = debounce(() => {
+      const cond = String($root.find('#searchCondition').val() || 'prodName');
+      const kw = String($kw.val() || '').trim();
+      if (kw.length < 2) { $list.empty().hide(); return; }
+      $.getJSON(`${ctx()}/api/products/suggest`, { type: cond, keyword: kw })
+        .done((res) => {
+          const items = res?.items || [];
+          if (!items.length) { $list.empty().hide(); return; }
+          const esc = (w.App?.esc) || ((t) => String(t).replace(/[<>&"]/g, s => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[s])));
+          $list.html(items.map(t => `<div class="ac-item">${esc(t)}</div>`).join('')).show().width($kw.outerWidth());
+        })
+        .fail(() => $list.empty().hide());
+    }, 120);
 
-  // API 보강용(선택)
-  function fetchDetailAndEnhance(CTX, prodNo, $root) {
-    if (!CTX || !prodNo) return;
-    $.getJSON(`${CTX}/api/products/${encodeURIComponent(prodNo)}`)
-      .done((p) => {
-        if (!p) return;
-        // 이름/가격/재고/설명/메타 등 서버 렌더 내용을 덮어써 최신화
-        $root.find('.prod-name').text(p.prodName || '');
-        $root.find('.prod-price').text(`${Number(p.price || 0).toLocaleString('ko-KR')}원`);
-        const stock = Number(p.stockQty || 0);
-        $root.attr('data-stock', stock);
-        $root.find('.prod-status').html(
-          stock > 0 ? `<span class="badge badge-green">재고 ${stock}개</span>`
-                    : `<span class="badge badge-red">품절</span>`
-        );
-        if (p.prodDetail) $root.find('.prod-desc').html(p.prodDetail);
+    $root.off('.ac')
+      .on('input.ac focus.ac', '#searchKeyword', requestAC)
+      .on('blur.ac', '#searchKeyword', () => setTimeout(() => $list.hide(), 150))
+      .on('mousedown.ac', '#acList .ac-item', function(){ $kw.val($(this).text()); $list.empty().hide(); doSearch(); });
+  };
 
-        // 이미지 갱신
-        $.getJSON(`${CTX}/api/products/${encodeURIComponent(prodNo)}/images`)
-          .done((imgs = []) => {
-            const $thumbs = $root.find('#thumbList').empty();
-            if (!imgs.length) {
-              $thumbs.append(`<img src="${CTX}/images/uploadFiles/noimage.png" class="active" alt="이미지 없음">`);
-              return;
-            }
-            imgs.forEach((it, i) => {
-              const c = i === 0 ? 'active' : '';
-              $thumbs.append(`<img src="${CTX}/images/uploadFiles/${encodeURIComponent(it.fileName)}" class="${c}" alt="썸네일 ${i + 1}">`);
-            });
-            // 첫 장을 메인으로
-            const first = imgs[0] && imgs[0].fileName
-              ? `${CTX}/images/uploadFiles/${encodeURIComponent(imgs[0].fileName)}`
-              : `${CTX}/images/uploadFiles/noimage.png`;
-            $root.find('#mainImg').attr('src', first);
-          });
+  const looksLikeError = (doc) => {
+    try { const text = doc?.body?.textContent || ''; return /default Exception page|No static resource|\/common\/error\.jsp/i.test(text); }
+    catch { return false; }
+  };
+
+  const openHistory = (prodNo) => {
+    if (!prodNo || historyLoading) return;
+    const $root = getRoot();
+    if (!$root.length) return;
+    const $modal = $root.find('#historyModal');
+    const $iframe = $modal.find('iframe');
+
+    const base = ctx();
+    const candidates = [
+      `${base}/purchase/listPurchase?${toQS({ menu: 'manage', currentPage: 1, searchCondition: 'prodNo', searchKeyword: prodNo })}`,
+      `${base}/purchase/listPurchase?${toQS({ menu: 'manage', currentPage: 1, prodNo })}`,
+      `${base}/purchase/listPurchaseByProduct?${toQS({ currentPage: 1, prodNo })}`
+    ];
+
+    const tryLoad = (i) => {
+      if (i >= candidates.length) {
+        historyLoading = false;
+        const fb = `${base}/purchase/listPurchase?menu=manage&currentPage=1&searchCondition=prodNo&searchKeyword=${encodeURIComponent(prodNo)}`;
+        (w.App?.popup ? w.App.popup(fb) : window.open(fb, '_blank'));
+        return;
+      }
+      historyLoading = true;
+      const url = candidates[i] + (candidates[i].includes('?') ? '&' : '?') + 't=' + Date.now();
+      $iframe.off('load.pm').on('load.pm', () => {
+        const doc = $iframe[0].contentDocument || $iframe[0].contentWindow?.document || null;
+        if (looksLikeError(doc)) tryLoad(i + 1);
+        else { historyLoading = false; $modal.removeClass('hidden').show().attr('aria-hidden', 'false'); $('body').addClass('no-scroll'); }
       });
-  }
+      $iframe.attr('src', url);
+    };
+    tryLoad(0);
+  };
 
-  // ① 풀 리로드
-  $(function () { boot(); });
+  const bindOnce = () => {
+    $(d).off('.lpm');
+    $(d).on('click.lpm', `${ROOT_SEL} #btnSearch`, (e) => { e.preventDefault(); doSearch(); });
+    $(d).on('keydown.lpm', `${ROOT_SEL} #searchKeyword`, (e) => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
 
-  // ② SPA(Fragment) 교체 후
-  $(d).on('view:afterload', function (_e, payload) {
-    if (payload && payload.page === 'product-detail') {
-      boot(payload.$main || $('#mainArea'));
-    }
-  });
+    $(d).on('click.lpm', `${ROOT_SEL} .sort-btn`, (e) => {
+      e.preventDefault();
+      const { searchCondition, searchKeyword } = buildQuery();
+      const sort = String($(e.currentTarget).data('sort') || '');
+      const url = `${ctx()}/product/listProduct?${toQS({ menu: 'manage', searchCondition, searchKeyword, sort })} [data-page=product-list]:first`;
+      useLoad(url);
+    });
 
+    $(d).on('click.lpm', `${ROOT_SEL} .btn-detail`, (e) => {
+      e.preventDefault();
+      const no = $(e.currentTarget).data('prodno');
+      if (!no) return;
+      useLoad(`${ctx()}/product/getProduct?prodNo=${encodeURIComponent(no)} [data-page=product-detail]:first`);
+    });
+
+    $(d).on('click.lpm', `${ROOT_SEL} .btn-order-history`, (e) => {
+      e.preventDefault();
+      const $btn = $(e.currentTarget);
+      if ($btn.prop('disabled') || historyLoading) return;
+      $btn.prop('disabled', true); setTimeout(() => $btn.prop('disabled', false), 600);
+      const no = $btn.data('prodno'); if (!no) return;
+      openHistory(no);
+    });
+
+    $(d).on('click.lpm', `${ROOT_SEL} .dlg-close`, (e) => { e.preventDefault(); closeModal(); });
+    $(d).on('mousedown.lpm', `${ROOT_SEL} #historyModal`, (e) => { if (!$(e.target).closest('.dlg').length) closeModal(); });
+    $(d).on('keydown.lpm', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    bindAutocomplete();
+    interceptPagination();
+  };
+
+  $(d).on('view:afterload.lpm', (_e, p) => { if (p?.page === 'product-manage') bindOnce(); });
+  $(() => { if (getRoot().length) bindOnce(); });
 })(jQuery, window, document);

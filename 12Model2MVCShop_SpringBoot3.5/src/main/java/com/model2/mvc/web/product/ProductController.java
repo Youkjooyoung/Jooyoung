@@ -51,30 +51,26 @@ public class ProductController {
 		Product product = productService.getProduct(prodNo);
 		model.addAttribute("product", product);
 		model.addAttribute("productImages", productService.getProductImages(prodNo));
-
-		String xrw = req.getHeader("X-Requested-With");
-		if ("XMLHttpRequest".equalsIgnoreCase(xrw)) {
+		boolean ajax = "XMLHttpRequest".equalsIgnoreCase(req.getHeader("X-Requested-With"));
+		if (ajax) {
 			return "forward:/product/getProduct.jsp";
 		}
-		model.addAttribute("entry", "/product/getProduct?prodNo=" + prodNo + " .container:first");
-		return "/index.jsp";
+		model.addAttribute("entry", "/product/getProduct?prodNo=" + prodNo + " [data-page=product-detail]:first");
+		return "index";
 	}
 
 	@RequestMapping(value = "updateProduct", method = RequestMethod.GET)
 	public String updateProduct(@RequestParam("prodNo") int prodNo, Model model, HttpServletRequest req)
 			throws Exception {
-
 		Product product = productService.getProduct(prodNo);
 		model.addAttribute("product", product);
 		model.addAttribute("productImages", productService.getProductImages(prodNo));
-
 		boolean ajax = "XMLHttpRequest".equalsIgnoreCase(req.getHeader("X-Requested-With"));
-
 		if (ajax) {
 			return "forward:/product/updateProduct.jsp";
 		}
-		model.addAttribute("entry", "/product/updateProduct?prodNo=" + prodNo + " .container:first");
-		return "/index.jsp";
+		model.addAttribute("entry", "/product/updateProduct?prodNo=" + prodNo + " [data-page=product-update]:first");
+		return "index";
 	}
 
 	@RequestMapping(value = "updateProduct", method = RequestMethod.POST)
@@ -90,22 +86,49 @@ public class ProductController {
 	}
 
 	@RequestMapping("listProduct")
-	public String listProduct(@ModelAttribute("search") Search search,
-			@RequestParam(value = "sort", required = false, defaultValue = "") String sort, Model model)
-			throws Exception {
+    public String listProduct(@ModelAttribute("search") Search search,
+                              @RequestParam(value = "sort", required = false, defaultValue = "") String sort,
+                              Model model, HttpServletRequest req) throws Exception {
+        if (search.getCurrentPage() == 0) search.setCurrentPage(1);
+        search.setPageSize(pageSize);
 
-		if (search.getCurrentPage() == 0)
-			search.setCurrentPage(1);
-		search.setPageSize(pageSize);
+        Map<String, Object> map = productService.getProductList(search, sort);
+        int totalCount = ((Integer) map.get("totalCount")).intValue();
+        Page resultPage = new Page(search.getCurrentPage(), totalCount, pageUnit, search.getPageSize());
 
-		Map<String, Object> map = productService.getProductList(search, sort);
-		int totalCount = ((Integer) map.get("totalCount")).intValue();
-		Page resultPage = new Page(search.getCurrentPage(), totalCount, pageUnit, search.getPageSize());
+        model.addAttribute("list", map.get("list"));
+        model.addAttribute("resultPage", resultPage);
+        model.addAttribute("search", search);
 
-		model.addAttribute("list", map.get("list"));
-		model.addAttribute("resultPage", resultPage);
-		model.addAttribute("search", search);
+        boolean ajax = "XMLHttpRequest".equalsIgnoreCase(req.getHeader("X-Requested-With")) || "1".equals(req.getParameter("embed"));
+        if (ajax) {
+            return "forward:/product/listProduct.jsp";
+        }
+        model.addAttribute("entry", "/product/listProduct [data-page=product-list]:first");
+        return "index";
+    }
 
-		return "product/listProduct";
-	}
+    @RequestMapping(value = "manage", method = RequestMethod.GET)
+    public String manage(@ModelAttribute("search") Search search,
+                         @RequestParam(value = "sort", required = false, defaultValue = "") String sort,
+                         Model model, HttpServletRequest req) throws Exception {
+
+        if (search.getCurrentPage() == 0) search.setCurrentPage(1);
+        search.setPageSize(pageSize);
+
+        Map<String, Object> map = productService.getProductList(search, sort);
+        int totalCount = ((Integer) map.get("totalCount")).intValue();
+        Page resultPage = new Page(search.getCurrentPage(), totalCount, pageUnit, search.getPageSize());
+
+        model.addAttribute("list", map.get("list"));
+        model.addAttribute("resultPage", resultPage);
+        model.addAttribute("search", search);
+
+        boolean ajax = "XMLHttpRequest".equalsIgnoreCase(req.getHeader("X-Requested-With")) || "1".equals(req.getParameter("embed"));
+        if (ajax) {
+            return "forward:/product/listManageProduct.jsp";
+        }
+        model.addAttribute("entry", "/product/manage [data-page=product-manage]:first");
+        return "index";
+    }
 }

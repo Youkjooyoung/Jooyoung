@@ -9,7 +9,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>회원정보수정 | Model2 MVC Shop</title>
 <link rel="icon" href="${ctx}/images/favicon.ico" />
-
 <meta http-equiv="Content-Security-Policy"
   content="
   default-src 'self' data: blob:;
@@ -57,25 +56,7 @@
   </div>
 </header>
 
-<div class="w-full max-w-[1000px] mx-auto flex flex-row">
-  <aside class="w-[220px] bg-white border-r border-gray-200 text-[0.9rem] leading-[1.4]">
-    <div class="flex flex-col">
-      <button type="button" class="text-left w-full px-4 py-3 border-b border-gray-200 hover:bg-[#f7f8f9] font-semibold text-gray-900">내 정보</button>
-      <button type="button" class="text-left w-full px-4 py-3 border-b border-gray-200 hover:bg-[#f7f8f9] text-gray-700">개인정보조회</button>
-      <button type="button" class="text-left w-full px-4 py-3 border-b border-gray-200 hover:bg-[#f7f8f9] text-gray-700">회원정보조회</button>
-    </div>
-    <div class="flex flex-col mt-4 border-t border-gray-200">
-      <button type="button" class="text-left w-full px-4 py-3 border-b border-gray-200 hover:bg-[#f7f8f9] font-semibold text-gray-900">상품</button>
-      <button type="button" class="text-left w-full px-4 py-3 border-b border-gray-200 hover:bg-[#f7f8f9] text-gray-700">판매상품등록</button>
-      <button type="button" class="text-left w-full px-4 py-3 border-b border-gray-200 hover:bg-[#f7f8f9] text-gray-700">판매상품관리</button>
-      <button type="button" class="text-left w-full px-4 py-3 border-b border-gray-200 hover:bg-[#f7f8f9] text-gray-700">상품 검색</button>
-    </div>
-    <div class="flex flex-col mt-4 border-t border-gray-200">
-      <button type="button" class="text-left w-full px-4 py-3 border-b border-gray-200 hover:bg-[#f7f8f9] font-semibold text-gray-900">사용자</button>
-      <button type="button" class="text-left w-full px-4 py-3 border-b border-gray-200 hover:bg-[#f7f8f9] text-gray-700">최근 본 상품</button>
-    </div>
-  </aside>
-
+<div class="w-full max-w-[1000px] mx-auto flex justify-center">
   <main class="flex-1 bg-white p-6 flex justify-center">
     <section class="w-full max-w-[480px] bg-white rounded-[20px] border border-[#e5e8eb] shadow-[0_30px_80px_rgba(0,0,0,0.07)] p-8" data-page="user-update" data-view="user-update" data-ctx="${ctx}">
       <div class="flex flex-col items-center text-center mb-8">
@@ -115,17 +96,14 @@
         <div class="space-y-2">
           <label class="text-sm font-semibold text-gray-700 block">휴대전화번호</label>
           <div class="flex items-center gap-2">
-            <div class="relative">
-              <select name="phone1" id="phone1" class="h-11 w-[5rem] rounded-[12px] border border-[#e5e8eb] pl-3 pr-8 text-[0.95rem] leading-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#03c75a] focus:border-[#03c75a] appearance-none [appearance:none] [-webkit-appearance:none] [-moz-appearance:none]">
-                <option value="010" <c:if test="${user.phone1 eq '010'}">selected="selected"</c:if>>010</option>
-                <option value="011" <c:if test="${user.phone1 eq '011'}">selected="selected"</c:if>>011</option>
-                <option value="016" <c:if test="${user.phone1 eq '016'}">selected="selected"</c:if>>016</option>
-                <option value="017" <c:if test="${user.phone1 eq '017'}">selected="selected"</c:if>>017</option>
-                <option value="018" <c:if test="${user.phone1 eq '018'}">selected="selected"</c:if>>018</option>
-                <option value="019" <c:if test="${user.phone1 eq '019'}">selected="selected"</c:if>>019</option>
-              </select>
-              <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </div>
+            <select name="phone1" id="phone1" class="h-11 w-[5rem] rounded-[12px] border border-[#e5e8eb] pl-3 pr-8 text-[0.95rem] leading-none text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#03c75a] focus:border-[#03c75a] appearance-none">
+              <option value="010" <c:if test="${user.phone1 eq '010'}">selected="selected"</c:if>>010</option>
+              <option value="011" <c:if test="${user.phone1 eq '011'}">selected="selected"</c:if>>011</option>
+              <option value="016" <c:if test="${user.phone1 eq '016'}">selected="selected"</c:if>>016</option>
+              <option value="017" <c:if test="${user.phone1 eq '017'}">selected="selected"</c:if>>017</option>
+              <option value="018" <c:if test="${user.phone1 eq '018'}">selected="selected"</c:if>>018</option>
+              <option value="019" <c:if test="${user.phone1 eq '019'}">selected="selected"</c:if>>019</option>
+            </select>
             <input type="text" name="phone2" id="phone2" maxlength="4" value="${user.phone2}" class="h-11 w-[4.5rem] rounded-[12px] border border-[#e5e8eb] px-2 text-[0.95rem] leading-none text-center focus:outline-none focus:ring-2 focus:ring-[#03c75a] focus:border-[#03c75a]" placeholder="1234" />
             <input type="text" name="phone3" id="phone3" maxlength="4" value="${user.phone3}" class="h-11 w-[4.5rem] rounded-[12px] border border-[#e5e8eb] px-2 text-[0.95rem] leading-none text-center focus:outline-none focus:ring-2 focus:ring-[#03c75a] focus:border-[#03c75a]" placeholder="5678" />
           </div>
